@@ -32,16 +32,149 @@
       image-rendering: crisp-edges;
     }
 
-    .menu {
+    /* ===== CRT / RETRO TV OVERLAY ===== */
+    .crt-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Scanlines */
+    .crt-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
+      );
+      animation: scanlines 0.1s linear infinite;
+    }
+
+    /* Screen flicker */
+    .crt-overlay::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(18, 16, 16, 0);
+      animation: flicker 0.15s infinite;
+    }
+
+    @keyframes scanlines {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(4px); }
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.27861; }
+      5% { opacity: 0.34769; }
+      10% { opacity: 0.23604; }
+      15% { opacity: 0.90626; }
+      20% { opacity: 0.18128; }
+      25% { opacity: 0.83891; }
+      30% { opacity: 0.65583; }
+      35% { opacity: 0.67807; }
+      40% { opacity: 0.26559; }
+      45% { opacity: 0.84693; }
+      50% { opacity: 0.96019; }
+      55% { opacity: 0.08594; }
+      60% { opacity: 0.20313; }
+      65% { opacity: 0.71988; }
+      70% { opacity: 0.53455; }
+      75% { opacity: 0.37288; }
+      80% { opacity: 0.71428; }
+      85% { opacity: 0.70419; }
+      90% { opacity: 0.78130; }
+      95% { opacity: 0.54057; }
+      100% { opacity: 0.11630; }
+    }
+
+    /* CRT curvature on the whole page */
+    .crt-screen {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* subtle vignette */
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.9), inset 0 0 60px rgba(0,0,0,0.5);
+    }
+
+    /* Static noise overlay */
+    .crt-static {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      animation: static-shift 0.5s steps(10) infinite;
+    }
+
+    @keyframes static-shift {
+      0% { transform: translate(0, 0); }
+      10% { transform: translate(-5px, 3px); }
+      20% { transform: translate(3px, -5px); }
+      30% { transform: translate(-3px, 5px); }
+      40% { transform: translate(5px, -3px); }
+      50% { transform: translate(-5px, -3px); }
+      60% { transform: translate(3px, 5px); }
+      70% { transform: translate(-3px, -5px); }
+      80% { transform: translate(5px, 3px); }
+      90% { transform: translate(-5px, 5px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* RGB split on title for extra retro feel */
+    .rgb-split {
+      text-shadow:
+        0 0 0 2px #000,
+        2px 2px 0 #8b0000,
+        4px 4px 0 #4a0000,
+        0 2px 0 rgba(255,180,180,0.5);
+      animation: rgb-shift 4s ease-in-out infinite;
+    }
+
+    @keyframes rgb-shift {
+      0%, 100% { text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5); }
+      25% { text-shadow: -1px 0 0 rgba(255,0,0,0.3), 1px 0 0 rgba(0,255,255,0.3), 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; }
+      50% { text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5); }
+      75% { text-shadow: 1px 0 0 rgba(255,0,0,0.3), -1px 0 0 rgba(0,255,255,0.3), 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; }
+    }
+
+    /* ===== SCREEN / MENU SYSTEM ===== */
+    .screen {
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
       max-width: 900px;
       padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
     }
 
+    .screen.active {
+      display: flex;
+    }
+
+    .screen.visible {
+      opacity: 1;
+    }
+
+    /* ===== TITLE SCREEN ===== */
     .title-wrap {
       text-align: center;
       margin-bottom: 0.5rem;
@@ -87,6 +220,14 @@
       letter-spacing: 0.2em;
       margin: 1rem 0;
       animation: blink 1s step-end infinite;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      user-select: none;
+    }
+
+    .press-start:hover {
+      color: #e02020;
+      animation: none;
     }
 
     @keyframes blink {
@@ -111,30 +252,510 @@
       padding: 2rem;
     }
     .no-video a { color: #cc2222; }
+
+    /* ===== NAV MENU ===== */
+    .menu-title {
+      font-family: 'Blood Crow', Impact, sans-serif !important;
+      font-size: clamp(2rem, 7vw, 4rem);
+      color: #e02020;
+      text-shadow:
+        0 0 0 2px #000,
+        2px 2px 0 #8b0000,
+        4px 4px 0 #4a0000,
+        0 2px 0 rgba(255,180,180,0.5);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .menu-list {
+      list-style: none;
+      text-align: center;
+      width: 100%;
+    }
+
+    .menu-list li {
+      margin: 0.8rem 0;
+    }
+
+    .menu-item {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.5rem, 1.8vw, 0.75rem);
+      color: #aaa;
+      cursor: pointer;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+      user-select: none;
+      display: inline-block;
+      padding: 0.3rem 0;
+    }
+
+    .menu-item:hover {
+      color: #e02020;
+      text-shadow: 0 0 8px rgba(224, 32, 32, 0.5);
+    }
+
+    .menu-item::before {
+      content: '> ';
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .menu-item:hover::before {
+      opacity: 1;
+    }
+
+    /* ===== MEMBERS LIST ===== */
+    .members-list {
+      list-style: none;
+      text-align: center;
+      width: 100%;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .members-list li {
+      margin: 0.5rem 0;
+    }
+
+    .member-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.4rem, 1.5vw, 0.6rem);
+      color: #aaa;
+      cursor: pointer;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+      user-select: none;
+      display: inline-block;
+      padding: 0.2rem 0;
+    }
+
+    .member-name:hover {
+      color: #e02020;
+      text-shadow: 0 0 8px rgba(224, 32, 32, 0.5);
+    }
+
+    .member-name.redacted {
+      color: #550000;
+      text-decoration: line-through;
+      text-decoration-color: #e02020;
+    }
+
+    .member-name.redacted:hover {
+      color: #880000;
+      text-shadow: 0 0 12px rgba(224, 32, 32, 0.3);
+    }
+
+    /* ===== MEMBER PROFILE ===== */
+    .profile-card {
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .profile-card .profile-name {
+      font-family: 'Blood Crow', Impact, sans-serif !important;
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      color: #e02020;
+      text-shadow:
+        2px 2px 0 #8b0000,
+        4px 4px 0 #4a0000;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    .profile-detail {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.35rem, 1.2vw, 0.5rem);
+      color: #aaa;
+      margin: 0.7rem 0;
+      line-height: 1.8;
+      letter-spacing: 0.08em;
+    }
+
+    .profile-detail .label {
+      color: #e02020;
+    }
+
+    /* ===== CLASSIFIED SCREEN ===== */
+    .classified-screen {
+      text-align: center;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .classified-stamp {
+      font-family: 'Blood Crow', Impact, sans-serif !important;
+      font-size: clamp(2rem, 8vw, 5rem);
+      color: #e02020;
+      text-shadow:
+        2px 2px 0 #8b0000,
+        4px 4px 0 #4a0000;
+      transform: rotate(-12deg);
+      margin: 1rem 0;
+      text-transform: uppercase;
+      animation: stamp-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes stamp-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .redacted-lines {
+      margin: 1.5rem auto;
+      max-width: 500px;
+    }
+
+    .redacted-line {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.3rem, 1vw, 0.45rem);
+      color: #330000;
+      background: #330000;
+      margin: 0.4rem 0;
+      padding: 0.2rem 0.5rem;
+      letter-spacing: 0.1em;
+      display: block;
+      user-select: none;
+    }
+
+    .classified-watermark {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.5rem, 1.5vw, 0.7rem);
+      color: #440000;
+      letter-spacing: 0.3em;
+      margin: 0.5rem 0;
+      text-transform: uppercase;
+    }
+
+    /* ===== RELEASES ===== */
+    .release-card {
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .release-art {
+      width: 200px;
+      height: 200px;
+      margin: 1rem auto;
+      border: 2px solid #e02020;
+      box-shadow: 0 0 15px rgba(224, 32, 32, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .release-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+
+    .release-art .placeholder {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.4rem;
+      color: #550000;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    .release-title-text {
+      font-family: 'Blood Crow', Impact, sans-serif !important;
+      font-size: clamp(1.2rem, 4vw, 2.5rem);
+      color: #e02020;
+      text-shadow:
+        2px 2px 0 #8b0000,
+        4px 4px 0 #4a0000;
+      margin: 0.8rem 0 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .release-info {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.3rem, 1vw, 0.45rem);
+      color: #aaa;
+      line-height: 2;
+      letter-spacing: 0.08em;
+    }
+
+    .release-status {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.35rem, 1.2vw, 0.5rem);
+      color: #e02020;
+      margin-top: 1rem;
+      animation: blink 1.5s step-end infinite;
+    }
+
+    /* ===== ABOUT US ===== */
+    .about-text {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.3rem, 1.1vw, 0.45rem);
+      color: #aaa;
+      line-height: 2.2;
+      text-align: center;
+      max-width: 650px;
+      letter-spacing: 0.05em;
+      margin: 0 auto;
+    }
+
+    .about-text p {
+      margin-bottom: 1rem;
+    }
+
+    /* ===== LOGIN / REGISTER ===== */
+    .auth-container {
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-tab {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.4rem, 1.3vw, 0.55rem);
+      color: #555;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      user-select: none;
+      padding-bottom: 0.3rem;
+    }
+
+    .auth-tab:hover, .auth-tab.active {
+      color: #e02020;
+      border-bottom: 2px solid #e02020;
+    }
+
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .auth-form.active {
+      display: flex;
+    }
+
+    .auth-input {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.3rem, 1vw, 0.4rem);
+      background: #111;
+      border: 1px solid #333;
+      color: #aaa;
+      padding: 0.6rem 0.8rem;
+      width: 100%;
+      max-width: 280px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      letter-spacing: 0.05em;
+    }
+
+    .auth-input:focus {
+      border-color: #e02020;
+      box-shadow: 0 0 8px rgba(224, 32, 32, 0.2);
+    }
+
+    .auth-input::placeholder {
+      color: #444;
+    }
+
+    .auth-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.3rem, 1vw, 0.4rem);
+      background: transparent;
+      border: 1px solid #e02020;
+      color: #e02020;
+      padding: 0.5rem 1.5rem;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, color 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .auth-btn:hover {
+      background: #e02020;
+      color: #000;
+    }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(0.35rem, 1.2vw, 0.5rem);
+      color: #555;
+      cursor: pointer;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      user-select: none;
+      margin-top: 1.5rem;
+    }
+
+    .back-btn:hover {
+      color: #e02020;
+    }
+
+    .back-btn::before {
+      content: '< ';
+    }
+
+    /* ===== FOOTER ===== */
+    .screen-footer {
+      margin-top: 1.5rem;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #e02020; }
   </style>
 </head>
 <body>
-  <video id="video" crossorigin="anonymous" style="display:none" muted loop playsinline autoplay>
-    <source src="assets/mask.mp4" type="video/mp4">
-  </video>
-  <canvas id="source" style="display:none"></canvas>
+  <!-- CRT Effects -->
+  <div class="crt-overlay"></div>
+  <div class="crt-static"></div>
 
-  <div class="menu">
-    <div class="title-wrap">
-      <h1 class="title">RUNE TRIBE</h1>
-    </div>
-    <div class="ascii-container">
-      <canvas id="ascii-canvas" style="display:none"></canvas>
-    </div>
-    <p class="press-start">PRESS START BUTTON</p>
-    <p class="copyright">TM&© 2025 RUNE TRIBE<br>ALL RIGHTS RESERVED</p>
-  </div>
+  <div class="crt-screen">
+    <video id="video" crossorigin="anonymous" style="display:none" muted loop playsinline autoplay>
+      <source src="assets/mask.mp4" type="video/mp4">
+    </video>
+    <canvas id="source" style="display:none"></canvas>
 
-  <div id="no-video" class="no-video" style="display:none">
-    <p>Put mask.mp4 in assets/</p>
+    <!-- ===== TITLE SCREEN ===== -->
+    <div id="screen-title" class="screen active visible">
+      <div class="title-wrap">
+        <h1 class="title rgb-split">RUNE TRIBE</h1>
+      </div>
+      <div class="ascii-container">
+        <canvas id="ascii-canvas" style="display:none"></canvas>
+      </div>
+      <p class="press-start" id="press-start">PRESS START BUTTON</p>
+      <p class="copyright">TM&amp;© 2025 RUNE TRIBE<br>ALL RIGHTS RESERVED</p>
+    </div>
+
+    <!-- ===== MAIN NAVIGATION MENU ===== -->
+    <div id="screen-nav" class="screen">
+      <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
+      <ul class="menu-list">
+        <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
+        <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
+        <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
+        <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
+        <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
+      </ul>
+      <div class="screen-footer">
+        <p class="copyright">TM&amp;© 2025 RUNE TRIBE</p>
+      </div>
+    </div>
+
+    <!-- ===== LOGIN / REGISTER ===== -->
+    <div id="screen-auth" class="screen">
+      <h2 class="menu-title rgb-split">ACCESS TERMINAL</h2>
+      <div class="auth-container">
+        <div class="auth-tabs">
+          <span class="auth-tab active" data-form="login-form">LOGIN</span>
+          <span class="auth-tab" data-form="register-form">REGISTER</span>
+        </div>
+        <form id="login-form" class="auth-form active" onsubmit="return false;">
+          <input type="text" class="auth-input" placeholder="USERNAME" autocomplete="username">
+          <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="current-password">
+          <button type="submit" class="auth-btn">ENTER</button>
+        </form>
+        <form id="register-form" class="auth-form" onsubmit="return false;">
+          <input type="text" class="auth-input" placeholder="USERNAME" autocomplete="username">
+          <input type="email" class="auth-input" placeholder="EMAIL" autocomplete="email">
+          <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="new-password">
+          <input type="password" class="auth-input" placeholder="CONFIRM PASSWORD" autocomplete="new-password">
+          <button type="submit" class="auth-btn">REGISTER</button>
+        </form>
+      </div>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
+    <!-- ===== MEMBERS LIST ===== -->
+    <div id="screen-members" class="screen">
+      <h2 class="menu-title rgb-split">MEMBERS</h2>
+      <ul class="members-list" id="members-list"></ul>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
+    <!-- ===== MEMBER PROFILE ===== -->
+    <div id="screen-profile" class="screen">
+      <div class="profile-card" id="profile-card"></div>
+      <span class="back-btn" data-target="screen-members">BACK</span>
+    </div>
+
+    <!-- ===== CLASSIFIED SCREEN ===== -->
+    <div id="screen-classified" class="screen">
+      <div class="classified-screen">
+        <div class="classified-stamp">CLASSIFIED</div>
+        <div class="classified-watermark">TOP SECRET // RUNE TRIBE</div>
+        <div class="redacted-lines">
+          <span class="redacted-line">SUBJECT: ████████████████████████</span>
+          <span class="redacted-line">STATUS: ██████████ ACTIVE ██████</span>
+          <span class="redacted-line">LOCATION: ████████████████████████</span>
+          <span class="redacted-line">CLEARANCE: ████████ LEVEL ████████</span>
+          <span class="redacted-line">MISSION: ████████████████████████</span>
+          <span class="redacted-line">████████████████████████████████</span>
+        </div>
+        <div class="classified-watermark">UNAUTHORIZED ACCESS LOGGED</div>
+        <div class="classified-stamp" style="transform: rotate(8deg);">REDACTED</div>
+      </div>
+      <span class="back-btn" data-target="screen-members">BACK</span>
+    </div>
+
+    <!-- ===== RELEASES ===== -->
+    <div id="screen-releases" class="screen">
+      <h2 class="menu-title rgb-split">RELEASES</h2>
+      <div class="release-card">
+        <div class="release-art">
+          <img src="assets/ep-cover.png" alt="EP Cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
+        </div>
+        <div class="release-title-text">COMING SOON</div>
+        <div class="release-info">
+          TYPE: EP<br>
+          RELEASE: END OF MARCH 2026
+        </div>
+        <div class="release-status">STAY TUNED...</div>
+      </div>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
+    <!-- ===== ABOUT US ===== -->
+    <div id="screen-about" class="screen">
+      <h2 class="menu-title rgb-split">ABOUT US</h2>
+      <div class="about-text">
+        <p>RUNE TRIBE IS A COLLECTIVE OF ARTISTS, MUSICIANS, AND CREATORS UNITED BY A SHARED VISION OF DARK, UNCOMPROMISING ART.</p>
+        <p>BORN FROM THE UNDERGROUND, WE BLEND MUSIC, VISUALS, AND CODE INTO SOMETHING RAW AND REAL. NO RULES. NO BOUNDARIES. JUST THE CRAFT.</p>
+        <p>WE OPERATE IN THE SHADOWS, BUILDING A WORLD WHERE CREATIVITY HAS NO LIMITS AND EVERY PIECE TELLS A STORY.</p>
+        <p>THIS IS RUNE TRIBE. YOU EITHER GET IT OR YOU DON'T.</p>
+      </div>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
+    <div id="no-video" class="no-video" style="display:none">
+      <p>Put mask.mp4 in assets/</p>
+    </div>
   </div>
 
   <script>
+    /* ===== ASCII VIDEO ENGINE (unchanged logic) ===== */
     const video = document.getElementById('video');
     const sourceCanvas = document.getElementById('source');
     const sourceCtx = sourceCanvas.getContext('2d');
@@ -147,8 +768,8 @@
     const CELL_W = 4;
     const CELL_H = 6;
     const BG_COLOR = '#000';
-    const WHITE_THRESHOLD = 245; // hide white bg + light aura/edge
-    const FPS_TARGET = 12; // slower than video's native fps
+    const WHITE_THRESHOLD = 245;
+    const FPS_TARGET = 12;
     let lastFrameTime = 0;
 
     function luminance(r, g, b) {
@@ -172,33 +793,25 @@
 
     function processFrame() {
       if (video.readyState < 2) return;
-
       const vw = video.videoWidth;
       const vh = video.videoHeight;
       if (!vw || !vh) return;
-
       const cellW = vw / COLS;
       const cellH = cellW * (CELL_H / CELL_W);
       const rows = Math.floor(vh / cellH);
-
       const outW = COLS * CELL_W;
       const outH = rows * CELL_H;
-
       sourceCanvas.width = vw;
       sourceCanvas.height = vh;
       sourceCtx.drawImage(video, 0, 0);
-
       const imgData = sourceCtx.getImageData(0, 0, vw, vh);
       const data = imgData.data;
-
       asciiCanvas.width = outW;
       asciiCanvas.height = outH;
       asciiCtx.fillStyle = BG_COLOR;
       asciiCtx.fillRect(0, 0, outW, outH);
-
       asciiCtx.font = `bold ${CELL_H}px "Consolas","Monaco","Courier New",monospace`;
       asciiCtx.textBaseline = 'top';
-
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < COLS; col++) {
           const px = Math.floor(col * cellW + cellW / 2);
@@ -246,6 +859,106 @@
     });
 
     video.play().catch(() => {});
+
+    /* ===== SCREEN NAVIGATION ENGINE ===== */
+    function switchScreen(fromId, toId) {
+      const from = document.getElementById(fromId);
+      const to = document.getElementById(toId);
+      if (!from || !to) return;
+
+      // Fade out
+      from.classList.remove('visible');
+      setTimeout(() => {
+        from.classList.remove('active');
+        // Fade in
+        to.classList.add('active');
+        // Force reflow before adding visible class
+        to.offsetHeight;
+        to.classList.add('visible');
+      }, 600);
+    }
+
+    let currentScreen = 'screen-title';
+
+    // Press Start Button
+    document.getElementById('press-start').addEventListener('click', () => {
+      switchScreen('screen-title', 'screen-nav');
+      currentScreen = 'screen-nav';
+    });
+
+    // Menu items navigate to screens
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.dataset.target;
+        if (target) {
+          switchScreen(currentScreen, target);
+          currentScreen = target;
+        }
+      });
+    });
+
+    // Back buttons
+    document.querySelectorAll('.back-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        if (target) {
+          switchScreen(currentScreen, target);
+          currentScreen = target;
+        }
+      });
+    });
+
+    // Auth tabs
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.form).classList.add('active');
+      });
+    });
+
+    /* ===== MEMBERS DATA ===== */
+    const members = [
+      { name: 'PHANTOM', role: 'PRODUCER / ENGINEER', rank: 'FOUNDER', time: 'SINCE DAY ONE', redacted: false },
+      { name: 'VEXIS', role: 'VOCALIST / LYRICIST', rank: 'CO-FOUNDER', time: 'SINCE DAY ONE', redacted: false },
+      { name: 'KROW', role: 'GRAPHIC DESIGNER / VISUAL ARTIST', rank: 'ELDER', time: '3 YEARS', redacted: false },
+      { name: 'SHADE', role: 'BEAT ARCHITECT', rank: 'ELDER', time: '2 YEARS', redacted: false },
+      { name: 'NOXIS', role: 'MIX ENGINEER', rank: 'MEMBER', time: '1 YEAR', redacted: false },
+      { name: '█████████', role: '████████████', rank: '████████', time: '██████', redacted: true },
+      { name: '██████████', role: '████████████', rank: '████████', time: '██████', redacted: true },
+      { name: '████████', role: '████████████', rank: '████████', time: '██████', redacted: true },
+      { name: '█████████████', role: '████████████', rank: '████████', time: '██████', redacted: true },
+      { name: '███████', role: '████████████', rank: '████████', time: '██████', redacted: true },
+    ];
+
+    // Build members list
+    const membersList = document.getElementById('members-list');
+    members.forEach((member, i) => {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.className = 'member-name' + (member.redacted ? ' redacted' : '');
+      span.textContent = member.name;
+      span.addEventListener('click', () => {
+        if (member.redacted) {
+          switchScreen('screen-members', 'screen-classified');
+          currentScreen = 'screen-classified';
+        } else {
+          // Build profile
+          const card = document.getElementById('profile-card');
+          card.innerHTML = `
+            <div class="profile-name">${member.name}</div>
+            <p class="profile-detail"><span class="label">ROLE:</span> ${member.role}</p>
+            <p class="profile-detail"><span class="label">RANK:</span> ${member.rank}</p>
+            <p class="profile-detail"><span class="label">TIME WITH TRIBE:</span> ${member.time}</p>
+          `;
+          switchScreen('screen-members', 'screen-profile');
+          currentScreen = 'screen-profile';
+        }
+      });
+      li.appendChild(span);
+      membersList.appendChild(li);
+    });
   </script>
 </body>
 </html>
