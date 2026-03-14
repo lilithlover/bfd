@@ -6,8 +6,8 @@
 const SupabaseClient = (() => {
   // !! REPLACE THESE with your Supabase project values !!
   // Found in: Supabase Dashboard > Settings > API
-  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://oaefzkipbkjmtchckfwd.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_qrxYyrjn3Ze3HA3-4zGyAw_s0MsQgn4';
 
   let sb = null;
   let currentUser = null;
