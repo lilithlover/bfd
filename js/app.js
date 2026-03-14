@@ -707,11 +707,11 @@
 
   /* ===== MEMBERS ===== */
   const members = [
-    { name: 'PHANTOM', role: 'PRODUCER / ENGINEER', rank: 'FOUNDER', time: 'SINCE DAY ONE', redacted: false },
-    { name: 'VEXIS', role: 'VOCALIST / LYRICIST', rank: 'CO-FOUNDER', time: 'SINCE DAY ONE', redacted: false },
-    { name: 'KROW', role: 'GRAPHIC DESIGNER / VISUAL ARTIST', rank: 'ELDER', time: '3 YEARS', redacted: false },
-    { name: 'SHADE', role: 'BEAT ARCHITECT', rank: 'ELDER', time: '2 YEARS', redacted: false },
-    { name: 'NOXIS', role: 'MIX ENGINEER', rank: 'MEMBER', time: '1 YEAR', redacted: false },
+    { name: 'Percpuke', role: 'Manager', rank: 'Stone Mask', time: 'Since 2019', redacted: false },
+    { name: 'Allcontempt', role: 'Vocals & Graphic Designer', rank: 'Stone Mask', time: 'Since 2020', redacted: false },
+    { name: 'Deadbelief', role: 'Vocals & Producer', rank: 'Stone Mask', time: 'Since 2025', redacted: false },
+    { name: 'Alkoholinmeinemblut', role: 'Website Manager', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
+    { name: 'Allsomecat', role: 'Producer & Mixxer', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
     { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
     { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
     { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
