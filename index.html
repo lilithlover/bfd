@@ -9,141 +9,76 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     /* ===== FONTS ===== */
-    @font-face {
-      font-family: 'Blood Crow';
-      src: url('bloodcrowe.ttf') format('truetype');
-      font-weight: normal; font-style: normal; font-display: swap;
-    }
-    @font-face {
-      font-family: 'Retro Arcade';
-      src: url('assets/Retro Arcade Terror.ttf') format('truetype');
-      font-weight: normal; font-style: normal; font-display: swap;
-    }
+    @font-face { font-family: 'Blood Crow'; src: url('bloodcrowe.ttf') format('truetype'); font-display: swap; }
+    @font-face { font-family: 'Retro Arcade'; src: url('assets/Retro Arcade Terror.ttf') format('truetype'); font-display: swap; }
 
-    /* ===== RESET & BASE ===== */
+    /* ===== RESET ===== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #0a0a0a;
-      overflow: hidden;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #0a0a0a; overflow: hidden;
       font-family: 'Press Start 2P', monospace;
-      -webkit-font-smoothing: none;
-      -moz-osx-font-smoothing: grayscale;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      color: #aaa;
+      -webkit-font-smoothing: none; -moz-osx-font-smoothing: grayscale;
+      image-rendering: pixelated; image-rendering: crisp-edges; color: #aaa;
     }
 
-    /* ===== CRT / RETRO TV OVERLAY ===== */
-    .crt-overlay {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; z-index: 9999;
-    }
+    /* ===== CRT OVERLAY ===== */
+    .crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
     .crt-overlay::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
-      );
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
       animation: scanlines 0.08s linear infinite;
     }
-    .crt-overlay::after {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(18,16,16,0);
-      animation: flicker 0.15s infinite;
-    }
-    @keyframes scanlines {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(4px); }
-    }
+    .crt-overlay::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(18,16,16,0); animation: flicker 0.15s infinite; }
+    @keyframes scanlines { 0% { transform: translateY(0); } 100% { transform: translateY(4px); } }
     @keyframes flicker {
-      0% { opacity: 0.27; } 5% { opacity: 0.35; } 10% { opacity: 0.24; }
-      15% { opacity: 0.91; } 20% { opacity: 0.18; } 25% { opacity: 0.84; }
-      30% { opacity: 0.66; } 35% { opacity: 0.68; } 40% { opacity: 0.27; }
-      45% { opacity: 0.85; } 50% { opacity: 0.96; } 55% { opacity: 0.09; }
-      60% { opacity: 0.20; } 65% { opacity: 0.72; } 70% { opacity: 0.53; }
-      75% { opacity: 0.37; } 80% { opacity: 0.71; } 85% { opacity: 0.70; }
-      90% { opacity: 0.78; } 95% { opacity: 0.54; } 100% { opacity: 0.12; }
+      0%{opacity:.27}5%{opacity:.35}10%{opacity:.24}15%{opacity:.91}20%{opacity:.18}25%{opacity:.84}
+      30%{opacity:.66}35%{opacity:.68}40%{opacity:.27}45%{opacity:.85}50%{opacity:.96}55%{opacity:.09}
+      60%{opacity:.20}65%{opacity:.72}70%{opacity:.53}75%{opacity:.37}80%{opacity:.71}85%{opacity:.70}
+      90%{opacity:.78}95%{opacity:.54}100%{opacity:.12}
     }
-
     .crt-screen {
       position: relative; width: 100%; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       box-shadow: inset 0 0 150px rgba(0,0,0,0.95), inset 0 0 60px rgba(0,0,0,0.5);
     }
-
     .crt-static {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none; z-index: 9998; opacity: 0.04;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 256px 256px;
-      animation: static-shift 0.5s steps(10) infinite;
+      background-size: 256px; animation: static-shift 0.5s steps(10) infinite;
     }
     @keyframes static-shift {
-      0% { transform: translate(0,0); } 10% { transform: translate(-5px,3px); }
-      20% { transform: translate(3px,-5px); } 30% { transform: translate(-3px,5px); }
-      40% { transform: translate(5px,-3px); } 50% { transform: translate(-5px,-3px); }
-      60% { transform: translate(3px,5px); } 70% { transform: translate(-3px,-5px); }
-      80% { transform: translate(5px,3px); } 90% { transform: translate(-5px,5px); }
-      100% { transform: translate(0,0); }
+      0%{transform:translate(0,0)}10%{transform:translate(-5px,3px)}20%{transform:translate(3px,-5px)}
+      30%{transform:translate(-3px,5px)}40%{transform:translate(5px,-3px)}50%{transform:translate(-5px,-3px)}
+      60%{transform:translate(3px,5px)}70%{transform:translate(-3px,-5px)}80%{transform:translate(5px,3px)}
+      90%{transform:translate(-5px,5px)}100%{transform:translate(0,0)}
     }
-
-    /* Phosphor glow line at top */
     .crt-screen::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 2px;
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
       background: linear-gradient(90deg, transparent, rgba(224,32,32,0.15), transparent);
       animation: phosphor-line 8s linear infinite;
     }
-    @keyframes phosphor-line {
-      0% { top: -2px; opacity: 0; }
-      5% { opacity: 1; }
-      95% { opacity: 1; }
-      100% { top: 100vh; opacity: 0; }
-    }
+    @keyframes phosphor-line { 0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100vh;opacity:0} }
 
     /* ===== RGB SPLIT ===== */
-    .rgb-split {
-      animation: rgb-shift 5s ease-in-out infinite;
-    }
+    .rgb-split { animation: rgb-shift 5s ease-in-out infinite; }
     @keyframes rgb-shift {
-      0%, 100% { text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5); }
-      20% { text-shadow: -1px 0 rgba(255,0,0,0.4), 1px 0 rgba(0,255,255,0.4), 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; }
-      40% { text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5); }
-      60% { text-shadow: 1px 0 rgba(255,0,0,0.4), -1px 0 rgba(0,255,255,0.4), 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; }
-      80% { text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5); }
+      0%,100%{text-shadow:0 0 0 2px #000,2px 2px 0 #8b0000,4px 4px 0 #4a0000,0 2px 0 rgba(255,180,180,.5)}
+      20%{text-shadow:-1px 0 rgba(255,0,0,.4),1px 0 rgba(0,255,255,.4),2px 2px 0 #8b0000,4px 4px 0 #4a0000}
+      40%{text-shadow:0 0 0 2px #000,2px 2px 0 #8b0000,4px 4px 0 #4a0000,0 2px 0 rgba(255,180,180,.5)}
+      60%{text-shadow:1px 0 rgba(255,0,0,.4),-1px 0 rgba(0,255,255,.4),2px 2px 0 #8b0000,4px 4px 0 #4a0000}
+      80%{text-shadow:0 0 0 2px #000,2px 2px 0 #8b0000,4px 4px 0 #4a0000,0 2px 0 rgba(255,180,180,.5)}
     }
 
     /* ===== PIXEL DECORATIONS ===== */
-    .pixel-border {
-      border: 2px solid #e02020;
-      box-shadow:
-        inset 0 0 0 1px #000,
-        inset 0 0 0 2px #8b0000,
-        0 0 8px rgba(224,32,32,0.2);
-    }
-    .pixel-divider {
-      width: 80%;
-      height: 2px;
-      background: repeating-linear-gradient(90deg, #e02020 0px, #e02020 4px, transparent 4px, transparent 8px);
-      margin: 0.8rem auto;
-      opacity: 0.6;
-    }
+    .pixel-border { border: 2px solid #e02020; box-shadow: inset 0 0 0 1px #000, inset 0 0 0 2px #8b0000, 0 0 8px rgba(224,32,32,.2); }
+    .pixel-divider { width: 80%; height: 2px; background: repeating-linear-gradient(90deg,#e02020 0px,#e02020 4px,transparent 4px,transparent 8px); margin: 0.8rem auto; opacity: 0.6; }
 
-    /* ===== SCREEN / MENU SYSTEM ===== */
-    .screen {
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      width: 100%; max-width: 900px; padding: 1rem;
-      opacity: 0; transition: opacity 0.6s ease;
-    }
+    /* ===== SCREENS ===== */
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 900px; padding: 1rem; opacity: 0; transition: opacity 0.6s ease; }
     .screen.active { display: flex; }
     .screen.visible { opacity: 1; }
 
@@ -151,552 +86,376 @@
     .title-wrap { text-align: center; margin-bottom: 0.5rem; }
     .title {
       font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(3rem, 10vw, 6.5rem);
-      color: #e02020;
-      text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5);
-      letter-spacing: 0.08em; line-height: 1.2;
-      text-transform: uppercase; white-space: nowrap;
+      font-size: clamp(3rem, 10vw, 6.5rem); color: #e02020;
+      text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,.5);
+      letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; white-space: nowrap;
     }
-    .subtitle {
-      font-family: 'Retro Arcade', 'Press Start 2P', monospace;
-      font-size: clamp(0.35rem, 1.2vw, 0.5rem);
-      color: #660000;
-      letter-spacing: 0.3em;
-      margin-top: 0.3rem;
-    }
-
-    .ascii-container {
-      width: 100%; display: flex; justify-content: center; align-items: center;
-      min-height: 220px; margin: 0.5rem 0;
-    }
-    #ascii-canvas {
-      display: block; width: 100%; max-height: 42vh; height: auto;
-      image-rendering: pixelated; image-rendering: crisp-edges;
-    }
-
+    .subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.5vw, .7rem); color: #660000; letter-spacing: .3em; margin-top: .3rem; }
+    .ascii-container { width: 100%; display: flex; justify-content: center; align-items: center; min-height: 220px; margin: .5rem 0; }
+    #ascii-canvas { display: block; width: 100%; max-height: 42vh; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
     .press-start {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.5rem, 1.8vw, 0.7rem);
-      color: #ccc;
-      letter-spacing: 0.2em; margin: 1rem 0;
-      animation: blink 1s step-end infinite;
-      cursor: pointer; user-select: none;
-      text-shadow: 0 0 4px rgba(204,204,204,0.3);
+      font-size: clamp(.6rem, 2vw, .9rem); color: #ccc; letter-spacing: .2em; margin: 1rem 0;
+      animation: blink 1s step-end infinite; cursor: pointer; user-select: none;
+      text-shadow: 0 0 4px rgba(204,204,204,.3);
     }
-    .press-start:hover {
-      color: #e02020; animation: none;
-      text-shadow: 0 0 12px rgba(224,32,32,0.6);
-    }
-    @keyframes blink {
-      0%, 49% { opacity: 1; }
-      50%, 100% { opacity: 0; }
-    }
+    .press-start:hover { color: #e02020; animation: none; text-shadow: 0 0 12px rgba(224,32,32,.6); }
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    .copyright { font-size: clamp(.35rem, 1.2vw, .55rem); color: #444; letter-spacing: .1em; text-align: center; line-height: 2; }
+    .insert-coin { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .45rem); color: #333; letter-spacing: .2em; margin-top: .5rem; animation: blink 2s step-end infinite; }
+    .no-video { color: #333; font-size: .5rem; text-align: center; padding: 2rem; }
 
-    .copyright {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 1vw, 0.4rem);
-      color: #444; letter-spacing: 0.1em;
-      text-align: center; line-height: 2;
-    }
-
-    .no-video {
-      color: #333; font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem; text-align: center; padding: 2rem;
-    }
-    .no-video a { color: #cc2222; }
-
-    /* ===== NAV MENU ===== */
+    /* ===== MENU ===== */
     .menu-title {
       font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(2rem, 7vw, 4rem);
-      color: #e02020;
-      text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,0.5);
-      letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 0.3rem; text-align: center;
+      font-size: clamp(2rem, 7vw, 4rem); color: #e02020;
+      text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,.5);
+      letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; text-align: center;
     }
-    .menu-subtitle {
-      font-family: 'Retro Arcade', 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 0.9vw, 0.38rem);
-      color: #550000; letter-spacing: 0.25em;
-      margin-bottom: 1.2rem; text-align: center;
-    }
-
+    .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.35rem, 1.1vw, .5rem); color: #550000; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
     .menu-list { list-style: none; text-align: center; width: 100%; }
-    .menu-list li { margin: 0.6rem 0; }
-
+    .menu-list li { margin: .7rem 0; }
     .menu-item {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.45rem, 1.6vw, 0.65rem);
-      color: #777; cursor: pointer;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      transition: color 0.15s, text-shadow 0.15s;
-      user-select: none; display: inline-block; padding: 0.3rem 0;
-      position: relative;
+      font-size: clamp(.55rem, 1.8vw, .85rem); color: #777; cursor: pointer;
+      letter-spacing: .15em; text-transform: uppercase;
+      transition: color .15s, text-shadow .15s; user-select: none;
+      display: inline-block; padding: .3rem 0; position: relative;
     }
-    .menu-item:hover {
-      color: #e02020;
-      text-shadow: 0 0 8px rgba(224,32,32,0.5), 0 0 2px rgba(224,32,32,0.8);
-    }
-    .menu-item::before {
-      content: '\25BA '; /* right-pointing triangle */
-      opacity: 0; transition: opacity 0.15s;
-      color: #e02020;
-    }
+    .menu-item:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5), 0 0 2px rgba(224,32,32,.8); }
+    .menu-item::before { content: '\25BA '; opacity: 0; transition: opacity .15s; color: #e02020; }
     .menu-item:hover::before { opacity: 1; }
-
-    /* Chat badge */
-    .chat-badge {
-      display: none;
-      font-size: 0.35rem;
-      color: #000;
-      background: #e02020;
-      padding: 0.1rem 0.25rem;
-      margin-left: 0.3rem;
-      vertical-align: top;
-      animation: blink 1.5s step-end infinite;
-    }
+    .chat-badge { display: none; font-size: .4rem; color: #000; background: #e02020; padding: .1rem .25rem; margin-left: .3rem; vertical-align: top; animation: blink 1.5s step-end infinite; }
     .chat-badge.show { display: inline; }
 
-    /* ===== PLAYER HUD (top-left) ===== */
-    .player-hud {
-      position: fixed;
-      top: 8px; left: 8px;
-      z-index: 9990;
-      display: none;
-      cursor: pointer;
-    }
+    /* ===== HUD ===== */
+    .player-hud { position: fixed; top: 10px; left: 10px; z-index: 9990; display: none; cursor: pointer; }
     .player-hud.show { display: flex; }
-
     .hud-content {
-      display: flex; align-items: center; gap: 0.4rem;
-      background: rgba(10,10,10,0.9);
-      border: 1px solid #330000;
-      padding: 0.3rem 0.5rem;
-      transition: border-color 0.2s;
+      display: flex; align-items: center; gap: .5rem;
+      background: rgba(10,10,10,.92); border: 1px solid #330000;
+      padding: .4rem .6rem; transition: border-color .2s;
     }
     .hud-content:hover { border-color: #e02020; }
-
-    .hud-avatar {
-      width: 28px; height: 28px;
-      border: 1px solid #e02020;
-      overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
+    .hud-avatar { width: 32px; height: 32px; border: 1px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .hud-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .hud-avatar-placeholder {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.5rem; color: #e02020;
-    }
-
-    .hud-info {
-      display: flex; flex-direction: column; gap: 0.1rem;
-    }
-    .hud-username {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.35rem; letter-spacing: 0.05em;
-    }
-    .hud-rank {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.25rem; color: #660000; letter-spacing: 0.05em;
-    }
-    .hud-stats {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.22rem; color: #444; letter-spacing: 0.05em;
-    }
+    .hud-avatar-placeholder { font-size: .6rem; color: #e02020; }
+    .hud-info { display: flex; flex-direction: column; gap: .15rem; }
+    .hud-username { font-size: .4rem; letter-spacing: .05em; }
+    .hud-rank { font-size: .3rem; color: #660000; letter-spacing: .05em; }
+    .hud-stats { font-size: .28rem; color: #444; letter-spacing: .05em; }
+    .hud-guest { font-size: .3rem; color: #333; }
 
     /* ===== SOUND TOGGLE ===== */
     .sound-toggle {
-      position: fixed; top: 8px; right: 8px;
-      z-index: 9990;
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.25rem, 0.8vw, 0.32rem);
-      color: #444; cursor: pointer;
-      background: rgba(10,10,10,0.9);
-      border: 1px solid #220000;
-      padding: 0.25rem 0.4rem;
-      user-select: none;
-      transition: color 0.2s, border-color 0.2s;
+      position: fixed; top: 10px; right: 10px; z-index: 9990;
+      font-size: clamp(.3rem, 1vw, .42rem); color: #444; cursor: pointer;
+      background: rgba(10,10,10,.92); border: 1px solid #220000;
+      padding: .3rem .5rem; user-select: none; transition: color .2s, border-color .2s;
     }
     .sound-toggle:hover { color: #e02020; border-color: #e02020; }
 
-    /* ===== NAME EFFECTS ===== */
+    /* ===== 45 NAME EFFECTS ===== */
+    /* FREE */
     .fx-glow { text-shadow: 0 0 6px currentColor, 0 0 12px currentColor, 0 0 20px currentColor !important; }
-    .fx-radioactive {
-      text-shadow: 0 0 6px #0f0, 0 0 12px #0f0, 0 0 20px #0f0 !important;
-      animation: fx-radioactive 2s ease-in-out infinite !important;
-    }
-    @keyframes fx-radioactive {
-      0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.5) hue-rotate(20deg); }
-    }
-    .fx-glitch { animation: fx-glitch 0.3s steps(2) infinite !important; }
-    @keyframes fx-glitch {
-      0% { text-shadow: -1px 0 #f00, 1px 0 #0ff; transform: translate(0); }
-      25% { text-shadow: 1px 0 #f00, -1px 0 #0ff; transform: translate(-1px, 1px); }
-      50% { text-shadow: -1px 0 #f00, 1px 0 #0ff; transform: translate(1px, -1px); }
-      75% { text-shadow: 1px 0 #f00, -1px 0 #0ff; transform: translate(0); }
-    }
     .fx-pulse { animation: fx-pulse 1.5s ease-in-out infinite !important; }
-    @keyframes fx-pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.05); }
-    }
-    .fx-neon {
-      text-shadow: 0 0 4px currentColor, 0 0 8px currentColor, 0 0 16px currentColor,
-        0 0 32px #e02020, 0 0 64px #e02020 !important;
-    }
-    .fx-fire {
-      text-shadow: 0 -2px 4px #ff6600, 0 -4px 8px #ff3300, 0 -6px 12px #ff0000 !important;
-      animation: fx-fire 0.4s ease-in-out infinite alternate !important;
-    }
-    @keyframes fx-fire {
-      0% { text-shadow: 0 -2px 4px #ff6600, 0 -3px 6px #ff3300; }
-      100% { text-shadow: 0 -3px 6px #ff6600, 0 -5px 10px #ff3300, 0 -7px 14px #ff0000; }
-    }
-    .fx-ice {
-      text-shadow: 0 0 6px #66ccff, 0 0 12px #3399ff, 0 0 20px #0066cc !important;
-    }
-    .fx-shadow {
-      text-shadow: 2px 2px 0 #000, 4px 4px 0 #111, 6px 6px 4px rgba(0,0,0,0.8) !important;
-    }
+    @keyframes fx-pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)} }
+    .fx-shadow { text-shadow: 2px 2px 0 #000, 4px 4px 0 #111, 6px 6px 4px rgba(0,0,0,.8) !important; }
+    .fx-flicker { animation: fx-flicker .1s steps(2) infinite !important; }
+    @keyframes fx-flicker { 0%{opacity:1}50%{opacity:.4}100%{opacity:1} }
+    .fx-outline { text-shadow: -1px -1px 0 currentColor, 1px -1px 0 currentColor, -1px 1px 0 currentColor, 1px 1px 0 currentColor !important; color: #000 !important; -webkit-text-stroke: 1px currentColor; }
 
-    /* ===== MEMBERS LIST ===== */
-    .members-list {
-      list-style: none; text-align: center; width: 100%;
-      max-height: 50vh; overflow-y: auto;
-    }
-    .members-list li { margin: 0.5rem 0; }
-    .member-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.4rem, 1.5vw, 0.6rem);
-      color: #666; cursor: pointer;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      transition: color 0.15s, text-shadow 0.15s;
-      user-select: none; display: inline-block; padding: 0.2rem 0;
-    }
-    .member-name:hover {
-      color: #e02020;
-      text-shadow: 0 0 8px rgba(224,32,32,0.5);
-    }
-    .member-name.redacted {
-      color: #330000;
-      text-decoration: line-through;
-      text-decoration-color: #660000;
-    }
-    .member-name.redacted:hover {
-      color: #550000;
-      text-shadow: 0 0 12px rgba(224,32,32,0.2);
-    }
+    /* LEVEL-GATED */
+    .fx-neon { text-shadow: 0 0 4px currentColor, 0 0 8px currentColor, 0 0 16px currentColor, 0 0 32px #e02020, 0 0 64px #e02020 !important; }
+    .fx-ice { text-shadow: 0 0 6px #66ccff, 0 0 12px #3399ff, 0 0 20px #0066cc !important; }
+    .fx-fire { text-shadow: 0 -2px 4px #ff6600, 0 -4px 8px #ff3300, 0 -6px 12px #ff0000 !important; animation: fx-fire .4s ease-in-out infinite alternate !important; }
+    @keyframes fx-fire { 0%{text-shadow:0 -2px 4px #ff6600,0 -3px 6px #ff3300}100%{text-shadow:0 -3px 6px #ff6600,0 -5px 10px #ff3300,0 -7px 14px #ff0000} }
+    .fx-glitch { animation: fx-glitch .3s steps(2) infinite !important; }
+    @keyframes fx-glitch { 0%{text-shadow:-1px 0 #f00,1px 0 #0ff;transform:translate(0)}25%{text-shadow:1px 0 #f00,-1px 0 #0ff;transform:translate(-1px,1px)}50%{text-shadow:-1px 0 #f00,1px 0 #0ff;transform:translate(1px,-1px)}75%{text-shadow:1px 0 #f00,-1px 0 #0ff;transform:translate(0)} }
+    .fx-radioactive { text-shadow: 0 0 6px #0f0, 0 0 12px #0f0, 0 0 20px #0f0 !important; animation: fx-radioactive 2s ease-in-out infinite !important; }
+    @keyframes fx-radioactive { 0%,100%{filter:brightness(1)}50%{filter:brightness(1.5) hue-rotate(20deg)} }
+    .fx-phantom { text-shadow: 0 0 10px rgba(150,100,255,.7), 0 0 20px rgba(150,100,255,.4) !important; animation: fx-phantom 3s ease-in-out infinite !important; }
+    @keyframes fx-phantom { 0%,100%{opacity:1}50%{opacity:.3} }
+    .fx-lightning { text-shadow: 0 0 4px #fff, 0 0 8px #88f, 0 0 16px #44f !important; animation: fx-lightning .15s steps(2) infinite !important; }
+    @keyframes fx-lightning { 0%{opacity:1;text-shadow:0 0 4px #fff,0 0 8px #88f}50%{opacity:.6;text-shadow:0 0 2px #88f}100%{opacity:1} }
+    .fx-blood { text-shadow: 0 2px 4px #8b0000, 0 4px 8px #660000, 0 6px 12px #440000 !important; }
+    .fx-ember { text-shadow: 0 0 4px #ff8800, 0 -2px 6px #ff4400, 0 0 12px #ff2200 !important; animation: fx-ember 2s ease-in-out infinite !important; }
+    @keyframes fx-ember { 0%,100%{text-shadow:0 0 4px #ff8800,0 -2px 6px #ff4400}50%{text-shadow:0 0 8px #ff8800,0 -4px 10px #ff4400,0 0 16px #ff2200} }
+    .fx-toxic { text-shadow: 0 0 6px #88ff00, 0 0 12px #66cc00 !important; animation: fx-toxic 1.5s ease-in-out infinite !important; }
+    @keyframes fx-toxic { 0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(30deg)} }
+    .fx-chrome { background: linear-gradient(90deg, #ccc, #fff, #999, #fff, #ccc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: contrast(1.5); }
+    .fx-matrix { text-shadow: 0 0 4px #0f0, 0 0 8px #0f0 !important; animation: fx-matrix 1s steps(3) infinite !important; }
+    @keyframes fx-matrix { 0%{opacity:1}33%{opacity:.8;transform:translateY(-1px)}66%{opacity:.9;transform:translateY(1px)}100%{opacity:1;transform:translateY(0)} }
+    .fx-voidfx { text-shadow: 0 0 8px #220044, 0 0 16px #110022, 0 0 32px #000 !important; animation: fx-void 3s ease-in-out infinite !important; }
+    @keyframes fx-void { 0%,100%{filter:brightness(.8)}50%{filter:brightness(.4)} }
+    .fx-thunder { text-shadow: 0 0 4px #fff, 0 0 8px #aaf, 0 0 16px #66f !important; animation: fx-thunder .08s steps(2) infinite !important; }
+    @keyframes fx-thunder { 0%{opacity:1}50%{opacity:.3}100%{opacity:1} }
+    .fx-crystal { text-shadow: 0 0 6px #aaddff, 0 0 12px #88bbff, 0 0 20px #6699ff !important; background: linear-gradient(135deg, #aaddff, #fff, #88bbff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .fx-magma { text-shadow: 0 0 4px #ff4400, 0 2px 8px #cc2200, 0 4px 12px #881100 !important; animation: fx-magma 1s ease-in-out infinite alternate !important; }
+    @keyframes fx-magma { 0%{text-shadow:0 0 4px #ff4400,0 2px 8px #cc2200}100%{text-shadow:0 0 8px #ff6600,0 3px 12px #ff2200,0 5px 16px #cc0000} }
+    .fx-spectrum { animation: fx-spectrum 3s linear infinite !important; }
+    @keyframes fx-spectrum { 0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)} }
+    .fx-storm { text-shadow: 0 0 4px #668, 0 0 8px #446 !important; animation: fx-storm .5s ease-in-out infinite !important; }
+    @keyframes fx-storm { 0%,100%{transform:translate(0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,-1px)} }
+    .fx-inferno { text-shadow: 0 -2px 6px #ff0000, 0 -4px 12px #ff4400, 0 -6px 18px #ff8800 !important; animation: fx-inferno .3s ease-in-out infinite alternate !important; }
+    @keyframes fx-inferno { 0%{text-shadow:0 -2px 6px #ff0000,0 -4px 12px #ff4400}100%{text-shadow:0 -4px 10px #ff0000,0 -8px 20px #ff4400,0 -12px 30px #ff8800} }
+    .fx-plasma { text-shadow: 0 0 8px #ff00ff, 0 0 16px #8800ff, 0 0 24px #4400ff !important; animation: fx-plasma 2s ease-in-out infinite !important; }
+    @keyframes fx-plasma { 0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(60deg) brightness(1.3)} }
+    .fx-eclipse { text-shadow: 0 0 12px #fff, 0 0 24px #884400, 0 0 36px #442200 !important; animation: fx-eclipse 4s ease-in-out infinite !important; }
+    @keyframes fx-eclipse { 0%,100%{opacity:1;text-shadow:0 0 12px #fff,0 0 24px #884400}50%{opacity:.5;text-shadow:0 0 4px #442200} }
+    .fx-cyber { text-shadow: 0 0 4px #0ff, 0 0 8px #0ff, 0 0 16px #088 !important; animation: fx-cyber .5s steps(4) infinite !important; }
+    @keyframes fx-cyber { 0%{text-shadow:0 0 4px #0ff,0 0 8px #0ff}50%{text-shadow:0 0 4px #0ff,0 0 8px #088,-2px 0 #f0f,2px 0 #0ff}100%{text-shadow:0 0 4px #0ff,0 0 8px #0ff} }
+    .fx-frost { text-shadow: 0 0 8px #aaeeff, 0 0 16px #77ccff, 0 0 24px #44aaff !important; filter: brightness(1.1); }
+    .fx-nova { text-shadow: 0 0 8px #ff8800, 0 0 16px #ff4400, 0 0 32px #ff0000, 0 0 48px #ff6600 !important; animation: fx-nova 1s ease-in-out infinite !important; }
+    @keyframes fx-nova { 0%,100%{text-shadow:0 0 8px #ff8800,0 0 16px #ff4400}50%{text-shadow:0 0 16px #ff8800,0 0 32px #ff4400,0 0 48px #ff0000,0 0 64px #ff6600} }
+    .fx-vortex { animation: fx-vortex 2s linear infinite !important; }
+    @keyframes fx-vortex { 0%{transform:rotate(0deg) scale(1)}25%{transform:rotate(2deg) scale(1.02)}50%{transform:rotate(0deg) scale(1)}75%{transform:rotate(-2deg) scale(.98)}100%{transform:rotate(0deg) scale(1)} }
+    .fx-demon { text-shadow: 0 0 6px #f00, 0 0 12px #800, 0 0 20px #400 !important; animation: fx-demon 2s ease-in-out infinite !important; }
+    @keyframes fx-demon { 0%,100%{text-shadow:0 0 6px #f00,0 0 12px #800}50%{text-shadow:0 0 12px #f00,0 0 24px #800,0 0 36px #400} }
+    .fx-wraith { animation: fx-wraith 3s ease-in-out infinite !important; text-shadow: 0 0 8px rgba(100,0,150,.6) !important; }
+    @keyframes fx-wraith { 0%,100%{opacity:.3;filter:blur(0px)}50%{opacity:1;filter:blur(1px)} }
+    .fx-titan { text-shadow: 0 0 4px #ffd700, 0 0 8px #daa520, 0 0 16px #b8860b !important; font-weight: 900; }
+    .fx-reaper { text-shadow: 0 0 8px #000, 0 0 16px #220000, 0 0 24px #440000 !important; animation: fx-reaper 2s ease-in-out infinite !important; }
+    @keyframes fx-reaper { 0%,100%{filter:brightness(.6)}50%{filter:brightness(1.2)} }
+    .fx-dragon { text-shadow: 0 -2px 6px #ff2200, 0 -4px 12px #ff6600, 0 0 8px #ffd700 !important; animation: fx-dragon .6s ease-in-out infinite alternate !important; }
+    @keyframes fx-dragon { 0%{text-shadow:0 -2px 6px #ff2200,0 -4px 12px #ff6600,0 0 8px #ffd700}100%{text-shadow:0 -4px 10px #ff0000,0 -8px 20px #ff4400,0 0 16px #ffd700} }
+    .fx-celestial { text-shadow: 0 0 8px #fff, 0 0 16px #aaf, 0 0 24px #88f, 0 0 32px #66f !important; animation: fx-celestial 4s ease-in-out infinite !important; }
+    @keyframes fx-celestial { 0%,100%{text-shadow:0 0 8px #fff,0 0 16px #aaf}50%{text-shadow:0 0 16px #fff,0 0 32px #aaf,0 0 48px #88f,0 0 64px #66f} }
+    .fx-oblivion { text-shadow: 0 0 12px #000, 0 0 24px #110011, 0 0 36px #220022 !important; animation: fx-oblivion 3s ease-in-out infinite !important; }
+    @keyframes fx-oblivion { 0%,100%{filter:brightness(.3) saturate(0)}50%{filter:brightness(1) saturate(2)} }
+    .fx-eternal { text-shadow: 0 0 8px #ffd700, 0 0 16px #ffd700, 0 0 32px #daa520, 0 0 48px #b8860b !important; animation: fx-eternal 2s ease-in-out infinite !important; }
+    @keyframes fx-eternal { 0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)} }
+    .fx-supernova { text-shadow: 0 0 12px #fff, 0 0 24px #ff8800, 0 0 48px #ff4400, 0 0 72px #ff0000 !important; animation: fx-supernova 1.5s ease-in-out infinite !important; }
+    @keyframes fx-supernova { 0%,100%{text-shadow:0 0 12px #fff,0 0 24px #ff8800,0 0 48px #ff4400;transform:scale(1)}50%{text-shadow:0 0 24px #fff,0 0 48px #ff8800,0 0 72px #ff4400,0 0 96px #ff0000;transform:scale(1.1)} }
 
-    /* ===== MEMBER PROFILE ===== */
+    /* GOD EFFECT - Level 100 */
+    .fx-god {
+      background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088, #ff0000);
+      background-size: 400% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-god 2s linear infinite !important;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.8)) drop-shadow(0 0 16px rgba(255,136,0,.6)) drop-shadow(0 0 32px rgba(255,0,0,.4));
+    }
+    @keyframes fx-god { 0%{background-position:0% 50%}100%{background-position:400% 50%} }
+
+    /* ADMIN-ONLY EFFECTS */
+    .fx-divine {
+      background: linear-gradient(90deg, #ffd700, #fff, #ffd700); background-size: 200% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-divine 3s ease-in-out infinite !important;
+      filter: drop-shadow(0 0 12px rgba(255,215,0,.8)) drop-shadow(0 0 24px rgba(255,215,0,.4));
+    }
+    @keyframes fx-divine { 0%,100%{background-position:0% 50%}50%{background-position:200% 50%} }
+    .fx-corrupted {
+      text-shadow: 0 0 4px #800080, 0 0 8px #400040 !important;
+      animation: fx-corrupted .2s steps(3) infinite !important;
+    }
+    @keyframes fx-corrupted { 0%{text-shadow:0 0 4px #800080,0 0 8px #400040;transform:translate(0)}33%{text-shadow:-2px 0 #f00,2px 0 #0ff;transform:translate(2px,-1px)}66%{text-shadow:2px 0 #f00,-2px 0 #0ff;transform:translate(-2px,1px)}100%{transform:translate(0)} }
+    .fx-ancient {
+      text-shadow: 0 0 6px #c8a000, 0 0 12px #806000, 0 0 20px #402000 !important;
+      animation: fx-ancient 4s ease-in-out infinite !important;
+    }
+    @keyframes fx-ancient { 0%,100%{filter:sepia(.8) brightness(.8)}50%{filter:sepia(.3) brightness(1.2)} }
+    .fx-overlord {
+      text-shadow: 0 0 8px #f00, 0 0 16px #f00, 0 0 32px #800, 0 0 48px #400 !important;
+      animation: fx-overlord 1s ease-in-out infinite !important;
+    }
+    @keyframes fx-overlord { 0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.08);filter:brightness(1.4)} }
+    .fx-omega {
+      background: linear-gradient(90deg, #ff0000, #000, #ff0000); background-size: 300% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-omega 2s ease-in-out infinite !important;
+      filter: drop-shadow(0 0 12px rgba(255,0,0,.9)) drop-shadow(0 0 24px rgba(0,0,0,.8));
+    }
+    @keyframes fx-omega { 0%,100%{background-position:0% 50%}50%{background-position:300% 50%} }
+
+    /* ===== MEMBERS ===== */
+    .members-list { list-style: none; text-align: center; width: 100%; max-height: 50vh; overflow-y: auto; }
+    .members-list li { margin: .5rem 0; }
+    .member-name { font-size: clamp(.45rem, 1.6vw, .7rem); color: #666; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .15s, text-shadow .15s; user-select: none; display: inline-block; padding: .2rem 0; }
+    .member-name:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5); }
+    .member-name.redacted { color: #330000; text-decoration: line-through; text-decoration-color: #660000; }
+    .member-name.redacted:hover { color: #550000; text-shadow: 0 0 12px rgba(224,32,32,.2); }
+
+    /* ===== PROFILE ===== */
     .profile-card { text-align: center; width: 100%; max-width: 600px; }
-    .profile-card .profile-name {
-      font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(1.5rem, 5vw, 3rem);
-      color: #e02020;
-      text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000;
-      margin-bottom: 0.5rem; text-transform: uppercase;
-    }
-    .profile-detail {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 1.1vw, 0.45rem);
-      color: #666; margin: 0.6rem 0;
-      line-height: 1.8; letter-spacing: 0.08em;
-    }
+    .profile-card .profile-name { font-family: 'Blood Crow', Impact, sans-serif !important; font-size: clamp(1.5rem, 5vw, 3rem); color: #e02020; text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; margin-bottom: .5rem; text-transform: uppercase; }
+    .profile-detail { font-size: clamp(.35rem, 1.2vw, .55rem); color: #666; margin: .6rem 0; line-height: 1.8; letter-spacing: .08em; display: block; }
     .profile-detail .label { color: #e02020; }
 
     /* ===== CLASSIFIED ===== */
     .classified-screen { text-align: center; width: 100%; overflow: hidden; }
-    .classified-stamp {
-      font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(2rem, 8vw, 5rem);
-      color: #e02020;
-      text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000;
-      transform: rotate(-12deg); margin: 1rem 0;
-      text-transform: uppercase; animation: stamp-pulse 2s ease-in-out infinite;
-    }
-    @keyframes stamp-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .classified-stamp { font-family: 'Blood Crow', Impact, sans-serif !important; font-size: clamp(2rem, 8vw, 5rem); color: #e02020; text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; transform: rotate(-12deg); margin: 1rem 0; text-transform: uppercase; animation: stamp-pulse 2s ease-in-out infinite; }
+    @keyframes stamp-pulse { 0%,100%{opacity:1}50%{opacity:.7} }
     .redacted-lines { margin: 1.5rem auto; max-width: 500px; }
-    .redacted-line {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 1vw, 0.4rem);
-      color: #220000; background: #220000;
-      margin: 0.4rem 0; padding: 0.2rem 0.5rem;
-      letter-spacing: 0.1em; display: block; user-select: none;
-    }
-    .classified-watermark {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.4rem, 1.3vw, 0.55rem);
-      color: #330000; letter-spacing: 0.3em;
-      margin: 0.5rem 0; text-transform: uppercase;
-    }
+    .redacted-line { font-size: clamp(.32rem, 1.1vw, .5rem); color: #220000; background: #220000; margin: .4rem 0; padding: .2rem .5rem; letter-spacing: .1em; display: block; user-select: none; }
+    .classified-watermark { font-size: clamp(.45rem, 1.4vw, .65rem); color: #330000; letter-spacing: .3em; margin: .5rem 0; text-transform: uppercase; }
 
     /* ===== RELEASES ===== */
     .release-card { text-align: center; width: 100%; max-width: 500px; }
-    .release-art {
-      width: 200px; height: 200px; margin: 1rem auto;
-      border: 2px solid #e02020;
-      box-shadow: 0 0 15px rgba(224,32,32,0.2), inset 0 0 30px rgba(0,0,0,0.8);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; background: #0a0a0a;
-    }
+    .release-art { width: 220px; height: 220px; margin: 1rem auto; border: 2px solid #e02020; box-shadow: 0 0 15px rgba(224,32,32,.2), inset 0 0 30px rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0a0a0a; }
     .release-art img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .release-art .placeholder {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.35rem; color: #330000; text-align: center; padding: 0.5rem;
-    }
-    .release-title-text {
-      font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(1.2rem, 4vw, 2.5rem);
-      color: #e02020;
-      text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000;
-      margin: 0.8rem 0 0.5rem; text-transform: uppercase;
-    }
-    .release-info {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.28rem, 0.9vw, 0.4rem);
-      color: #666; line-height: 2.2; letter-spacing: 0.08em;
-    }
-    .release-status {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 1vw, 0.42rem);
-      color: #e02020; margin-top: 1rem;
-      animation: blink 1.5s step-end infinite;
-    }
+    .release-art .placeholder { font-size: .4rem; color: #330000; text-align: center; padding: .5rem; }
+    .release-title-text { font-family: 'Blood Crow', Impact, sans-serif !important; font-size: clamp(1.2rem, 4vw, 2.5rem); color: #e02020; text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; margin: .8rem 0 .5rem; text-transform: uppercase; }
+    .release-info { font-size: clamp(.32rem, 1.1vw, .5rem); color: #666; line-height: 2.2; letter-spacing: .08em; }
+    .release-status { font-size: clamp(.35rem, 1.2vw, .55rem); color: #e02020; margin-top: 1rem; animation: blink 1.5s step-end infinite; }
 
-    /* ===== ABOUT US ===== */
-    .about-text {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.28rem, 1vw, 0.4rem);
-      color: #666; line-height: 2.4;
-      text-align: center; max-width: 620px;
-      letter-spacing: 0.05em; margin: 0 auto;
-    }
+    /* ===== ABOUT ===== */
+    .about-text { font-size: clamp(.32rem, 1.2vw, .52rem); color: #666; line-height: 2.4; text-align: center; max-width: 650px; letter-spacing: .05em; margin: 0 auto; }
     .about-text p { margin-bottom: 1rem; }
 
     /* ===== AUTH ===== */
-    .auth-container { text-align: center; width: 100%; max-width: 400px; }
+    .auth-container { text-align: center; width: 100%; max-width: 420px; }
     .auth-tabs { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.2rem; }
-    .auth-tab {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.35rem, 1.1vw, 0.48rem);
-      color: #444; cursor: pointer; letter-spacing: 0.1em;
-      text-transform: uppercase; user-select: none; padding-bottom: 0.3rem;
-      transition: color 0.15s;
-    }
-    .auth-tab:hover, .auth-tab.active {
-      color: #e02020; border-bottom: 2px solid #e02020;
-    }
-    .auth-form { display: none; flex-direction: column; align-items: center; gap: 0.7rem; }
+    .auth-tab { font-size: clamp(.4rem, 1.3vw, .6rem); color: #444; cursor: pointer; letter-spacing: .1em; text-transform: uppercase; user-select: none; padding-bottom: .3rem; transition: color .15s; }
+    .auth-tab:hover, .auth-tab.active { color: #e02020; border-bottom: 2px solid #e02020; }
+    .auth-form { display: none; flex-direction: column; align-items: center; gap: .8rem; }
     .auth-form.active { display: flex; }
-    .auth-input {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.28rem, 0.9vw, 0.38rem);
-      background: #080808; border: 1px solid #222; color: #888;
-      padding: 0.55rem 0.7rem; width: 100%; max-width: 260px;
-      outline: none; transition: border-color 0.2s; letter-spacing: 0.05em;
-    }
-    .auth-input:focus {
-      border-color: #e02020; color: #ccc;
-      box-shadow: 0 0 8px rgba(224,32,32,0.15);
-    }
+    .auth-input { font-size: clamp(.32rem, 1.1vw, .48rem); background: #080808; border: 1px solid #222; color: #888; padding: .6rem .8rem; width: 100%; max-width: 300px; outline: none; transition: border-color .2s; letter-spacing: .05em; font-family: 'Press Start 2P', monospace; }
+    .auth-input:focus { border-color: #e02020; color: #ccc; box-shadow: 0 0 8px rgba(224,32,32,.15); }
     .auth-input::placeholder { color: #333; }
-    .auth-btn {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.28rem, 0.9vw, 0.38rem);
-      background: transparent; border: 1px solid #e02020; color: #e02020;
-      padding: 0.45rem 1.2rem; cursor: pointer;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      transition: background 0.15s, color 0.15s; margin-top: 0.3rem;
-    }
+    .auth-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.32rem, 1.1vw, .48rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .5rem 1.5rem; cursor: pointer; letter-spacing: .1em; text-transform: uppercase; transition: background .15s, color .15s; margin-top: .3rem; }
     .auth-btn:hover { background: #e02020; color: #000; }
 
     /* ===== PROFILE EDITOR ===== */
-    .editor-container {
-      text-align: center; width: 100%; max-width: 500px;
-    }
-    .edit-preview-box {
-      margin: 1rem auto; padding: 0.8rem;
-      border: 1px solid #220000; background: #080808;
-      max-width: 300px;
-    }
-    .edit-preview-name {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.5rem, 1.5vw, 0.7rem);
-      letter-spacing: 0.1em;
-    }
-    .edit-field {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 0.3rem; margin: 0.7rem 0;
-    }
-    .edit-label {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.25rem, 0.8vw, 0.32rem);
-      color: #e02020; letter-spacing: 0.1em;
-    }
-    .edit-color-input {
-      width: 40px; height: 24px; border: 1px solid #e02020;
-      background: #000; cursor: pointer; padding: 0;
-    }
-    .edit-select {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.25rem, 0.8vw, 0.32rem);
-      background: #080808; border: 1px solid #333; color: #888;
-      padding: 0.3rem 0.5rem; outline: none; cursor: pointer;
-    }
+    .editor-container { text-align: center; width: 100%; max-width: 500px; }
+    .edit-preview-box { margin: 1rem auto; padding: .8rem; border: 1px solid #220000; background: #080808; max-width: 320px; }
+    .edit-preview-name { font-size: clamp(.55rem, 1.8vw, .85rem); letter-spacing: .1em; }
+    .edit-field { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: .7rem 0; }
+    .edit-label { font-size: clamp(.28rem, .9vw, .4rem); color: #e02020; letter-spacing: .1em; }
+    .edit-color-input { width: 48px; height: 28px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
+    .edit-select { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .4rem); background: #080808; border: 1px solid #333; color: #888; padding: .35rem .5rem; outline: none; cursor: pointer; max-width: 280px; }
     .edit-select:focus { border-color: #e02020; }
-    .edit-avatar-area {
-      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-      margin: 0.7rem 0;
-    }
-    .edit-avatar-preview {
-      width: 48px; height: 48px; border: 1px solid #e02020;
-      overflow: hidden; display: flex; align-items: center; justify-content: center;
-    }
+    .edit-avatar-area { display: flex; flex-direction: column; align-items: center; gap: .4rem; margin: .7rem 0; }
+    .edit-avatar-preview { width: 56px; height: 56px; border: 1px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .edit-avatar-preview img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .edit-avatar-btn {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.22rem, 0.7vw, 0.28rem);
-      background: transparent; border: 1px solid #333; color: #555;
-      padding: 0.25rem 0.5rem; cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
+    .edit-avatar-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #333; color: #555; padding: .3rem .6rem; cursor: pointer; transition: color .15s, border-color .15s; }
     .edit-avatar-btn:hover { color: #e02020; border-color: #e02020; }
-    .edit-info {
-      display: flex; flex-direction: column; gap: 0.3rem;
-      margin: 0.8rem 0; text-align: center;
-    }
+    .edit-info { display: flex; flex-direction: column; gap: .3rem; margin: .8rem 0; text-align: center; }
 
     /* ===== CHAT ===== */
-    .chat-container {
-      width: 100%; max-width: 600px; display: flex;
-      flex-direction: column; height: 65vh;
-    }
-    .chat-messages {
-      flex: 1; overflow-y: auto; padding: 0.5rem;
-      background: #060606; border: 1px solid #1a0000;
-      display: flex; flex-direction: column; gap: 0.3rem;
-    }
-    .chat-msg {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.22rem, 0.75vw, 0.3rem);
-      line-height: 1.8; word-break: break-word;
-    }
-    .chat-time { color: #333; margin-right: 0.3rem; }
-    .chat-user { margin-right: 0.3rem; cursor: default; }
+    .chat-container { width: 100%; max-width: 650px; display: flex; flex-direction: column; height: 60vh; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: .6rem; background: #060606; border: 1px solid #1a0000; display: flex; flex-direction: column; gap: .35rem; }
+    .chat-msg { font-size: clamp(.28rem, .95vw, .4rem); line-height: 1.8; word-break: break-word; }
+    .chat-time { color: #333; margin-right: .3rem; }
+    .chat-user { margin-right: .2rem; cursor: default; }
+    .chat-id { color: #333; font-size: .8em; margin-right: .2rem; }
+    .chat-admin-tag { color: #e02020; font-size: .8em; margin-right: .2rem; }
     .chat-text { color: #777; }
     .chat-mention { color: #e02020; font-weight: bold; }
     .retro-emoji { font-style: normal; font-size: 1.2em; }
-    .chat-system {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.25rem; color: #333; text-align: center; padding: 0.5rem;
-    }
-
-    .chat-input-area {
-      display: flex; gap: 0; margin-top: 0.3rem;
-    }
-    .chat-input-wrap {
-      flex: 1; display: flex; position: relative;
-    }
-    #chat-input {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.25rem, 0.8vw, 0.32rem);
-      background: #080808; border: 1px solid #1a0000; color: #888;
-      padding: 0.4rem; width: 100%; outline: none;
-      transition: border-color 0.15s;
-    }
+    .chat-system { font-size: .3rem; color: #333; text-align: center; padding: .5rem; }
+    .chat-input-area { display: flex; gap: 0; margin-top: .3rem; }
+    .chat-input-wrap { flex: 1; display: flex; }
+    #chat-input { font-family: 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .42rem); background: #080808; border: 1px solid #1a0000; color: #888; padding: .45rem; width: 100%; outline: none; transition: border-color .15s; }
     #chat-input:focus { border-color: #e02020; color: #ccc; }
     #chat-input::placeholder { color: #222; }
-
-    .emoji-toggle-btn {
-      font-size: 0.4rem; background: #080808; border: 1px solid #1a0000;
-      color: #444; padding: 0 0.4rem; cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-      display: flex; align-items: center;
-    }
+    .emoji-toggle-btn { font-size: .5rem; background: #080808; border: 1px solid #1a0000; color: #444; padding: 0 .5rem; cursor: pointer; transition: color .15s, border-color .15s; display: flex; align-items: center; }
     .emoji-toggle-btn:hover { color: #e02020; border-color: #e02020; }
-
-    .chat-send-btn {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.22rem, 0.7vw, 0.28rem);
-      background: #080808; border: 1px solid #e02020; color: #e02020;
-      padding: 0.4rem 0.6rem; cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
+    .chat-send-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem); background: #080808; border: 1px solid #e02020; color: #e02020; padding: .45rem .7rem; cursor: pointer; transition: background .15s, color .15s; }
     .chat-send-btn:hover { background: #e02020; color: #000; }
-
-    /* Emoji picker */
-    .emoji-picker {
-      display: none; flex-wrap: wrap; gap: 0.3rem;
-      background: #080808; border: 1px solid #1a0000;
-      padding: 0.4rem; margin-top: 0.3rem;
-      max-width: 300px;
-    }
+    .emoji-picker { display: none; flex-wrap: wrap; gap: .35rem; background: #080808; border: 1px solid #1a0000; padding: .5rem; margin-top: .3rem; max-width: 320px; }
     .emoji-picker.show { display: flex; }
-    .emoji-option {
-      font-size: 0.6rem; cursor: pointer; padding: 0.15rem;
-      transition: transform 0.1s;
-    }
+    .emoji-option { font-size: .7rem; cursor: pointer; padding: .2rem; transition: transform .1s; }
     .emoji-option:hover { transform: scale(1.3); }
 
+    /* ===== ADMIN PANEL ===== */
+    .admin-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: .8rem; }
+    .admin-search-row { display: flex; gap: .3rem; }
+    .admin-search-row input { flex: 1; }
+    .admin-columns { display: flex; gap: .8rem; width: 100%; min-height: 300px; }
+    .admin-user-col { flex: 1; max-height: 50vh; overflow-y: auto; background: #060606; border: 1px solid #1a0000; padding: .4rem; }
+    .admin-detail-col { flex: 1.5; background: #060606; border: 1px solid #1a0000; padding: .5rem; overflow-y: auto; max-height: 50vh; }
+    .admin-user-row { font-size: clamp(.28rem, .9vw, .38rem); color: #666; padding: .3rem .2rem; cursor: pointer; border-bottom: 1px solid #111; transition: color .15s; }
+    .admin-user-row:hover { color: #e02020; background: #0a0000; }
+    .admin-user-id { color: #444; }
+    .admin-user-name { color: #888; }
+    .admin-flags { color: #e02020; font-size: .85em; }
+    .admin-detail-header { font-family: 'Blood Crow', Impact, sans-serif; font-size: clamp(1rem, 3vw, 1.8rem); color: #e02020; margin-bottom: .5rem; text-transform: uppercase; }
+    .admin-detail-info { display: flex; flex-direction: column; gap: .2rem; margin-bottom: .5rem; }
+    .admin-actions { display: flex; flex-wrap: wrap; gap: .3rem; margin: .5rem 0; }
+    .admin-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .34rem); background: transparent; border: 1px solid #444; color: #666; padding: .3rem .5rem; cursor: pointer; transition: all .15s; }
+    .admin-btn:hover { border-color: #e02020; color: #e02020; }
+    .admin-btn.active { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.1); }
+    .admin-set-row { display: flex; align-items: center; gap: .3rem; margin: .4rem 0; flex-wrap: wrap; }
+    .admin-small-input { max-width: 120px !important; padding: .25rem .4rem !important; font-size: clamp(.25rem, .8vw, .34rem) !important; }
+
     /* ===== BACK BUTTON ===== */
-    .back-btn {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.3rem, 1vw, 0.42rem);
-      color: #444; cursor: pointer;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      transition: color 0.15s; user-select: none; margin-top: 1.2rem;
-    }
+    .back-btn { font-size: clamp(.35rem, 1.2vw, .55rem); color: #444; cursor: pointer; letter-spacing: .15em; text-transform: uppercase; transition: color .15s; user-select: none; margin-top: 1.2rem; }
     .back-btn:hover { color: #e02020; }
     .back-btn::before { content: '\25C4 '; color: #e02020; }
-
     .screen-footer { margin-top: 1.2rem; }
 
     /* ===== TOAST ===== */
-    .toast {
-      position: fixed; bottom: 20px; left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(0.25rem, 0.8vw, 0.32rem);
-      color: #e02020; background: #0a0a0a;
-      border: 1px solid #e02020;
-      padding: 0.5rem 1rem; z-index: 10000;
-      transition: transform 0.3s ease; white-space: nowrap;
-      box-shadow: 0 0 12px rgba(224,32,32,0.3);
-    }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); font-size: clamp(.3rem, 1vw, .42rem); color: #e02020; background: #0a0a0a; border: 1px solid #e02020; padding: .5rem 1rem; z-index: 10000; transition: transform .3s ease; white-space: nowrap; box-shadow: 0 0 12px rgba(224,32,32,.3); }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
     /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: #0a0a0a; }
     ::-webkit-scrollbar-thumb { background: #e02020; }
 
-    /* ===== COIN INSERT DECORATION ===== */
-    .insert-coin {
-      font-family: 'Retro Arcade', 'Press Start 2P', monospace;
-      font-size: clamp(0.22rem, 0.7vw, 0.3rem);
-      color: #333; letter-spacing: 0.2em;
-      margin-top: 0.5rem;
-      animation: blink 2s step-end infinite;
+    /* ===== DESKTOP RESPONSIVE - Scale up for PC ===== */
+    @media (min-width: 768px) {
+      .hud-avatar { width: 40px; height: 40px; }
+      .hud-username { font-size: .5rem; }
+      .hud-rank { font-size: .35rem; }
+      .hud-stats { font-size: .32rem; }
+      .hud-guest { font-size: .38rem; }
+      .edit-avatar-preview { width: 72px; height: 72px; }
+      .admin-columns { min-height: 400px; }
+    }
+
+    @media (min-width: 1024px) {
+      .screen { max-width: 1000px; padding: 2rem; }
+      .menu-item { font-size: 1rem; padding: .5rem 0; }
+      .menu-list li { margin: .9rem 0; }
+      .press-start { font-size: 1rem; }
+      .subtitle { font-size: .7rem; }
+      .menu-subtitle { font-size: .55rem; }
+      .copyright { font-size: .55rem; }
+      .insert-coin { font-size: .5rem; }
+      .member-name { font-size: .75rem; }
+      .profile-detail { font-size: .6rem; }
+      .about-text { font-size: .55rem; max-width: 750px; }
+      .auth-tab { font-size: .65rem; }
+      .auth-input { font-size: .5rem; max-width: 340px; padding: .7rem .9rem; }
+      .auth-btn { font-size: .5rem; padding: .6rem 1.8rem; }
+      .edit-preview-name { font-size: .9rem; }
+      .edit-label { font-size: .42rem; }
+      .edit-select { font-size: .42rem; max-width: 340px; }
+      .chat-msg { font-size: .42rem; }
+      #chat-input { font-size: .45rem; }
+      .chat-send-btn { font-size: .4rem; }
+      .emoji-option { font-size: .85rem; }
+      .release-art { width: 260px; height: 260px; }
+      .release-info { font-size: .55rem; }
+      .release-status { font-size: .6rem; }
+      .release-title-text { font-size: 2.8rem; }
+      .classified-watermark { font-size: .7rem; }
+      .redacted-line { font-size: .5rem; }
+      .back-btn { font-size: .6rem; }
+      .chat-badge { font-size: .45rem; }
+      .admin-user-row { font-size: .4rem; }
+      .admin-btn { font-size: .36rem; }
+      .admin-small-input { font-size: .36rem !important; }
+      .sound-toggle { font-size: .42rem; }
+      .hud-avatar { width: 48px; height: 48px; }
+      .hud-username { font-size: .55rem; }
+      .hud-rank { font-size: .4rem; }
+      .hud-stats { font-size: .36rem; }
+      .edit-avatar-preview { width: 80px; height: 80px; }
     }
   </style>
 </head>
 <body>
-  <!-- CRT Effects -->
   <div class="crt-overlay"></div>
   <div class="crt-static"></div>
-
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
-
-  <!-- Sound Toggle -->
   <div class="sound-toggle" id="sound-toggle">SOUND:ON</div>
 
   <!-- Player HUD -->
   <div class="player-hud" id="player-hud">
     <div class="hud-content" id="hud-content">
-      <span class="hud-text" style="font-size:0.28rem;color:#444;">NOT LOGGED IN</span>
+      <span class="hud-guest">GUEST</span>
     </div>
   </div>
 
@@ -706,21 +465,19 @@
     </video>
     <canvas id="source" style="display:none"></canvas>
 
-    <!-- ===== TITLE SCREEN ===== -->
+    <!-- TITLE -->
     <div id="screen-title" class="screen active visible">
       <div class="title-wrap">
         <h1 class="title rgb-split">RUNE TRIBE</h1>
         <div class="subtitle">EST. 2025</div>
       </div>
-      <div class="ascii-container">
-        <canvas id="ascii-canvas" style="display:none"></canvas>
-      </div>
+      <div class="ascii-container"><canvas id="ascii-canvas" style="display:none"></canvas></div>
       <p class="press-start" id="press-start">PRESS START BUTTON</p>
       <p class="insert-coin">INSERT COIN</p>
       <p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE<br>ALL RIGHTS RESERVED</p>
     </div>
 
-    <!-- ===== MAIN NAV ===== -->
+    <!-- NAV -->
     <div id="screen-nav" class="screen">
       <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
       <div class="menu-subtitle">- SELECT OPTION -</div>
@@ -730,19 +487,15 @@
         <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
         <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
         <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
-        <li>
-          <span class="menu-item" data-target="screen-chat">CHAT</span>
-          <span class="chat-badge" id="chat-badge"></span>
-        </li>
+        <li><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
+        <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin">ADMIN PANEL</span></li>
         <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
       </ul>
       <div class="pixel-divider"></div>
-      <div class="screen-footer">
-        <p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE</p>
-      </div>
+      <div class="screen-footer"><p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE</p></div>
     </div>
 
-    <!-- ===== LOGIN / REGISTER ===== -->
+    <!-- AUTH -->
     <div id="screen-auth" class="screen">
       <h2 class="menu-title rgb-split">ACCESS TERMINAL</h2>
       <div class="menu-subtitle">- AUTHENTICATION REQUIRED -</div>
@@ -768,7 +521,7 @@
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- ===== MEMBERS ===== -->
+    <!-- MEMBERS -->
     <div id="screen-members" class="screen">
       <h2 class="menu-title rgb-split">MEMBERS</h2>
       <div class="menu-subtitle">- ROSTER -</div>
@@ -777,13 +530,13 @@
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- ===== MEMBER PROFILE ===== -->
+    <!-- MEMBER PROFILE -->
     <div id="screen-profile" class="screen">
       <div class="profile-card" id="profile-card"></div>
       <span class="back-btn" data-target="screen-members">BACK</span>
     </div>
 
-    <!-- ===== CLASSIFIED ===== -->
+    <!-- CLASSIFIED -->
     <div id="screen-classified" class="screen">
       <div class="classified-screen">
         <div class="classified-stamp">CLASSIFIED</div>
@@ -802,27 +555,24 @@
       <span class="back-btn" data-target="screen-members">BACK</span>
     </div>
 
-    <!-- ===== RELEASES ===== -->
+    <!-- RELEASES -->
     <div id="screen-releases" class="screen">
       <h2 class="menu-title rgb-split">RELEASES</h2>
       <div class="menu-subtitle">- DISCOGRAPHY -</div>
       <div class="pixel-divider"></div>
       <div class="release-card">
         <div class="release-art pixel-border">
-          <img src="assets/ep-cover.png" alt="EP Cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img src="assets/ep-cover.png" alt="EP Cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
           <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
         </div>
         <div class="release-title-text">COMING SOON</div>
-        <div class="release-info">
-          TYPE: EP<br>
-          RELEASE: END OF MARCH 2026
-        </div>
+        <div class="release-info">TYPE: EP<br>RELEASE: END OF MARCH 2026</div>
         <div class="release-status">STAY TUNED...</div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- ===== ABOUT US ===== -->
+    <!-- ABOUT -->
     <div id="screen-about" class="screen">
       <h2 class="menu-title rgb-split">ABOUT US</h2>
       <div class="menu-subtitle">- WHO WE ARE -</div>
@@ -836,19 +586,15 @@
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- ===== CHAT ===== -->
+    <!-- CHAT -->
     <div id="screen-chat" class="screen">
       <h2 class="menu-title rgb-split">CHAT</h2>
       <div class="menu-subtitle">- COMMS CHANNEL -</div>
       <div class="pixel-divider"></div>
       <div class="chat-container">
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-system">LOADING MESSAGES...</div>
-        </div>
+        <div class="chat-messages" id="chat-messages"><div class="chat-system">LOADING MESSAGES...</div></div>
         <div class="chat-input-area">
-          <div class="chat-input-wrap">
-            <input type="text" id="chat-input" placeholder="TYPE MESSAGE..." maxlength="500" autocomplete="off">
-          </div>
+          <div class="chat-input-wrap"><input type="text" id="chat-input" placeholder="TYPE MESSAGE..." maxlength="500" autocomplete="off"></div>
           <button class="emoji-toggle-btn" id="emoji-toggle" title="Emojis">&#9786;</button>
           <button class="chat-send-btn" id="chat-send">SEND</button>
         </div>
@@ -857,67 +603,49 @@
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- ===== PROFILE EDITOR ===== -->
+    <!-- PROFILE EDITOR -->
     <div id="screen-editor" class="screen">
       <h2 class="menu-title rgb-split">EDIT PROFILE</h2>
       <div class="menu-subtitle">- CUSTOMIZE -</div>
       <div class="pixel-divider"></div>
       <div class="editor-container">
-        <!-- Preview -->
-        <div class="edit-preview-box pixel-border">
-          <span class="edit-preview-name" id="edit-preview-name">USERNAME</span>
-        </div>
-
-        <!-- Avatar -->
+        <div class="edit-preview-box pixel-border"><span class="edit-preview-name" id="edit-preview-name">USERNAME</span></div>
         <div class="edit-avatar-area">
           <div class="edit-label">AVATAR</div>
-          <div class="edit-avatar-preview" id="edit-avatar-preview">
-            <span class="hud-avatar-placeholder">?</span>
-          </div>
-          <label class="edit-avatar-btn">
-            UPLOAD
-            <input type="file" id="edit-avatar-input" accept="image/*" style="display:none;">
-          </label>
+          <div class="edit-avatar-preview" id="edit-avatar-preview"><span class="hud-avatar-placeholder">?</span></div>
+          <label class="edit-avatar-btn">UPLOAD<input type="file" id="edit-avatar-input" accept="image/*" style="display:none;"></label>
         </div>
-
-        <!-- Name Color -->
-        <div class="edit-field">
-          <span class="edit-label">NAME COLOR</span>
-          <input type="color" id="edit-color" value="#e02020" class="edit-color-input">
-        </div>
-
-        <!-- Name Effect -->
-        <div class="edit-field">
-          <span class="edit-label">NAME EFFECT</span>
-          <select id="edit-effect" class="edit-select">
-            <option value="none">NONE</option>
-            <option value="glow">GLOW</option>
-            <option value="radioactive">RADIOACTIVE</option>
-            <option value="glitch">GLITCH</option>
-            <option value="pulse">PULSE</option>
-            <option value="neon">NEON</option>
-            <option value="fire">FIRE</option>
-            <option value="ice">ICE</option>
-            <option value="shadow">SHADOW</option>
-          </select>
-        </div>
-
-        <!-- Info (read-only) -->
+        <div class="edit-field"><span class="edit-label">NAME COLOR</span><input type="color" id="edit-color" value="#e02020" class="edit-color-input"></div>
+        <div class="edit-field"><span class="edit-label">NAME EFFECT</span><select id="edit-effect" class="edit-select"></select></div>
         <div class="edit-info" id="edit-info"></div>
-
         <button class="auth-btn" id="edit-save">SAVE</button>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <div id="no-video" class="no-video" style="display:none">
-      <p>Put mask.mp4 in assets/</p>
+    <!-- ADMIN PANEL -->
+    <div id="screen-admin" class="screen">
+      <h2 class="menu-title rgb-split">ADMIN PANEL</h2>
+      <div class="menu-subtitle">- MANAGEMENT CONSOLE -</div>
+      <div class="pixel-divider"></div>
+      <div class="admin-container">
+        <div class="admin-search-row">
+          <input type="text" id="admin-search" class="auth-input" placeholder="SEARCH USER / ID" style="max-width:100%;">
+        </div>
+        <div class="admin-columns">
+          <div class="admin-user-col" id="admin-user-list"></div>
+          <div class="admin-detail-col" id="admin-detail">
+            <div class="chat-system">SELECT A USER</div>
+          </div>
+        </div>
+      </div>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
+
+    <div id="no-video" class="no-video" style="display:none"><p>Put mask.mp4 in assets/</p></div>
   </div>
 
-  <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <!-- App Scripts -->
   <script src="js/audio.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
