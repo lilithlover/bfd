@@ -400,6 +400,21 @@
     .retro-emoji { font-style: normal; font-size: 1.3em; }
     .chat-system { font-size: 9px; color: #444; text-align: center; padding: .8rem; width: 100%; }
 
+    /* Rare effect drop */
+    .chat-drop { padding: .5rem; }
+    .chat-drop-inner { border: 2px solid #e02020; background: linear-gradient(135deg, #1a0000, #0a0000, #1a0000); padding: .7rem .8rem; display: flex; align-items: center; gap: .7rem; animation: drop-pulse 2s ease-in-out infinite; box-shadow: 0 0 16px rgba(224,32,32,.2), inset 0 0 20px rgba(224,32,32,.05); }
+    .chat-drop-inner.claimed { border-color: #333; opacity: .5; animation: none; box-shadow: none; }
+    .chat-drop-inner.expired { border-color: #222; opacity: .3; animation: none; box-shadow: none; }
+    @keyframes drop-pulse { 0%,100%{box-shadow:0 0 16px rgba(224,32,32,.2),inset 0 0 20px rgba(224,32,32,.05)}50%{box-shadow:0 0 28px rgba(224,32,32,.4),inset 0 0 30px rgba(224,32,32,.1)} }
+    .chat-drop-icon { font-size: 24px; color: #e02020; animation: drop-spin 3s linear infinite; flex-shrink: 0; }
+    @keyframes drop-spin { 0%{transform:rotate(0deg) scale(1)}25%{transform:rotate(5deg) scale(1.1)}50%{transform:rotate(0deg) scale(1)}75%{transform:rotate(-5deg) scale(1.1)}100%{transform:rotate(0deg) scale(1)} }
+    .chat-drop-info { flex: 1; min-width: 0; }
+    .chat-drop-title { font-size: 10px; color: #e02020; letter-spacing: .12em; margin-bottom: .2rem; animation: blink 1.5s step-end infinite; }
+    .chat-drop-effect { font-size: 14px; letter-spacing: .08em; margin-bottom: .2rem; }
+    .chat-drop-timer { font-size: 8px; color: #666; letter-spacing: .06em; }
+    .chat-drop-claim { font-family: 'Press Start 2P', monospace; font-size: 9px; background: transparent; border: 2px solid #e02020; color: #e02020; padding: .5rem .8rem; cursor: pointer; transition: all .15s; flex-shrink: 0; animation: blink 1s step-end infinite; }
+    .chat-drop-claim:hover { background: #e02020; color: #000; animation: none; }
+
     /* Chat command output */
     .chat-cmd-msg { color: #666; font-style: italic; }
     .chat-cmd-msg .chat-text { color: #777; }
@@ -818,6 +833,7 @@
             <span class="chat-header-name" id="chat-header-name">GENERAL</span>
             <span class="chat-header-desc" id="chat-header-desc">Main chat for the tribe</span>
             <div class="chat-header-actions">
+              <button class="chat-header-btn" id="chat-spawn-drop-btn" title="Spawn Effect Drop (Admin)" style="display:none;">&#9733; DROP</button>
               <button class="chat-header-btn danger" id="chat-purge-btn" title="Purge Channel (Admin)" style="display:none;">&#9888; PURGE</button>
               <button class="chat-header-btn" id="chat-members-btn" title="Members">&#9632; USERS</button>
             </div>
@@ -870,6 +886,17 @@
       <div class="dm-search-modal-title">&#9993; NEW DIRECT MESSAGE</div>
       <input type="text" class="dm-search-input" id="dm-search-input" placeholder="SEARCH USERNAME..." autocomplete="off">
       <div class="dm-search-results" id="dm-search-results"></div>
+    </div>
+
+    <!-- Spawn Drop Modal (Admin) -->
+    <div class="dm-search-modal" id="spawn-drop-modal">
+      <div class="dm-search-modal-title">&#9733; SPAWN EFFECT DROP</div>
+      <div style="font-size:8px;color:#666;margin-bottom:.5rem;letter-spacing:.05em;">SELECT AN EFFECT TO DROP IN CHAT</div>
+      <select id="spawn-drop-select" class="edit-select" style="width:100%;margin-bottom:.5rem;"></select>
+      <div style="display:flex;gap:.3rem;">
+        <button class="auth-btn" id="spawn-drop-confirm" style="flex:1;font-size:8px;padding:.4rem;">&#9733; SPAWN</button>
+        <button class="admin-btn" id="spawn-drop-cancel" style="flex:1;font-size:8px;padding:.4rem;">CANCEL</button>
+      </div>
     </div>
 
     <!-- PROFILE EDITOR -->

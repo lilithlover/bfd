@@ -8,67 +8,78 @@
   'use strict';
 
   /* ===== EFFECTS REGISTRY ===== */
-  // { id, name, level (0=free, -1=admin only), css class }
+  // rarity: 'free' = always available, 'drop' = rare drop only, 'admin' = admin only
   const EFFECTS = [
-    // FREE (Level 0) - first 5
-    { id: 'none',       name: 'NONE',        level: 0 },
-    { id: 'glow',       name: 'GLOW',        level: 0 },
-    { id: 'pulse',      name: 'PULSE',       level: 0 },
-    { id: 'shadow',     name: 'SHADOW',      level: 0 },
-    { id: 'flicker',    name: 'FLICKER',     level: 0 },
-    { id: 'outline',    name: 'OUTLINE',     level: 0 },
-    // LEVEL-GATED (35 effects)
-    { id: 'neon',       name: 'NEON',        level: 3 },
-    { id: 'ice',        name: 'ICE',         level: 5 },
-    { id: 'fire',       name: 'FIRE',        level: 8 },
-    { id: 'glitch',     name: 'GLITCH',      level: 10 },
-    { id: 'radioactive',name: 'RADIOACTIVE', level: 12 },
-    { id: 'phantom',    name: 'PHANTOM',     level: 15 },
-    { id: 'lightning',  name: 'LIGHTNING',   level: 18 },
-    { id: 'blood',      name: 'BLOOD',       level: 20 },
-    { id: 'ember',      name: 'EMBER',       level: 22 },
-    { id: 'toxic',      name: 'TOXIC',       level: 25 },
-    { id: 'chrome',     name: 'CHROME',      level: 28 },
-    { id: 'matrix',     name: 'MATRIX',      level: 30 },
-    { id: 'voidfx',     name: 'VOID',        level: 33 },
-    { id: 'thunder',    name: 'THUNDER',     level: 35 },
-    { id: 'crystal',    name: 'CRYSTAL',     level: 38 },
-    { id: 'magma',      name: 'MAGMA',       level: 40 },
-    { id: 'spectrum',   name: 'SPECTRUM',    level: 42 },
-    { id: 'storm',      name: 'STORM',       level: 45 },
-    { id: 'inferno',    name: 'INFERNO',     level: 48 },
-    { id: 'plasma',     name: 'PLASMA',      level: 50 },
-    { id: 'eclipse',    name: 'ECLIPSE',     level: 53 },
-    { id: 'cyber',      name: 'CYBER',       level: 55 },
-    { id: 'frost',      name: 'FROST',       level: 58 },
-    { id: 'nova',       name: 'NOVA',        level: 60 },
-    { id: 'vortex',     name: 'VORTEX',      level: 63 },
-    { id: 'demon',      name: 'DEMON',       level: 65 },
-    { id: 'wraith',     name: 'WRAITH',      level: 68 },
-    { id: 'titan',      name: 'TITAN',       level: 70 },
-    { id: 'reaper',     name: 'REAPER',      level: 75 },
-    { id: 'dragon',     name: 'DRAGON',      level: 80 },
-    { id: 'celestial',  name: 'CELESTIAL',   level: 85 },
-    { id: 'oblivion',   name: 'OBLIVION',    level: 90 },
-    { id: 'eternal',    name: 'ETERNAL',     level: 95 },
-    { id: 'supernova',  name: 'SUPERNOVA',   level: 98 },
-    { id: 'god',        name: 'GOD',         level: 100 },
-    // ADMIN-ONLY (-1)
-    { id: 'divine',     name: 'DIVINE',      level: -1 },
-    { id: 'corrupted',  name: 'CORRUPTED',   level: -1 },
-    { id: 'ancient',    name: 'ANCIENT',     level: -1 },
-    { id: 'overlord',   name: 'OVERLORD',    level: -1 },
-    { id: 'omega',      name: 'OMEGA',       level: -1 },
+    // FREE - always available to everyone
+    { id: 'none',       name: 'NONE',        rarity: 'free' },
+    { id: 'glow',       name: 'GLOW',        rarity: 'free' },
+    { id: 'pulse',      name: 'PULSE',       rarity: 'free' },
+    { id: 'shadow',     name: 'SHADOW',      rarity: 'free' },
+    { id: 'flicker',    name: 'FLICKER',     rarity: 'free' },
+    { id: 'outline',    name: 'OUTLINE',     rarity: 'free' },
+    // RARE DROPS - obtained from chat drops only
+    { id: 'neon',       name: 'NEON',        rarity: 'drop' },
+    { id: 'ice',        name: 'ICE',         rarity: 'drop' },
+    { id: 'fire',       name: 'FIRE',        rarity: 'drop' },
+    { id: 'glitch',     name: 'GLITCH',      rarity: 'drop' },
+    { id: 'radioactive',name: 'RADIOACTIVE', rarity: 'drop' },
+    { id: 'phantom',    name: 'PHANTOM',     rarity: 'drop' },
+    { id: 'lightning',  name: 'LIGHTNING',   rarity: 'drop' },
+    { id: 'blood',      name: 'BLOOD',       rarity: 'drop' },
+    { id: 'ember',      name: 'EMBER',       rarity: 'drop' },
+    { id: 'toxic',      name: 'TOXIC',       rarity: 'drop' },
+    { id: 'chrome',     name: 'CHROME',      rarity: 'drop' },
+    { id: 'matrix',     name: 'MATRIX',      rarity: 'drop' },
+    { id: 'voidfx',     name: 'VOID',        rarity: 'drop' },
+    { id: 'thunder',    name: 'THUNDER',     rarity: 'drop' },
+    { id: 'crystal',    name: 'CRYSTAL',     rarity: 'drop' },
+    { id: 'magma',      name: 'MAGMA',       rarity: 'drop' },
+    { id: 'spectrum',   name: 'SPECTRUM',    rarity: 'drop' },
+    { id: 'storm',      name: 'STORM',       rarity: 'drop' },
+    { id: 'inferno',    name: 'INFERNO',     rarity: 'drop' },
+    { id: 'plasma',     name: 'PLASMA',      rarity: 'drop' },
+    { id: 'eclipse',    name: 'ECLIPSE',     rarity: 'drop' },
+    { id: 'cyber',      name: 'CYBER',       rarity: 'drop' },
+    { id: 'frost',      name: 'FROST',       rarity: 'drop' },
+    { id: 'nova',       name: 'NOVA',        rarity: 'drop' },
+    { id: 'vortex',     name: 'VORTEX',      rarity: 'drop' },
+    { id: 'demon',      name: 'DEMON',       rarity: 'drop' },
+    { id: 'wraith',     name: 'WRAITH',      rarity: 'drop' },
+    { id: 'titan',      name: 'TITAN',       rarity: 'drop' },
+    { id: 'reaper',     name: 'REAPER',      rarity: 'drop' },
+    { id: 'dragon',     name: 'DRAGON',      rarity: 'drop' },
+    { id: 'celestial',  name: 'CELESTIAL',   rarity: 'drop' },
+    { id: 'oblivion',   name: 'OBLIVION',    rarity: 'drop' },
+    { id: 'eternal',    name: 'ETERNAL',     rarity: 'drop' },
+    { id: 'supernova',  name: 'SUPERNOVA',   rarity: 'drop' },
+    { id: 'god',        name: 'GOD',         rarity: 'drop' },
+    // ADMIN-ONLY
+    { id: 'divine',     name: 'DIVINE',      rarity: 'admin' },
+    { id: 'corrupted',  name: 'CORRUPTED',   rarity: 'admin' },
+    { id: 'ancient',    name: 'ANCIENT',     rarity: 'admin' },
+    { id: 'overlord',   name: 'OVERLORD',    rarity: 'admin' },
+    { id: 'omega',      name: 'OMEGA',       rarity: 'admin' },
   ];
+
+  const DROPPABLE_EFFECTS = EFFECTS.filter(e => e.rarity === 'drop');
 
   function getEffectClass(effectId) {
     return effectId && effectId !== 'none' ? 'fx-' + effectId : '';
   }
 
-  function getAvailableEffects(level, isAdmin) {
+  // Parse owned effects from comma-separated string
+  function parseOwnedEffects(str) {
+    if (!str) return [];
+    return str.split(',').map(s => s.trim()).filter(Boolean);
+  }
+
+  function getAvailableEffects(level, isAdmin, ownedEffectsStr) {
+    const owned = parseOwnedEffects(ownedEffectsStr);
     return EFFECTS.filter(e => {
-      if (e.level === -1) return isAdmin;
-      return e.level <= level;
+      if (e.rarity === 'admin') return isAdmin;
+      if (e.rarity === 'free') return true;
+      // 'drop' effects: must own it, or be admin
+      return isAdmin || owned.includes(e.id);
     });
   }
 
@@ -278,6 +289,7 @@
     updateHUD(user, profile);
     updateNavMenu(user, profile);
     updatePurgeBtn();
+    updateSpawnDropBtn();
 
     // Auto-resume session: skip title screen if user is already logged in on page load
     if (user && profile && !hasAutoResumed && currentScreen === 'screen-title') {
@@ -366,15 +378,15 @@
     if (!profile) return;
     AudioSystem.sfxSelect();
 
-    const available = getAvailableEffects(profile.level, profile.is_admin);
+    const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
     const effectSelect = document.getElementById('edit-effect');
     effectSelect.innerHTML = '';
     available.forEach(e => {
       const opt = document.createElement('option');
       opt.value = e.id;
       let label = e.name;
-      if (e.level === -1) label += ' [ADMIN]';
-      else if (e.level > 0) label += ` (LV.${e.level})`;
+      if (e.rarity === 'admin') label += ' [ADMIN]';
+      else if (e.rarity === 'drop') label += ' \u2605';
       opt.textContent = label;
       if (e.id === profile.name_effect) opt.selected = true;
       effectSelect.appendChild(opt);
@@ -398,6 +410,7 @@
       <span class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(profile.rank)}</span>
       <span class="profile-detail"><span class="label">LEVEL:</span> ${profile.level} / 100</span>
       <span class="profile-detail"><span class="label">BALANCE:</span> $${profile.balance}</span>
+      <span class="profile-detail"><span class="label">EFFECTS OWNED:</span> ${parseOwnedEffects(profile.owned_effects).length} / ${DROPPABLE_EFFECTS.length}</span>
       <span class="profile-detail"><span class="label">JOINED:</span> ${created}</span>
       ${profile.is_admin ? '<span class="profile-detail"><span class="label">STATUS:</span> ADMINISTRATOR</span>' : ''}
     `;
@@ -680,6 +693,9 @@
 
       // Online count (estimate from cached users)
       updateOnlineCount();
+
+      // Start rare effect drop timer
+      startDropTimer();
     }
 
     // Load messages for current channel
@@ -726,6 +742,182 @@
         showToast('PURGE FAILED');
         AudioSystem.sfxError();
       }
+    });
+  }
+
+  /* ===== RARE EFFECT DROP SYSTEM ===== */
+  const DROP_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+  const DROP_CLAIM_WINDOW_MS = 5 * 60 * 1000; // 5 minutes to claim
+  const DROP_DUPE_REWARD = 100; // coins for owning the effect already
+  let dropTimer = null;
+  let activeDropEffect = null;
+  let activeDropExpiry = 0;
+  let activeDropElement = null;
+
+  function startDropTimer() {
+    if (dropTimer) clearInterval(dropTimer);
+    dropTimer = setInterval(() => {
+      if (currentScreen === 'screen-chat' && SupabaseClient.getUser()) {
+        spawnDrop();
+      }
+    }, DROP_INTERVAL_MS);
+  }
+
+  function spawnDrop(specificEffectId) {
+    // Pick a random droppable effect, or use a specific one
+    let effect;
+    if (specificEffectId) {
+      effect = DROPPABLE_EFFECTS.find(e => e.id === specificEffectId);
+      if (!effect) effect = DROPPABLE_EFFECTS[Math.floor(Math.random() * DROPPABLE_EFFECTS.length)];
+    } else {
+      effect = DROPPABLE_EFFECTS[Math.floor(Math.random() * DROPPABLE_EFFECTS.length)];
+    }
+
+    activeDropEffect = effect;
+    activeDropExpiry = Date.now() + DROP_CLAIM_WINDOW_MS;
+
+    // Create the drop message element
+    const div = document.createElement('div');
+    div.className = 'chat-drop';
+    div.innerHTML = `
+      <div class="chat-drop-inner">
+        <div class="chat-drop-icon">\u2605</div>
+        <div class="chat-drop-info">
+          <div class="chat-drop-title">RARE EFFECT DROP!</div>
+          <div class="chat-drop-effect ${getEffectClass(effect.id)}">${escapeHtml(effect.name)}</div>
+          <div class="chat-drop-timer" id="drop-timer-text">5:00 REMAINING</div>
+        </div>
+        <button class="chat-drop-claim" id="drop-claim-btn">\u2605 CLAIM</button>
+      </div>
+    `;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    activeDropElement = div;
+    AudioSystem.sfxMention();
+
+    // Claim button
+    div.querySelector('#drop-claim-btn').addEventListener('click', () => claimDrop());
+
+    // Countdown timer
+    const timerEl = div.querySelector('#drop-timer-text');
+    const countdownInterval = setInterval(() => {
+      const remaining = activeDropExpiry - Date.now();
+      if (remaining <= 0 || !activeDropEffect) {
+        clearInterval(countdownInterval);
+        if (activeDropEffect && activeDropElement) {
+          // Expired unclaimed
+          activeDropElement.querySelector('.chat-drop-inner').classList.add('expired');
+          timerEl.textContent = 'EXPIRED';
+          const claimBtn = activeDropElement.querySelector('.chat-drop-claim');
+          if (claimBtn) claimBtn.remove();
+          activeDropEffect = null;
+          activeDropElement = null;
+        }
+        return;
+      }
+      const mins = Math.floor(remaining / 60000);
+      const secs = Math.floor((remaining % 60000) / 1000);
+      timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')} REMAINING`;
+    }, 1000);
+  }
+
+  async function claimDrop() {
+    if (!activeDropEffect) { showToast('DROP EXPIRED'); AudioSystem.sfxError(); return; }
+    if (Date.now() > activeDropExpiry) { showToast('DROP EXPIRED'); AudioSystem.sfxError(); return; }
+    const user = SupabaseClient.getUser();
+    const profile = SupabaseClient.getProfile();
+    if (!user || !profile) { showToast('LOGIN REQUIRED'); AudioSystem.sfxError(); return; }
+
+    const effectId = activeDropEffect.id;
+    const effectName = activeDropEffect.name;
+    const owned = parseOwnedEffects(profile.owned_effects || '');
+    const alreadyOwned = owned.includes(effectId);
+
+    try {
+      if (alreadyOwned) {
+        // Already own it - get coins instead
+        const newBalance = (profile.balance || 0) + DROP_DUPE_REWARD;
+        await SupabaseClient.updateProfile({ balance: newBalance });
+        showToast(`ALREADY OWNED! +$${DROP_DUPE_REWARD} COINS`);
+      } else {
+        // Add to owned effects
+        owned.push(effectId);
+        await SupabaseClient.updateProfile({ owned_effects: owned.join(',') });
+        showToast(`\u2605 CLAIMED: ${effectName}!`);
+      }
+      AudioSystem.sfxSelect();
+
+      // Mark drop as claimed in UI
+      if (activeDropElement) {
+        const inner = activeDropElement.querySelector('.chat-drop-inner');
+        inner.classList.add('claimed');
+        const claimBtn = activeDropElement.querySelector('.chat-drop-claim');
+        if (claimBtn) claimBtn.remove();
+        const timerEl = activeDropElement.querySelector('#drop-timer-text');
+        if (timerEl) {
+          timerEl.textContent = alreadyOwned
+            ? `CLAIMED BY ${escapeHtml(profile.username)} (+$${DROP_DUPE_REWARD})`
+            : `CLAIMED BY ${escapeHtml(profile.username)}`;
+        }
+      }
+
+      // Clear drop
+      activeDropEffect = null;
+      activeDropElement = null;
+
+      // Refresh profile
+      await SupabaseClient.fetchProfile();
+    } catch (err) {
+      showToast('CLAIM FAILED');
+      AudioSystem.sfxError();
+    }
+  }
+
+  // Admin spawn drop controls
+  const spawnDropBtn = document.getElementById('chat-spawn-drop-btn');
+  function updateSpawnDropBtn() {
+    if (spawnDropBtn) {
+      spawnDropBtn.style.display = SupabaseClient.isAdmin() ? '' : 'none';
+    }
+  }
+  if (spawnDropBtn) {
+    spawnDropBtn.addEventListener('click', () => {
+      if (!SupabaseClient.isAdmin()) return;
+      // Show spawn modal
+      const modal = document.getElementById('spawn-drop-modal');
+      if (modal) {
+        // Populate effect select
+        const sel = document.getElementById('spawn-drop-select');
+        if (sel) {
+          sel.innerHTML = '<option value="random">RANDOM</option>' +
+            DROPPABLE_EFFECTS.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+        }
+        modal.classList.add('show');
+        AudioSystem.sfxNavigate();
+      }
+    });
+  }
+
+  // Spawn modal confirm
+  const spawnConfirmBtn = document.getElementById('spawn-drop-confirm');
+  if (spawnConfirmBtn) {
+    spawnConfirmBtn.addEventListener('click', () => {
+      const sel = document.getElementById('spawn-drop-select');
+      const val = sel ? sel.value : 'random';
+      document.getElementById('spawn-drop-modal')?.classList.remove('show');
+      if (val === 'random') {
+        spawnDrop();
+      } else {
+        spawnDrop(val);
+      }
+      showToast('DROP SPAWNED!');
+    });
+  }
+
+  const spawnCancelBtn = document.getElementById('spawn-drop-cancel');
+  if (spawnCancelBtn) {
+    spawnCancelBtn.addEventListener('click', () => {
+      document.getElementById('spawn-drop-modal')?.classList.remove('show');
     });
   }
 
@@ -1197,6 +1389,7 @@
         <span class="profile-detail"><span class="label">LEVEL:</span> ${user.level}</span>
         <span class="profile-detail"><span class="label">BALANCE:</span> $${user.balance}</span>
         <span class="profile-detail"><span class="label">EFFECT:</span> ${escapeHtml(user.name_effect)}</span>
+        <span class="profile-detail"><span class="label">OWNED FX:</span> ${parseOwnedEffects(user.owned_effects).length} (${parseOwnedEffects(user.owned_effects).join(', ') || 'NONE'})</span>
         <span class="profile-detail"><span class="label">ADMIN:</span> ${user.is_admin ? 'YES' : 'NO'}</span>
         <span class="profile-detail"><span class="label">BANNED:</span> ${user.is_banned ? 'YES' : 'NO'}</span>
         <span class="profile-detail"><span class="label">MUTED:</span> ${muteInfo}</span>
@@ -1230,11 +1423,18 @@
         <button class="admin-btn" data-action="set-balance">SET</button>
       </div>
       <div class="admin-set-row">
-        <span class="edit-label">GRANT EFFECT</span>
+        <span class="edit-label">SET ACTIVE EFFECT</span>
         <select id="admin-effect-select" class="edit-select">
-          ${EFFECTS.map(e => `<option value="${e.id}" ${e.id === user.name_effect ? 'selected' : ''}>${e.name}${e.level === -1 ? ' [ADMIN]' : e.level > 0 ? ' (LV.' + e.level + ')' : ''}</option>`).join('')}
+          ${EFFECTS.map(e => `<option value="${e.id}" ${e.id === user.name_effect ? 'selected' : ''}>${e.name}${e.rarity === 'admin' ? ' [ADMIN]' : e.rarity === 'drop' ? ' \u2605' : ''}</option>`).join('')}
         </select>
         <button class="admin-btn" data-action="set-effect">SET</button>
+      </div>
+      <div class="admin-set-row">
+        <span class="edit-label">GRANT DROP EFFECT</span>
+        <select id="admin-grant-effect-select" class="edit-select">
+          ${DROPPABLE_EFFECTS.map(e => `<option value="${e.id}">${e.name} \u2605</option>`).join('')}
+        </select>
+        <button class="admin-btn" data-action="grant-effect">GRANT</button>
       </div>
       <div class="admin-danger-zone">
         <div class="admin-danger-title">\u26A0 DANGER ZONE</div>
@@ -1310,6 +1510,19 @@
           const fx = document.getElementById('admin-effect-select').value;
           await SupabaseClient.adminSetEffect(uid, fx);
           showToast('EFFECT SET TO ' + fx.toUpperCase());
+          break;
+        }
+        case 'grant-effect': {
+          const grantFx = document.getElementById('admin-grant-effect-select').value;
+          const currentOwned = parseOwnedEffects(adminSelectedUser.owned_effects || '');
+          if (currentOwned.includes(grantFx)) {
+            showToast('USER ALREADY OWNS ' + grantFx.toUpperCase());
+            AudioSystem.sfxError();
+            return;
+          }
+          currentOwned.push(grantFx);
+          await SupabaseClient.adminUpdateUser(uid, { owned_effects: currentOwned.join(',') });
+          showToast('GRANTED ' + grantFx.toUpperCase() + ' TO ' + adminSelectedUser.username);
           break;
         }
         case 'purge-msgs':
@@ -1492,6 +1705,7 @@
           <span class="label">RANK:</span> ${escapeHtml(profile.rank)}<br>
           <span class="label">LEVEL:</span> ${profile.level}<br>
           <span class="label">EFFECT:</span> ${escapeHtml(profile.name_effect || 'NONE').toUpperCase()}<br>
+          <span class="label">EFFECTS OWNED:</span> ${parseOwnedEffects(profile.owned_effects).length}<br>
           <span class="label">JOINED:</span> ${joined}
         </div>
       `;

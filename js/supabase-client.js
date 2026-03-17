@@ -129,13 +129,15 @@ const SupabaseClient = (() => {
     const path = `${currentUser.id}/avatar.${ext}`;
     const { error: uploadError } = await sb.storage
       .from('avatars')
-      .upload(path, file, { upsert: true });
+      .upload(path, file, { upsert: true, contentType: file.type });
     if (uploadError) throw uploadError;
     const { data: { publicUrl } } = sb.storage
       .from('avatars')
       .getPublicUrl(path);
-    await updateProfile({ avatar_url: publicUrl });
-    return publicUrl;
+    // Cache-bust so updated avatars show immediately
+    const finalUrl = publicUrl + '?v=' + Date.now();
+    await updateProfile({ avatar_url: finalUrl });
+    return finalUrl;
   }
 
   // --- CHAT ---

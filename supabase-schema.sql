@@ -214,6 +214,12 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
+-- 10. OWNED EFFECTS COLUMN (comma-separated effect IDs from rare drops)
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN owned_effects text DEFAULT '';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
 -- 9. SET allcontempt AS ADMIN
 -- (Will update once this username registers. Re-run after registration.)
 UPDATE public.profiles SET is_admin = true WHERE LOWER(username) = 'allcontempt';
