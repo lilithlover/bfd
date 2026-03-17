@@ -160,7 +160,7 @@
   // Press Start
   document.getElementById('press-start').addEventListener('click', () => {
     AudioSystem.init();
-    AudioSystem.sfxStart();
+    AudioSystem.sfxSelect();
     setTimeout(() => AudioSystem.startMusic(), 400);
     switchScreen('screen-title', 'screen-nav');
   });
@@ -428,6 +428,7 @@
   const chatSendBtn = document.getElementById('chat-send');
   const mentionSuggestions = document.getElementById('mention-suggestions');
   let chatLoaded = false;
+  let chatSubscribed = false; // true once realtime subscriptions are set up
   let currentChannel = 'general';
   let cachedUsers = []; // for @mention autocomplete
   let mentionSelIndex = -1;
@@ -597,6 +598,59 @@
   async function loadChat() {
     if (chatLoaded) return;
     chatLoaded = true;
+
+    // One-time setup: subscriptions, user cache, DMs
+    if (!chatSubscribed) {
+      chatSubscribed = true;
+
+      // Subscribe to ALL messages (filter by channel client-side)
+      SupabaseClient.subscribeChat((msg) => {
+        const msgChannel = msg.channel || 'general';
+        if (msgChannel === currentChannel) {
+          chatMessages.appendChild(renderMessage(msg));
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          AudioSystem.sfxChat();
+        } else {
+          // Unread badge for other hub
+          if (hubUnread[msgChannel] !== undefined) {
+            hubUnread[msgChannel]++;
+            updateHubUnreadBadges();
+          }
+        }
+      });
+
+      // Load cached users for @mention autocomplete
+      try {
+        cachedUsers = await SupabaseClient.fetchAllProfiles(100);
+      } catch (e) { cachedUsers = []; }
+
+      // Load DM conversations
+      loadDMList();
+
+      // Subscribe to DMs
+      try {
+        SupabaseClient.subscribeDMs((dm) => {
+          const user = SupabaseClient.getUser();
+          if (!user) return;
+          const partnerId = dm.from_user_id === user.id ? dm.to_user_id : dm.from_user_id;
+
+          // If DM panel is open for this partner, show message
+          if (activeDMPartner === partnerId) {
+            appendDMMessage(dm);
+            // Mark as read
+            if (dm.to_user_id === user.id) SupabaseClient.markDMsRead(dm.from_user_id);
+          }
+          // Refresh DM list
+          loadDMList();
+          if (dm.to_user_id === user.id) AudioSystem.sfxMention();
+        });
+      } catch (e) { /* DM subscription failed - table may not exist */ }
+
+      // Online count (estimate from cached users)
+      updateOnlineCount();
+    }
+
+    // Load messages for current channel
     try {
       const messages = await SupabaseClient.fetchMessages(50, currentChannel);
       chatMessages.innerHTML = '';
@@ -609,50 +663,6 @@
     } catch (err) {
       chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
     }
-
-    // Subscribe to ALL messages (filter by channel client-side)
-    SupabaseClient.subscribeChat((msg) => {
-      const msgChannel = msg.channel || 'general';
-      if (msgChannel === currentChannel) {
-        chatMessages.appendChild(renderMessage(msg));
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        AudioSystem.sfxChat();
-      } else {
-        // Unread badge for other hub
-        if (hubUnread[msgChannel] !== undefined) {
-          hubUnread[msgChannel]++;
-          updateHubUnreadBadges();
-        }
-      }
-    });
-
-    // Load cached users for @mention autocomplete
-    try {
-      cachedUsers = await SupabaseClient.fetchAllProfiles(100);
-    } catch (e) { cachedUsers = []; }
-
-    // Load DM conversations
-    loadDMList();
-
-    // Subscribe to DMs
-    SupabaseClient.subscribeDMs((dm) => {
-      const user = SupabaseClient.getUser();
-      if (!user) return;
-      const partnerId = dm.from_user_id === user.id ? dm.to_user_id : dm.from_user_id;
-
-      // If DM panel is open for this partner, show message
-      if (activeDMPartner === partnerId) {
-        appendDMMessage(dm);
-        // Mark as read
-        if (dm.to_user_id === user.id) SupabaseClient.markDMsRead(dm.from_user_id);
-      }
-      // Refresh DM list
-      loadDMList();
-      if (dm.to_user_id === user.id) AudioSystem.sfxMention();
-    });
-
-    // Online count (estimate from cached users)
-    updateOnlineCount();
   }
 
   function updateOnlineCount() {
@@ -874,6 +884,20 @@
     emojiPicker.appendChild(btn);
   }
 
+  // Dismiss mention suggestions & emoji picker when clicking outside
+  document.addEventListener('click', (e) => {
+    if (mentionSuggestions.classList.contains('show') &&
+        !mentionSuggestions.contains(e.target) &&
+        e.target !== chatInput) {
+      hideMentionSuggestions();
+    }
+    if (emojiPicker.classList.contains('show') &&
+        !emojiPicker.contains(e.target) &&
+        e.target !== emojiBtn) {
+      emojiPicker.classList.remove('show');
+    }
+  });
+
   // --- Chat badge (mentions) ---
   function updateChatBadge(count) {
     const badge = document.getElementById('chat-badge');
@@ -969,7 +993,19 @@
   }
 
   document.getElementById('dm-panel-close').addEventListener('click', closeDMPanel);
-  dmOverlay.addEventListener('click', closeDMPanel);
+  dmOverlay.addEventListener('click', () => {
+    // Close search modal if open
+    if (dmSearchModal.classList.contains('show')) {
+      dmSearchModal.classList.remove('show');
+    }
+    // Close DM panel if open
+    if (dmPanel.classList.contains('show')) {
+      closeDMPanel();
+      return;
+    }
+    // If neither panel was open, just hide overlay
+    dmOverlay.classList.remove('show');
+  });
 
   async function sendDM() {
     const content = dmInput.value.trim();
@@ -1030,15 +1066,6 @@
     }, 300);
   });
 
-  // Close search modal on overlay click (when DM panel is not open)
-  dmOverlay.addEventListener('click', () => {
-    if (dmSearchModal.classList.contains('show')) {
-      dmSearchModal.classList.remove('show');
-      if (!dmPanel.classList.contains('show')) {
-        dmOverlay.classList.remove('show');
-      }
-    }
-  });
 
   /* ===== ADMIN PANEL ===== */
   const adminUserList = document.getElementById('admin-user-list');
