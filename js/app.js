@@ -262,9 +262,30 @@
   });
 
   /* ===== AUTH STATE ===== */
+  let hasAutoResumed = false;
   SupabaseClient.setOnAuthChange((user, profile) => {
     updateHUD(user, profile);
     updateNavMenu(user, profile);
+
+    // Auto-resume session: skip title screen if user is already logged in on page load
+    if (user && profile && !hasAutoResumed && currentScreen === 'screen-title') {
+      hasAutoResumed = true;
+      AudioSystem.init();
+      setTimeout(() => AudioSystem.startMusic(), 400);
+      const titleEl = document.getElementById('screen-title');
+      const navEl = document.getElementById('screen-nav');
+      if (titleEl && navEl) {
+        titleEl.classList.remove('visible');
+        setTimeout(() => {
+          titleEl.classList.remove('active');
+          navEl.classList.add('active');
+          navEl.offsetHeight;
+          navEl.classList.add('visible');
+          hud.classList.add('show');
+          currentScreen = 'screen-nav';
+        }, 300);
+      }
+    }
   });
 
   function updateNavMenu(user, profile) {
