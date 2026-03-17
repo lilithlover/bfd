@@ -270,6 +270,7 @@
   function updateNavMenu(user, profile) {
     const authItem = document.querySelector('[data-target="screen-auth"]');
     const adminLi = document.getElementById('admin-menu-li');
+    const chatLi = document.getElementById('chat-menu-li');
     if (!authItem) return;
 
     if (user) {
@@ -289,6 +290,11 @@
       authItem.textContent = 'LOGIN / REGISTER';
       authItem.dataset.target = 'screen-auth';
       authItem.onclick = null;
+    }
+
+    // Show/hide chat option (logged-in users only)
+    if (chatLi) {
+      chatLi.style.display = user ? '' : 'none';
     }
 
     // Show/hide admin panel option
