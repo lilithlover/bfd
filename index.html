@@ -136,7 +136,7 @@
     }
     .hud-content:hover { border-color: #e02020; }
     .hud-avatar { width: 32px; height: 32px; border: 1px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .hud-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .hud-avatar img, .hud-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .hud-avatar-placeholder { font-size: .6rem; color: #e02020; }
     .hud-info { display: flex; flex-direction: column; gap: .15rem; }
     .hud-username { font-size: .4rem; letter-spacing: .05em; }
@@ -326,7 +326,7 @@
     .edit-select:focus { border-color: #e02020; }
     .edit-avatar-area { display: flex; flex-direction: column; align-items: center; gap: .4rem; margin: .7rem 0; }
     .edit-avatar-preview { width: 56px; height: 56px; border: 1px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .edit-avatar-preview img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .edit-avatar-preview img, .edit-avatar-preview video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .edit-avatar-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #333; color: #555; padding: .3rem .6rem; cursor: pointer; transition: color .15s, border-color .15s; }
     .edit-avatar-btn:hover { color: #e02020; border-color: #e02020; }
     .edit-info { display: flex; flex-direction: column; gap: .3rem; margin: .8rem 0; text-align: center; }
@@ -353,7 +353,7 @@
     .chat-dm-item:hover { color: #aaa; background: #0a0000; }
     .chat-dm-item.active { color: #e02020; border-left-color: #e02020; background: rgba(224,32,32,.04); }
     .chat-dm-item .dm-avatar { width: 22px; height: 22px; border: 1px solid #330000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .chat-dm-item .dm-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .chat-dm-item .dm-avatar img, .chat-dm-item .dm-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .chat-dm-item .dm-unread { width: 8px; height: 8px; background: #e02020; border-radius: 50%; margin-left: auto; flex-shrink: 0; display: none; }
     .chat-dm-item .dm-unread.show { display: block; }
     .chat-dm-new { font-size: 8px; color: #444; padding: .4rem .7rem; cursor: pointer; letter-spacing: .06em; transition: color .15s; }
@@ -375,15 +375,17 @@
     .chat-header-btn { font-family: 'Press Start 2P', monospace; font-size: 8px; background: transparent; border: 1px solid #222; color: #444; padding: .3rem .5rem; cursor: pointer; transition: all .15s; }
     .chat-header-btn:hover { color: #e02020; border-color: #e02020; }
     .chat-header-btn.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.08); }
+    .chat-header-btn.danger { border-color: #440000; color: #660000; }
+    .chat-header-btn.danger:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.08); }
 
     /* Messages area */
-    .chat-messages { flex: 1; overflow-y: auto; padding: .6rem; display: flex; flex-direction: column; gap: .25rem; background: #060606; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: .6rem; display: flex; flex-direction: column; gap: .15rem; background: #060606; }
 
     /* Individual message */
-    .chat-msg { font-size: 10px; line-height: 1.7; word-break: break-word; padding: .35rem .5rem; border-radius: 2px; transition: background .15s; display: flex; gap: .5rem; align-items: flex-start; }
-    .chat-msg:hover { background: rgba(224,32,32,.02); }
+    .chat-msg { font-size: 10px; line-height: 1.7; word-break: break-word; padding: .45rem .6rem; border-radius: 2px; transition: background .15s; display: flex; gap: .6rem; align-items: flex-start; border-bottom: 1px solid #0c0c0c; }
+    .chat-msg:hover { background: rgba(224,32,32,.03); }
     .chat-msg-avatar { width: 32px; height: 32px; border: 1px solid #1a0000; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: .15rem; }
-    .chat-msg-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .chat-msg-avatar img, .chat-msg-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .chat-msg-avatar-placeholder { font-size: 10px; color: #333; }
     .chat-msg-body { flex: 1; min-width: 0; }
     .chat-msg-header { display: flex; align-items: baseline; gap: .4rem; flex-wrap: wrap; margin-bottom: .15rem; }
@@ -420,7 +422,7 @@
     .mention-suggestion { font-size: 9px; color: #777; padding: .4rem .6rem; cursor: pointer; display: flex; align-items: center; gap: .4rem; transition: background .1s, color .1s; }
     .mention-suggestion:hover, .mention-suggestion.selected { background: rgba(224,32,32,.08); color: #e02020; }
     .mention-suggestion .mention-av { width: 20px; height: 20px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .mention-suggestion .mention-av img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .mention-suggestion .mention-av img, .mention-suggestion .mention-av video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
 
     .chat-input-row { display: flex; gap: 0; }
     .chat-input-wrap { flex: 1; display: flex; position: relative; }
@@ -513,10 +515,10 @@
     .user-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 340px; background: #070707; border: 1px solid #e02020; box-shadow: 0 0 30px rgba(224,32,32,.15), 0 0 60px rgba(0,0,0,.8); z-index: 9997; flex-direction: column; overflow: hidden; }
     .user-popup.show { display: flex; }
     .user-popup-banner { height: 50px; background: linear-gradient(135deg, #1a0000, #2a0000, #1a0000); position: relative; }
-    .user-popup-avatar { width: 56px; height: 56px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; position: absolute; bottom: -28px; left: 16px; background: #070707; }
-    .user-popup-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .user-popup-avatar { width: 56px; height: 56px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; margin-top: -28px; margin-left: 16px; margin-bottom: 0; background: #070707; flex-shrink: 0; }
+    .user-popup-avatar img, .user-popup-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .user-popup-avatar-placeholder { font-size: 18px; color: #e02020; }
-    .user-popup-body { padding: 36px 16px 12px; }
+    .user-popup-body { padding: 8px 16px 12px; }
     .user-popup-name { font-size: 12px; letter-spacing: .06em; margin-bottom: 2px; }
     .user-popup-id { font-size: 8px; color: #444; letter-spacing: .04em; margin-bottom: 8px; }
     .user-popup-divider { height: 1px; background: #1a0000; margin: 8px 0; }
@@ -816,6 +818,7 @@
             <span class="chat-header-name" id="chat-header-name">GENERAL</span>
             <span class="chat-header-desc" id="chat-header-desc">Main chat for the tribe</span>
             <div class="chat-header-actions">
+              <button class="chat-header-btn danger" id="chat-purge-btn" title="Purge Channel (Admin)" style="display:none;">&#9888; PURGE</button>
               <button class="chat-header-btn" id="chat-members-btn" title="Members">&#9632; USERS</button>
             </div>
           </div>
@@ -879,7 +882,7 @@
         <div class="edit-avatar-area">
           <div class="edit-label">AVATAR</div>
           <div class="edit-avatar-preview" id="edit-avatar-preview"><span class="hud-avatar-placeholder">?</span></div>
-          <label class="edit-avatar-btn">UPLOAD<input type="file" id="edit-avatar-input" accept="image/*" style="display:none;"></label>
+          <label class="edit-avatar-btn">UPLOAD<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
         </div>
         <div class="edit-field"><span class="edit-label">NAME COLOR</span><input type="color" id="edit-color" value="#e02020" class="edit-color-input"></div>
         <div class="edit-field"><span class="edit-label">NAME EFFECT</span><select id="edit-effect" class="edit-select"></select></div>

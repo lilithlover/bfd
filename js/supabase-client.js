@@ -189,11 +189,13 @@ const SupabaseClient = (() => {
         .ilike('username', mentionedUsername)
         .single();
       if (mentionedUser && mentionedUser.id !== currentUser.id) {
-        await sb.from('mentions').insert({
-          message_id: data.id,
-          from_user_id: currentUser.id,
-          to_user_id: mentionedUser.id,
-        }).catch(() => {});
+        try {
+          await sb.from('mentions').insert({
+            message_id: data.id,
+            from_user_id: currentUser.id,
+            to_user_id: mentionedUser.id,
+          });
+        } catch (_) { /* ignore duplicate mentions */ }
       }
     }
     return data;
@@ -476,6 +478,13 @@ const SupabaseClient = (() => {
     if (error) throw error;
   }
 
+  // --- ADMIN: Purge all messages in a channel ---
+  async function adminPurgeChannel(channel) {
+    if (!currentProfile?.is_admin) throw new Error('Not admin');
+    const { error } = await sb.from('messages').delete().eq('channel', channel);
+    if (error) throw error;
+  }
+
   // --- ADMIN: Reset user profile to defaults ---
   async function adminResetProfile(userId) {
     if (!currentProfile?.is_admin) throw new Error('Not admin');
@@ -518,7 +527,7 @@ const SupabaseClient = (() => {
     adminFetchAllUsers, adminUpdateUser,
     adminBanUser, adminMuteUser, adminUnmuteUser,
     adminSetEffect, adminSetAdmin, adminSetLevel, adminSetRank, adminSetBalance,
-    adminDeleteMessage, adminPurgeUserMessages, adminResetProfile, adminSetUsername,
+    adminDeleteMessage, adminPurgeUserMessages, adminPurgeChannel, adminResetProfile, adminSetUsername,
     fetchProfileById, fetchUserMessageCount,
   };
 })();

@@ -72,6 +72,17 @@
     });
   }
 
+  // Render avatar HTML - supports video/gif avatars with looping
+  function renderAvatar(url, size) {
+    if (!url) return '';
+    const sizeStyle = size ? `width:${size}px;height:${size}px;` : 'width:100%;height:100%;';
+    const isVideo = /\.(mp4|webm|mov)(\?|$)/i.test(url);
+    if (isVideo) {
+      return `<video src="${escapeHtml(url)}" autoplay loop muted playsinline style="${sizeStyle}object-fit:cover;"></video>`;
+    }
+    return `<img src="${escapeHtml(url)}" alt="" style="width:100%;height:100%;object-fit:cover;image-rendering:pixelated;">`;
+  }
+
   /* ===== ASCII VIDEO ENGINE ===== */
   const video = document.getElementById('video');
   const sourceCanvas = document.getElementById('source');
@@ -266,6 +277,7 @@
   SupabaseClient.setOnAuthChange((user, profile) => {
     updateHUD(user, profile);
     updateNavMenu(user, profile);
+    updatePurgeBtn();
 
     // Auto-resume session: skip title screen if user is already logged in on page load
     if (user && profile && !hasAutoResumed && currentScreen === 'screen-title') {
@@ -336,7 +348,7 @@
     hudContent.innerHTML = `
       <div class="hud-avatar" id="hud-avatar-btn">
         ${profile.avatar_url
-          ? `<img src="${escapeHtml(profile.avatar_url)}" alt="PFP">`
+          ? renderAvatar(profile.avatar_url)
           : '<span class="hud-avatar-placeholder">?</span>'}
       </div>
       <div class="hud-info">
@@ -376,7 +388,7 @@
 
     const avatarPreview = document.getElementById('edit-avatar-preview');
     avatarPreview.innerHTML = profile.avatar_url
-      ? `<img src="${escapeHtml(profile.avatar_url)}" alt="Avatar">`
+      ? renderAvatar(profile.avatar_url)
       : '<span class="hud-avatar-placeholder">?</span>';
 
     const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
@@ -404,10 +416,23 @@
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) { showToast('MAX 2MB'); return; }
+
+    // Only admins can upload video/gif avatars
+    const isAnimated = file.type === 'image/gif' || file.type.startsWith('video/');
+    if (isAnimated && !SupabaseClient.isAdmin()) {
+      showToast('ONLY ADMINS CAN USE GIF/VIDEO AVATARS');
+      AudioSystem.sfxError();
+      return;
+    }
+
     try {
       showToast('UPLOADING...');
       const url = await SupabaseClient.uploadAvatar(file);
-      document.getElementById('edit-avatar-preview').innerHTML = `<img src="${escapeHtml(url)}" alt="Avatar">`;
+      if (file.type.startsWith('video/')) {
+        document.getElementById('edit-avatar-preview').innerHTML = `<video src="${escapeHtml(url)}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>`;
+      } else {
+        document.getElementById('edit-avatar-preview').innerHTML = `<img src="${escapeHtml(url)}" alt="Avatar">`;
+      }
       showToast('AVATAR UPDATED'); AudioSystem.sfxSelect();
     } catch (err) { AudioSystem.sfxError(); showToast('UPLOAD FAILED'); }
   });
@@ -505,7 +530,7 @@
     div.innerHTML = `
       <div class="chat-msg-avatar">
         ${avatarUrl
-          ? `<img src="${escapeHtml(avatarUrl)}" alt="">`
+          ? renderAvatar(avatarUrl)
           : '<span class="chat-msg-avatar-placeholder">\u25C9</span>'}
       </div>
       <div class="chat-msg-body">
@@ -680,6 +705,30 @@
     }
   }
 
+  // --- Admin Purge Channel ---
+  const purgeBtn = document.getElementById('chat-purge-btn');
+  function updatePurgeBtn() {
+    if (purgeBtn) {
+      purgeBtn.style.display = SupabaseClient.isAdmin() ? '' : 'none';
+    }
+  }
+  if (purgeBtn) {
+    purgeBtn.addEventListener('click', async () => {
+      if (!SupabaseClient.isAdmin()) return;
+      if (!confirm('PURGE ALL MESSAGES IN ' + (HUBS[currentChannel]?.name || currentChannel).toUpperCase() + '? THIS CANNOT BE UNDONE.')) return;
+      try {
+        await SupabaseClient.adminPurgeChannel(currentChannel);
+        chatMessages.innerHTML = '';
+        addSystemMessage('CHANNEL PURGED BY ADMIN');
+        showToast('CHANNEL PURGED');
+        AudioSystem.sfxSelect();
+      } catch (err) {
+        showToast('PURGE FAILED');
+        AudioSystem.sfxError();
+      }
+    });
+  }
+
   // --- Cooldown ---
   function checkCooldown(content) {
     const now = Date.now();
@@ -846,7 +895,7 @@
       const effect = getEffectClass(u.name_effect);
       div.innerHTML = `
         <span class="mention-av">${u.avatar_url
-          ? `<img src="${escapeHtml(u.avatar_url)}" alt="">`
+          ? renderAvatar(u.avatar_url)
           : '<span style="color:#333;font-size:.25rem;">\u25C9</span>'}</span>
         <span class="${effect}" style="color:${escapeHtml(u.name_color)}">${escapeHtml(u.username)}</span>
         ${u.is_admin ? '<span style="color:#e02020;font-size:.7em;">[A]</span>' : ''}
@@ -936,7 +985,7 @@
         const partner = c.partner;
         li.innerHTML = `
           <span class="dm-avatar">${partner && partner.avatar_url
-            ? `<img src="${escapeHtml(partner.avatar_url)}" alt="">`
+            ? renderAvatar(partner.avatar_url)
             : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}</span>
           <span>${escapeHtml(partner ? partner.username : 'USER')}</span>
           <span class="dm-unread${c.unread > 0 ? ' show' : ''}"></span>
@@ -1055,7 +1104,7 @@
         div.className = 'dm-search-result';
         div.innerHTML = `
           <span class="dm-avatar" style="width:16px;height:16px;border:1px solid #330000;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-            ${u.avatar_url ? `<img src="${escapeHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;" alt="">` : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}
+            ${u.avatar_url ? renderAvatar(u.avatar_url) : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}
           </span>
           <span style="color:${escapeHtml(u.name_color)}">${escapeHtml(u.username)}</span>
           ${u.is_admin ? '<span style="color:#e02020;font-size:.7em;">[A]</span>' : ''}
@@ -1431,7 +1480,7 @@
       const adminTag = profile.is_admin ? '<span style="color:#e02020;font-size:8px;margin-left:4px;">[ADMIN]</span>' : '';
 
       userPopupAvatar.innerHTML = profile.avatar_url
-        ? `<img src="${escapeHtml(profile.avatar_url)}" alt="">`
+        ? renderAvatar(profile.avatar_url)
         : '<span class="user-popup-avatar-placeholder">\u25C9</span>';
 
       userPopupBody.innerHTML = `
