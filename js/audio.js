@@ -86,7 +86,7 @@ const AudioSystem = (() => {
     musicPlaying = true;
 
     if (!musicAudio) {
-      musicAudio = new Audio('assets/music.mp3');
+      musicAudio = new Audio('https://cdn.lewd.host/F4b2M0E0.mp3');
       musicAudio.loop = true;
       musicAudio.volume = 0.3;
     }
