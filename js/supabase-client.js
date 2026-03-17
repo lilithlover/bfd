@@ -6,7 +6,7 @@
 
 const SupabaseClient = (() => {
   const SUPABASE_URL = 'https://oaefzkipbkjmtchckfwd.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_qrxYyrjn3Ze3HA3-4zGyAw_s0MsQgn4';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hZWZ6a2lwYmtqbXRjaGNrZndkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NTIxODEsImV4cCI6MjA4OTAyODE4MX0.3fAjcNGiGEGeVSk4xLL0wY_65pAOGu8d-wsdA-7EChs';
 
   let sb = null;
   let currentUser = null;
