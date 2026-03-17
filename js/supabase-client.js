@@ -451,6 +451,53 @@ const SupabaseClient = (() => {
     if (error) throw error;
   }
 
+  // --- PROFILE LOOKUP ---
+  async function fetchProfileById(userId) {
+    const { data, error } = await sb.from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async function fetchUserMessageCount(userId) {
+    const { count, error } = await sb.from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    if (error) return 0;
+    return count || 0;
+  }
+
+  // --- ADMIN: Delete all messages by user ---
+  async function adminPurgeUserMessages(userId) {
+    if (!currentProfile?.is_admin) throw new Error('Not admin');
+    const { error } = await sb.from('messages').delete().eq('user_id', userId);
+    if (error) throw error;
+  }
+
+  // --- ADMIN: Reset user profile to defaults ---
+  async function adminResetProfile(userId) {
+    if (!currentProfile?.is_admin) throw new Error('Not admin');
+    return adminUpdateUser(userId, {
+      name_color: '#e02020',
+      name_effect: 'none',
+      avatar_url: null,
+      level: 1,
+      balance: 0,
+      rank: 'NEWCOMER',
+      is_muted: false,
+      muted_until: null,
+      is_banned: false,
+    });
+  }
+
+  // --- ADMIN: Set username ---
+  async function adminSetUsername(userId, username) {
+    if (!currentProfile?.is_admin) throw new Error('Not admin');
+    return adminUpdateUser(userId, { username: username.toUpperCase() });
+  }
+
   // --- HELPERS ---
   function setOnAuthChange(cb) { onAuthChange = cb; }
   function setOnMentionUpdate(cb) { onMentionUpdate = cb; }
@@ -471,6 +518,7 @@ const SupabaseClient = (() => {
     adminFetchAllUsers, adminUpdateUser,
     adminBanUser, adminMuteUser, adminUnmuteUser,
     adminSetEffect, adminSetAdmin, adminSetLevel, adminSetRank, adminSetBalance,
-    adminDeleteMessage,
+    adminDeleteMessage, adminPurgeUserMessages, adminResetProfile, adminSetUsername,
+    fetchProfileById, fetchUserMessageCount,
   };
 })();

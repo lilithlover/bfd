@@ -507,6 +507,53 @@
     .admin-set-row { display: flex; align-items: center; gap: .3rem; margin: .4rem 0; flex-wrap: wrap; }
     .admin-small-input { max-width: 120px !important; padding: .25rem .4rem !important; font-size: clamp(.25rem, .8vw, .34rem) !important; }
 
+    /* ===== USER PROFILE POPUP (Discord-style) ===== */
+    .user-popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9993; }
+    .user-popup-overlay.show { display: block; }
+    .user-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 340px; background: #070707; border: 1px solid #e02020; box-shadow: 0 0 30px rgba(224,32,32,.15), 0 0 60px rgba(0,0,0,.8); z-index: 9997; flex-direction: column; overflow: hidden; }
+    .user-popup.show { display: flex; }
+    .user-popup-banner { height: 50px; background: linear-gradient(135deg, #1a0000, #2a0000, #1a0000); position: relative; }
+    .user-popup-avatar { width: 56px; height: 56px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; position: absolute; bottom: -28px; left: 16px; background: #070707; }
+    .user-popup-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .user-popup-avatar-placeholder { font-size: 18px; color: #e02020; }
+    .user-popup-body { padding: 36px 16px 12px; }
+    .user-popup-name { font-size: 12px; letter-spacing: .06em; margin-bottom: 2px; }
+    .user-popup-id { font-size: 8px; color: #444; letter-spacing: .04em; margin-bottom: 8px; }
+    .user-popup-divider { height: 1px; background: #1a0000; margin: 8px 0; }
+    .user-popup-section { font-size: 8px; color: #e02020; letter-spacing: .1em; margin-bottom: 6px; text-transform: uppercase; }
+    .user-popup-info { font-size: 9px; color: #666; line-height: 2; letter-spacing: .04em; }
+    .user-popup-info .label { color: #888; }
+    .user-popup-actions { display: flex; gap: 6px; padding: 10px 16px; border-top: 1px solid #1a0000; }
+    .user-popup-btn { font-family: 'Press Start 2P', monospace; font-size: 8px; background: transparent; border: 1px solid #444; color: #666; padding: .35rem .6rem; cursor: pointer; transition: all .15s; flex: 1; text-align: center; }
+    .user-popup-btn:hover { border-color: #e02020; color: #e02020; }
+    .user-popup-btn.primary { border-color: #e02020; color: #e02020; }
+    .user-popup-btn.primary:hover { background: #e02020; color: #000; }
+
+    /* ===== ADMIN LOG PANEL ===== */
+    .admin-tabs { display: flex; gap: .4rem; margin-bottom: .6rem; }
+    .admin-tab-btn { font-family: 'Press Start 2P', monospace; font-size: 8px; background: transparent; border: 1px solid #222; color: #444; padding: .35rem .6rem; cursor: pointer; transition: all .15s; }
+    .admin-tab-btn:hover { color: #e02020; border-color: #e02020; }
+    .admin-tab-btn.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.08); }
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
+    .admin-stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .4rem; margin-bottom: .6rem; }
+    .admin-stat-card { background: #060606; border: 1px solid #1a0000; padding: .5rem; text-align: center; }
+    .admin-stat-value { font-size: 16px; color: #e02020; margin-bottom: .2rem; }
+    .admin-stat-label { font-size: 7px; color: #444; letter-spacing: .08em; }
+    .admin-msg-log { max-height: 300px; overflow-y: auto; background: #050505; border: 1px solid #1a0000; padding: .3rem; }
+    .admin-msg-row { font-size: 8px; color: #555; padding: .3rem .2rem; border-bottom: 1px solid #0a0a0a; display: flex; gap: .3rem; align-items: flex-start; }
+    .admin-msg-row:hover { background: rgba(224,32,32,.03); }
+    .admin-msg-user { color: #888; min-width: 80px; cursor: pointer; }
+    .admin-msg-user:hover { color: #e02020; }
+    .admin-msg-text { color: #555; flex: 1; word-break: break-word; }
+    .admin-msg-time { color: #282828; font-size: 7px; margin-left: auto; white-space: nowrap; }
+    .admin-msg-delete { font-family: 'Press Start 2P', monospace; font-size: 7px; color: #333; background: transparent; border: 1px solid #222; padding: .15rem .3rem; cursor: pointer; transition: all .15s; margin-left: .2rem; }
+    .admin-msg-delete:hover { color: #e02020; border-color: #e02020; }
+    .admin-danger-zone { border: 1px solid #440000; padding: .5rem; margin-top: .4rem; }
+    .admin-danger-title { font-size: 8px; color: #e02020; letter-spacing: .1em; margin-bottom: .4rem; }
+    .admin-btn.danger { border-color: #660000; color: #880000; }
+    .admin-btn.danger:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.08); }
+
     /* ===== BACK BUTTON ===== */
     .back-btn { font-size: clamp(.35rem, 1.2vw, .55rem); color: #444; cursor: pointer; letter-spacing: .15em; text-transform: uppercase; transition: color .15s; user-select: none; margin-top: 1.2rem; }
     .back-btn:hover { color: #e02020; }
@@ -585,6 +632,14 @@
       .admin-user-row { font-size: .4rem; }
       .admin-btn { font-size: .36rem; }
       .admin-small-input { font-size: .36rem !important; }
+      .admin-tab-btn { font-size: 9px; }
+      .admin-stat-label { font-size: 8px; }
+      .admin-msg-row { font-size: 9px; }
+      .admin-msg-delete { font-size: 8px; }
+      .user-popup { max-width: 380px; }
+      .user-popup-name { font-size: 13px; }
+      .user-popup-info { font-size: 10px; }
+      .user-popup-btn { font-size: 9px; }
       .sound-toggle { font-size: .42rem; }
       .hud-avatar { width: 48px; height: 48px; }
       .hud-username { font-size: .55rem; }
@@ -798,6 +853,15 @@
       </div>
     </div>
 
+    <!-- User Profile Popup -->
+    <div class="user-popup-overlay" id="user-popup-overlay"></div>
+    <div class="user-popup" id="user-popup">
+      <div class="user-popup-banner"></div>
+      <div class="user-popup-avatar" id="user-popup-avatar"></div>
+      <div class="user-popup-body" id="user-popup-body"></div>
+      <div class="user-popup-actions" id="user-popup-actions"></div>
+    </div>
+
     <!-- New DM search modal -->
     <div class="dm-search-modal" id="dm-search-modal">
       <div class="dm-search-modal-title">&#9993; NEW DIRECT MESSAGE</div>
@@ -831,14 +895,38 @@
       <div class="menu-subtitle">- MANAGEMENT CONSOLE -</div>
       <div class="pixel-divider"></div>
       <div class="admin-container">
-        <div class="admin-search-row">
-          <input type="text" id="admin-search" class="auth-input" placeholder="SEARCH USER / ID" style="max-width:100%;">
+        <div class="admin-tabs">
+          <button class="admin-tab-btn active" data-admin-tab="users">&#9632; USERS</button>
+          <button class="admin-tab-btn" data-admin-tab="messages">&#9993; MESSAGES</button>
+          <button class="admin-tab-btn" data-admin-tab="stats">&#9733; STATS</button>
         </div>
-        <div class="admin-columns">
-          <div class="admin-user-col" id="admin-user-list"></div>
-          <div class="admin-detail-col" id="admin-detail">
-            <div class="chat-system">SELECT A USER</div>
+
+        <!-- Users Tab -->
+        <div class="admin-tab-content active" id="admin-tab-users">
+          <div class="admin-search-row">
+            <input type="text" id="admin-search" class="auth-input" placeholder="SEARCH USER / ID" style="max-width:100%;">
           </div>
+          <div class="admin-columns">
+            <div class="admin-user-col" id="admin-user-list"></div>
+            <div class="admin-detail-col" id="admin-detail">
+              <div class="chat-system">SELECT A USER</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div class="admin-tab-content" id="admin-tab-messages">
+          <div class="admin-search-row" style="margin-bottom:.5rem;">
+            <input type="text" id="admin-msg-search" class="auth-input" placeholder="SEARCH MESSAGES..." style="max-width:100%;">
+          </div>
+          <div class="admin-msg-log" id="admin-msg-log">
+            <div class="chat-system">LOADING MESSAGES...</div>
+          </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div class="admin-tab-content" id="admin-tab-stats">
+          <div class="admin-stats-grid" id="admin-stats-grid"></div>
         </div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>

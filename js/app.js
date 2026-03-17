@@ -519,20 +519,27 @@
       </div>
     `;
 
-    // Click username to insert @mention
+    // Click username to show profile popup
     const userSpan = div.querySelector('.chat-user');
-    if (userSpan) {
+    if (userSpan && msg.user_id) {
       userSpan.addEventListener('click', () => {
-        chatInput.value += '@' + username + ' ';
-        chatInput.focus();
+        showUserPopup(msg.user_id, username);
       });
     }
 
-    // Click @mention in message to insert @mention
+    // Click @mention in message to show their profile popup
     div.querySelectorAll('.chat-mention').forEach(m => {
       m.addEventListener('click', () => {
-        const u = m.dataset.user;
-        if (u) { chatInput.value += '@' + u + ' '; chatInput.focus(); }
+        const mentionedName = m.dataset.user;
+        if (mentionedName) {
+          const found = cachedUsers.find(u => u.username.toLowerCase() === mentionedName.toLowerCase());
+          if (found) {
+            showUserPopup(found.id, found.username);
+          } else {
+            chatInput.value += '@' + mentionedName + ' ';
+            chatInput.focus();
+          }
+        }
       });
     });
 
@@ -1072,6 +1079,21 @@
   const adminSearch = document.getElementById('admin-search');
   const adminDetail = document.getElementById('admin-detail');
   let adminSelectedUser = null;
+  let adminAllUsers = [];
+
+  // Admin tab switching
+  document.querySelectorAll('[data-admin-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioSystem.sfxNavigate();
+      document.querySelectorAll('[data-admin-tab]').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('admin-tab-' + btn.dataset.adminTab)?.classList.add('active');
+      // Load tab data
+      if (btn.dataset.adminTab === 'messages') loadAdminMessages();
+      if (btn.dataset.adminTab === 'stats') loadAdminStats();
+    });
+  });
 
   // Open admin panel
   document.querySelector('[data-target="screen-admin"]')?.addEventListener('click', () => {
@@ -1083,6 +1105,7 @@
     if (!SupabaseClient.isAdmin()) return;
     try {
       const users = await SupabaseClient.adminFetchAllUsers(search);
+      adminAllUsers = users;
       adminUserList.innerHTML = '';
       users.forEach(u => {
         const div = document.createElement('div');
@@ -1133,7 +1156,14 @@
       <div class="admin-actions">
         <button class="admin-btn ${user.is_banned ? 'active' : ''}" data-action="ban">${user.is_banned ? 'UNBAN' : 'BAN'}</button>
         <button class="admin-btn ${user.is_muted ? 'active' : ''}" data-action="mute">${user.is_muted ? 'UNMUTE' : 'MUTE 30M'}</button>
+        <button class="admin-btn" data-action="mute-1h">MUTE 1H</button>
+        <button class="admin-btn" data-action="mute-24h">MUTE 24H</button>
         <button class="admin-btn" data-action="admin">${user.is_admin ? 'REMOVE ADMIN' : 'MAKE ADMIN'}</button>
+      </div>
+      <div class="admin-set-row">
+        <span class="edit-label">SET USERNAME</span>
+        <input type="text" id="admin-username-input" class="auth-input admin-small-input" value="${escapeHtml(user.username)}">
+        <button class="admin-btn" data-action="set-username">SET</button>
       </div>
       <div class="admin-set-row">
         <span class="edit-label">SET LEVEL</span>
@@ -1156,6 +1186,13 @@
           ${EFFECTS.map(e => `<option value="${e.id}" ${e.id === user.name_effect ? 'selected' : ''}>${e.name}${e.level === -1 ? ' [ADMIN]' : e.level > 0 ? ' (LV.' + e.level + ')' : ''}</option>`).join('')}
         </select>
         <button class="admin-btn" data-action="set-effect">SET</button>
+      </div>
+      <div class="admin-danger-zone">
+        <div class="admin-danger-title">\u26A0 DANGER ZONE</div>
+        <div class="admin-actions">
+          <button class="admin-btn danger" data-action="purge-msgs">PURGE MESSAGES</button>
+          <button class="admin-btn danger" data-action="reset-profile">RESET PROFILE</button>
+        </div>
       </div>
     `;
 
@@ -1183,28 +1220,56 @@
             showToast('USER MUTED FOR 30 MINUTES');
           }
           break;
+        case 'mute-1h':
+          await SupabaseClient.adminMuteUser(uid, 60);
+          showToast('USER MUTED FOR 1 HOUR');
+          break;
+        case 'mute-24h':
+          await SupabaseClient.adminMuteUser(uid, 1440);
+          showToast('USER MUTED FOR 24 HOURS');
+          break;
         case 'admin':
           await SupabaseClient.adminSetAdmin(uid, !adminSelectedUser.is_admin);
           showToast(adminSelectedUser.is_admin ? 'ADMIN REMOVED' : 'ADMIN GRANTED');
           break;
-        case 'set-level':
+        case 'set-username': {
+          const name = document.getElementById('admin-username-input').value.trim();
+          if (name && name.length >= 2 && name.length <= 20) {
+            await SupabaseClient.adminSetUsername(uid, name);
+            showToast('USERNAME SET TO ' + name.toUpperCase());
+          } else { showToast('USERNAME MUST BE 2-20 CHARS'); AudioSystem.sfxError(); return; }
+          break;
+        }
+        case 'set-level': {
           const lvl = parseInt(document.getElementById('admin-level-input').value) || 1;
           await SupabaseClient.adminSetLevel(uid, lvl);
           showToast('LEVEL SET TO ' + Math.max(1, Math.min(100, lvl)));
           break;
-        case 'set-rank':
+        }
+        case 'set-rank': {
           const rank = document.getElementById('admin-rank-input').value.trim();
           if (rank) { await SupabaseClient.adminSetRank(uid, rank.toUpperCase()); showToast('RANK UPDATED'); }
           break;
-        case 'set-balance':
+        }
+        case 'set-balance': {
           const bal = parseInt(document.getElementById('admin-balance-input').value) || 0;
           await SupabaseClient.adminSetBalance(uid, bal);
           showToast('BALANCE SET TO $' + Math.max(0, bal));
           break;
-        case 'set-effect':
+        }
+        case 'set-effect': {
           const fx = document.getElementById('admin-effect-select').value;
           await SupabaseClient.adminSetEffect(uid, fx);
           showToast('EFFECT SET TO ' + fx.toUpperCase());
+          break;
+        }
+        case 'purge-msgs':
+          await SupabaseClient.adminPurgeUserMessages(uid);
+          showToast('ALL MESSAGES PURGED FOR ' + adminSelectedUser.username);
+          break;
+        case 'reset-profile':
+          await SupabaseClient.adminResetProfile(uid);
+          showToast('PROFILE RESET FOR ' + adminSelectedUser.username);
           break;
       }
       AudioSystem.sfxSelect();
@@ -1219,6 +1284,199 @@
     }
   }
 
+  // --- Admin Messages Tab ---
+  async function loadAdminMessages(search = '') {
+    const log = document.getElementById('admin-msg-log');
+    if (!log) return;
+    try {
+      const messages = await SupabaseClient.fetchMessages(100, 'general');
+      // Also fetch from other channels
+      const allMessages = [...messages];
+      for (const ch of ['music', 'trading', 'offtopic']) {
+        try {
+          const chMsgs = await SupabaseClient.fetchMessages(50, ch);
+          allMessages.push(...chMsgs);
+        } catch (e) { /* skip */ }
+      }
+      allMessages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      const filtered = search
+        ? allMessages.filter(m => {
+            const u = m.profiles?.username || '';
+            return u.toLowerCase().includes(search.toLowerCase()) || m.content.toLowerCase().includes(search.toLowerCase());
+          })
+        : allMessages;
+
+      log.innerHTML = '';
+      if (filtered.length === 0) {
+        log.innerHTML = '<div class="chat-system">NO MESSAGES FOUND</div>';
+        return;
+      }
+      filtered.slice(0, 200).forEach(msg => {
+        const row = document.createElement('div');
+        row.className = 'admin-msg-row';
+        const p = msg.profiles;
+        const username = p ? p.username : 'UNKNOWN';
+        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const date = new Date(msg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const channel = msg.channel || 'general';
+        row.innerHTML = `
+          <span class="admin-msg-user" data-uid="${msg.user_id}">${escapeHtml(username)}</span>
+          <span style="color:#282828;font-size:7px;">[${channel}]</span>
+          <span class="admin-msg-text">${escapeHtml(msg.content.slice(0, 120))}</span>
+          <span class="admin-msg-time">${date} ${time}</span>
+          <button class="admin-msg-delete" data-msgid="${msg.id}" title="Delete">\u2718</button>
+        `;
+        // Click username to select in user tab
+        row.querySelector('.admin-msg-user')?.addEventListener('click', () => {
+          const found = adminAllUsers.find(u => u.id === msg.user_id);
+          if (found) {
+            // Switch to users tab and select
+            document.querySelectorAll('[data-admin-tab]').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('[data-admin-tab="users"]')?.classList.add('active');
+            document.getElementById('admin-tab-users')?.classList.add('active');
+            selectAdminUser(found);
+            AudioSystem.sfxNavigate();
+          }
+        });
+        // Delete message
+        row.querySelector('.admin-msg-delete')?.addEventListener('click', async () => {
+          try {
+            await SupabaseClient.adminDeleteMessage(msg.id);
+            row.remove();
+            showToast('MESSAGE DELETED');
+            AudioSystem.sfxSelect();
+          } catch (e) {
+            showToast('DELETE FAILED');
+            AudioSystem.sfxError();
+          }
+        });
+        log.appendChild(row);
+      });
+    } catch (err) {
+      log.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
+    }
+  }
+
+  // Admin message search
+  const adminMsgSearch = document.getElementById('admin-msg-search');
+  if (adminMsgSearch) {
+    let msgSearchTimeout;
+    adminMsgSearch.addEventListener('input', () => {
+      clearTimeout(msgSearchTimeout);
+      msgSearchTimeout = setTimeout(() => loadAdminMessages(adminMsgSearch.value.trim()), 300);
+    });
+  }
+
+  // --- Admin Stats Tab ---
+  async function loadAdminStats() {
+    const grid = document.getElementById('admin-stats-grid');
+    if (!grid) return;
+    try {
+      const users = adminAllUsers.length > 0 ? adminAllUsers : await SupabaseClient.adminFetchAllUsers('');
+      const totalUsers = users.length;
+      const admins = users.filter(u => u.is_admin).length;
+      const banned = users.filter(u => u.is_banned).length;
+      const muted = users.filter(u => u.is_muted).length;
+      const avgLevel = totalUsers > 0 ? Math.round(users.reduce((s, u) => s + (u.level || 1), 0) / totalUsers) : 0;
+      const totalBalance = users.reduce((s, u) => s + (u.balance || 0), 0);
+      const highestLevel = users.reduce((max, u) => Math.max(max, u.level || 1), 0);
+      const newestUser = users.length > 0 ? users.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0] : null;
+
+      grid.innerHTML = `
+        <div class="admin-stat-card"><div class="admin-stat-value">${totalUsers}</div><div class="admin-stat-label">TOTAL USERS</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${admins}</div><div class="admin-stat-label">ADMINS</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${banned}</div><div class="admin-stat-label">BANNED</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${muted}</div><div class="admin-stat-label">MUTED</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${avgLevel}</div><div class="admin-stat-label">AVG LEVEL</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${highestLevel}</div><div class="admin-stat-label">MAX LEVEL</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">$${totalBalance}</div><div class="admin-stat-label">TOTAL BALANCE</div></div>
+        <div class="admin-stat-card"><div class="admin-stat-value">${newestUser ? escapeHtml(newestUser.username).slice(0, 10) : '-'}</div><div class="admin-stat-label">NEWEST USER</div></div>
+      `;
+    } catch (err) {
+      grid.innerHTML = '<div class="chat-system">FAILED TO LOAD STATS</div>';
+    }
+  }
+
+  /* ===== USER PROFILE POPUP (Discord-style) ===== */
+  const userPopup = document.getElementById('user-popup');
+  const userPopupOverlay = document.getElementById('user-popup-overlay');
+  const userPopupAvatar = document.getElementById('user-popup-avatar');
+  const userPopupBody = document.getElementById('user-popup-body');
+  const userPopupActions = document.getElementById('user-popup-actions');
+
+  function closeUserPopup() {
+    userPopup.classList.remove('show');
+    userPopupOverlay.classList.remove('show');
+  }
+  userPopupOverlay.addEventListener('click', closeUserPopup);
+
+  async function showUserPopup(userId, username) {
+    AudioSystem.sfxNavigate();
+    // Show loading state
+    userPopupAvatar.innerHTML = '<span class="user-popup-avatar-placeholder">\u25C9</span>';
+    userPopupBody.innerHTML = '<div class="chat-system">LOADING...</div>';
+    userPopupActions.innerHTML = '';
+    userPopup.classList.add('show');
+    userPopupOverlay.classList.add('show');
+
+    try {
+      const profile = await SupabaseClient.fetchProfileById(userId);
+      if (!profile) { closeUserPopup(); showToast('USER NOT FOUND'); return; }
+
+      const effect = getEffectClass(profile.name_effect);
+      const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
+      const joined = new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+      const adminTag = profile.is_admin ? '<span style="color:#e02020;font-size:8px;margin-left:4px;">[ADMIN]</span>' : '';
+
+      userPopupAvatar.innerHTML = profile.avatar_url
+        ? `<img src="${escapeHtml(profile.avatar_url)}" alt="">`
+        : '<span class="user-popup-avatar-placeholder">\u25C9</span>';
+
+      userPopupBody.innerHTML = `
+        <div class="user-popup-name ${effect}" style="color:${escapeHtml(profile.name_color)}">${escapeHtml(profile.username)}${adminTag}</div>
+        <div class="user-popup-id">${idNum}</div>
+        <div class="user-popup-divider"></div>
+        <div class="user-popup-section">ABOUT</div>
+        <div class="user-popup-info">
+          <span class="label">RANK:</span> ${escapeHtml(profile.rank)}<br>
+          <span class="label">LEVEL:</span> ${profile.level}<br>
+          <span class="label">EFFECT:</span> ${escapeHtml(profile.name_effect || 'NONE').toUpperCase()}<br>
+          <span class="label">JOINED:</span> ${joined}
+        </div>
+      `;
+
+      // Actions - show DM button if logged in and not viewing own profile
+      const currentUser = SupabaseClient.getUser();
+      const isOwnProfile = currentUser && currentUser.id === userId;
+      let actionsHTML = '';
+      if (!isOwnProfile && currentUser) {
+        actionsHTML += `<button class="user-popup-btn primary" id="popup-dm-btn">\u2709 MESSAGE</button>`;
+      }
+      actionsHTML += `<button class="user-popup-btn" id="popup-mention-btn">@ MENTION</button>`;
+      actionsHTML += `<button class="user-popup-btn" id="popup-close-btn">\u2718 CLOSE</button>`;
+      userPopupActions.innerHTML = actionsHTML;
+
+      // Wire up action buttons
+      document.getElementById('popup-close-btn')?.addEventListener('click', closeUserPopup);
+      document.getElementById('popup-dm-btn')?.addEventListener('click', () => {
+        closeUserPopup();
+        openDMPanel(userId, profile.username);
+        AudioSystem.sfxSelect();
+      });
+      document.getElementById('popup-mention-btn')?.addEventListener('click', () => {
+        closeUserPopup();
+        chatInput.value += '@' + profile.username + ' ';
+        chatInput.focus();
+        AudioSystem.sfxSelect();
+      });
+    } catch (err) {
+      closeUserPopup();
+      showToast('FAILED TO LOAD PROFILE');
+    }
+  }
+
   /* ===== MEMBERS ===== */
   const members = [
     { name: 'Percpuke', role: 'Manager', rank: 'Stone Mask', time: 'Since 2019', redacted: false },
@@ -1226,33 +1484,24 @@
     { name: 'Deadbelief', role: 'Vocals & Producer', rank: 'Stone Mask', time: 'Since 2025', redacted: false },
     { name: 'Alkoholinmeinemblut', role: 'Website Manager', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
     { name: 'Allsomecat', role: 'Producer & Mixxer', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
-    { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
-    { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
-    { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
-    { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
-    { name: '\u2588\u2588\u2588\u2588\u2588\u2588\u2588', redacted: true },
   ];
 
   const membersList = document.getElementById('members-list');
   members.forEach(member => {
     const li = document.createElement('li');
     const span = document.createElement('span');
-    span.className = 'member-name' + (member.redacted ? ' redacted' : '');
+    span.className = 'member-name';
     span.textContent = member.name;
     span.addEventListener('mouseenter', () => AudioSystem.sfxHover());
     span.addEventListener('click', () => {
-      if (member.redacted) {
-        switchScreen('screen-members', 'screen-classified');
-      } else {
-        document.getElementById('profile-card').innerHTML = `
-          <div class="profile-name">${escapeHtml(member.name)}</div>
-          <div class="pixel-divider"></div>
-          <p class="profile-detail"><span class="label">ROLE:</span> ${escapeHtml(member.role)}</p>
-          <p class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(member.rank)}</p>
-          <p class="profile-detail"><span class="label">TIME WITH TRIBE:</span> ${escapeHtml(member.time)}</p>
-        `;
-        switchScreen('screen-members', 'screen-profile');
-      }
+      document.getElementById('profile-card').innerHTML = `
+        <div class="profile-name">${escapeHtml(member.name)}</div>
+        <div class="pixel-divider"></div>
+        <p class="profile-detail"><span class="label">ROLE:</span> ${escapeHtml(member.role)}</p>
+        <p class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(member.rank)}</p>
+        <p class="profile-detail"><span class="label">TIME WITH TRIBE:</span> ${escapeHtml(member.time)}</p>
+      `;
+      switchScreen('screen-members', 'screen-profile');
     });
     li.appendChild(span);
     membersList.appendChild(li);
