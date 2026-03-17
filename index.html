@@ -331,31 +331,160 @@
     .edit-avatar-btn:hover { color: #e02020; border-color: #e02020; }
     .edit-info { display: flex; flex-direction: column; gap: .3rem; margin: .8rem 0; text-align: center; }
 
-    /* ===== CHAT ===== */
-    .chat-container { width: 100%; max-width: 650px; display: flex; flex-direction: column; height: 60vh; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: .6rem; background: #060606; border: 1px solid #1a0000; display: flex; flex-direction: column; gap: .35rem; }
-    .chat-msg { font-size: clamp(.28rem, .95vw, .4rem); line-height: 1.8; word-break: break-word; }
-    .chat-time { color: #333; margin-right: .3rem; }
-    .chat-user { margin-right: .2rem; cursor: default; }
-    .chat-id { color: #333; font-size: .8em; margin-right: .2rem; }
-    .chat-admin-tag { color: #e02020; font-size: .8em; margin-right: .2rem; }
-    .chat-text { color: #777; }
-    .chat-mention { color: #e02020; font-weight: bold; }
+    /* ===== CHAT - FULL LAYOUT ===== */
+    .chat-layout { width: 100%; max-width: 900px; display: flex; height: 65vh; border: 1px solid #1a0000; background: #050505; overflow: hidden; }
+
+    /* Sidebar */
+    .chat-sidebar { width: 180px; min-width: 140px; background: #070707; border-right: 1px solid #1a0000; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+    .chat-sidebar-header { font-size: clamp(.25rem, .8vw, .34rem); color: #e02020; padding: .5rem .6rem .3rem; letter-spacing: .15em; border-bottom: 1px solid #120000; text-transform: uppercase; }
+    .chat-hub-list { list-style: none; padding: .2rem 0; }
+    .chat-hub-item { font-size: clamp(.24rem, .75vw, .32rem); color: #555; padding: .35rem .6rem; cursor: pointer; letter-spacing: .08em; transition: color .15s, background .15s; display: flex; align-items: center; gap: .35rem; border-left: 2px solid transparent; }
+    .chat-hub-item:hover { color: #aaa; background: #0a0000; }
+    .chat-hub-item.active { color: #e02020; border-left-color: #e02020; background: rgba(224,32,32,.04); }
+    .chat-hub-item .hub-icon { font-size: 1.1em; opacity: .7; }
+    .chat-hub-item .hub-unread { font-size: .7em; color: #000; background: #e02020; padding: .05rem .2rem; margin-left: auto; display: none; }
+    .chat-hub-item .hub-unread.show { display: inline; }
+
+    .chat-sidebar-divider { height: 1px; background: #1a0000; margin: .3rem .6rem; }
+
+    /* DM list in sidebar */
+    .chat-dm-list { list-style: none; padding: .2rem 0; flex: 1; overflow-y: auto; }
+    .chat-dm-item { font-size: clamp(.23rem, .7vw, .3rem); color: #555; padding: .3rem .6rem; cursor: pointer; letter-spacing: .06em; transition: color .15s, background .15s; display: flex; align-items: center; gap: .3rem; border-left: 2px solid transparent; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-dm-item:hover { color: #aaa; background: #0a0000; }
+    .chat-dm-item.active { color: #e02020; border-left-color: #e02020; background: rgba(224,32,32,.04); }
+    .chat-dm-item .dm-avatar { width: 16px; height: 16px; border: 1px solid #330000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .chat-dm-item .dm-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .chat-dm-item .dm-unread { width: 6px; height: 6px; background: #e02020; border-radius: 50%; margin-left: auto; flex-shrink: 0; display: none; }
+    .chat-dm-item .dm-unread.show { display: block; }
+    .chat-dm-new { font-size: clamp(.22rem, .7vw, .28rem); color: #444; padding: .3rem .6rem; cursor: pointer; letter-spacing: .06em; transition: color .15s; }
+    .chat-dm-new:hover { color: #e02020; }
+
+    /* Online count */
+    .chat-online-count { font-size: clamp(.22rem, .68vw, .28rem); color: #333; padding: .4rem .6rem; border-top: 1px solid #120000; display: flex; align-items: center; gap: .3rem; }
+    .chat-online-dot { width: 5px; height: 5px; background: #0f0; border-radius: 50%; box-shadow: 0 0 4px #0f0; }
+
+    /* Main chat area */
+    .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* Chat header bar */
+    .chat-header { display: flex; align-items: center; padding: .4rem .6rem; background: #080808; border-bottom: 1px solid #1a0000; gap: .4rem; flex-shrink: 0; }
+    .chat-header-icon { font-size: clamp(.35rem, 1vw, .5rem); color: #e02020; }
+    .chat-header-name { font-size: clamp(.28rem, .9vw, .38rem); color: #ccc; letter-spacing: .1em; text-transform: uppercase; }
+    .chat-header-desc { font-size: clamp(.2rem, .65vw, .26rem); color: #444; letter-spacing: .05em; margin-left: .4rem; }
+    .chat-header-actions { margin-left: auto; display: flex; gap: .3rem; }
+    .chat-header-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.2rem, .6vw, .26rem); background: transparent; border: 1px solid #222; color: #444; padding: .2rem .4rem; cursor: pointer; transition: all .15s; }
+    .chat-header-btn:hover { color: #e02020; border-color: #e02020; }
+    .chat-header-btn.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.08); }
+
+    /* Messages area */
+    .chat-messages { flex: 1; overflow-y: auto; padding: .5rem; display: flex; flex-direction: column; gap: .15rem; background: #060606; }
+
+    /* Individual message */
+    .chat-msg { font-size: clamp(.26rem, .85vw, .38rem); line-height: 1.6; word-break: break-word; padding: .25rem .4rem; border-radius: 2px; transition: background .15s; display: flex; gap: .4rem; align-items: flex-start; }
+    .chat-msg:hover { background: rgba(224,32,32,.02); }
+    .chat-msg-avatar { width: 24px; height: 24px; border: 1px solid #1a0000; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: .1rem; }
+    .chat-msg-avatar img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .chat-msg-avatar-placeholder { font-size: .35rem; color: #333; }
+    .chat-msg-body { flex: 1; min-width: 0; }
+    .chat-msg-header { display: flex; align-items: baseline; gap: .3rem; flex-wrap: wrap; margin-bottom: .1rem; }
+    .chat-user { cursor: pointer; letter-spacing: .04em; }
+    .chat-user:hover { text-decoration: underline; }
+    .chat-id { color: #282828; font-size: .75em; }
+    .chat-admin-tag { color: #e02020; font-size: .75em; font-weight: bold; }
+    .chat-time { color: #282828; font-size: .75em; margin-left: auto; }
+    .chat-text { color: #777; display: block; line-height: 1.7; }
+    .chat-mention { color: #e02020; font-weight: bold; cursor: pointer; }
+    .chat-mention:hover { text-decoration: underline; }
     .retro-emoji { font-style: normal; font-size: 1.2em; }
-    .chat-system { font-size: .3rem; color: #333; text-align: center; padding: .5rem; }
-    .chat-input-area { display: flex; gap: 0; margin-top: .3rem; }
-    .chat-input-wrap { flex: 1; display: flex; }
-    #chat-input { font-family: 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .42rem); background: #080808; border: 1px solid #1a0000; color: #888; padding: .45rem; width: 100%; outline: none; transition: border-color .15s; }
+    .chat-system { font-size: clamp(.22rem, .7vw, .3rem); color: #333; text-align: center; padding: .6rem; width: 100%; }
+
+    /* Chat command output */
+    .chat-cmd-msg { color: #555; font-style: italic; }
+    .chat-cmd-msg .chat-text { color: #666; }
+    .chat-roll-result { color: #e02020; font-weight: bold; }
+
+    /* Message reactions */
+    .chat-reactions { display: flex; gap: .2rem; margin-top: .15rem; flex-wrap: wrap; }
+    .chat-reaction { font-size: clamp(.22rem, .7vw, .28rem); background: #0a0a0a; border: 1px solid #1a0000; padding: .1rem .25rem; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: .15rem; }
+    .chat-reaction:hover { border-color: #e02020; }
+    .chat-reaction.reacted { border-color: #e02020; background: rgba(224,32,32,.08); }
+    .chat-reaction-emoji { font-size: 1.1em; }
+    .chat-reaction-count { color: #555; font-size: .85em; }
+
+    /* Input area */
+    .chat-input-area { flex-shrink: 0; background: #070707; border-top: 1px solid #1a0000; padding: .4rem; position: relative; }
+
+    /* @mention autocomplete */
+    .mention-suggestions { display: none; position: absolute; bottom: 100%; left: .4rem; right: .4rem; background: #0a0a0a; border: 1px solid #1a0000; border-bottom: none; max-height: 150px; overflow-y: auto; z-index: 100; }
+    .mention-suggestions.show { display: block; }
+    .mention-suggestion { font-size: clamp(.24rem, .75vw, .32rem); color: #777; padding: .3rem .5rem; cursor: pointer; display: flex; align-items: center; gap: .3rem; transition: background .1s, color .1s; }
+    .mention-suggestion:hover, .mention-suggestion.selected { background: rgba(224,32,32,.08); color: #e02020; }
+    .mention-suggestion .mention-av { width: 16px; height: 16px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .mention-suggestion .mention-av img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+
+    .chat-input-row { display: flex; gap: 0; }
+    .chat-input-wrap { flex: 1; display: flex; position: relative; }
+    #chat-input { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem); background: #0a0a0a; border: 1px solid #1a0000; color: #888; padding: .45rem .5rem; width: 100%; outline: none; transition: border-color .15s; }
     #chat-input:focus { border-color: #e02020; color: #ccc; }
-    #chat-input::placeholder { color: #222; }
-    .emoji-toggle-btn { font-size: .5rem; background: #080808; border: 1px solid #1a0000; color: #444; padding: 0 .5rem; cursor: pointer; transition: color .15s, border-color .15s; display: flex; align-items: center; }
+    #chat-input::placeholder { color: #1a1a1a; }
+    .emoji-toggle-btn { font-size: .5rem; background: #0a0a0a; border: 1px solid #1a0000; border-left: none; color: #333; padding: 0 .5rem; cursor: pointer; transition: color .15s, border-color .15s; display: flex; align-items: center; }
     .emoji-toggle-btn:hover { color: #e02020; border-color: #e02020; }
-    .chat-send-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem); background: #080808; border: 1px solid #e02020; color: #e02020; padding: .45rem .7rem; cursor: pointer; transition: background .15s, color .15s; }
+    .chat-send-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.26rem, .8vw, .34rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .45rem .7rem; cursor: pointer; transition: background .15s, color .15s; }
     .chat-send-btn:hover { background: #e02020; color: #000; }
-    .emoji-picker { display: none; flex-wrap: wrap; gap: .35rem; background: #080808; border: 1px solid #1a0000; padding: .5rem; margin-top: .3rem; max-width: 320px; }
+    .emoji-picker { display: none; flex-wrap: wrap; gap: .3rem; background: #0a0a0a; border: 1px solid #1a0000; padding: .5rem; margin-top: .3rem; }
     .emoji-picker.show { display: flex; }
-    .emoji-option { font-size: .7rem; cursor: pointer; padding: .2rem; transition: transform .1s; }
+    .emoji-option { font-size: .65rem; cursor: pointer; padding: .15rem; transition: transform .1s; }
     .emoji-option:hover { transform: scale(1.3); }
+
+    /* Chat commands help */
+    .chat-commands-bar { display: flex; gap: .3rem; padding: .25rem 0 0; flex-wrap: wrap; }
+    .chat-cmd-hint { font-size: clamp(.18rem, .55vw, .22rem); color: #222; letter-spacing: .04em; }
+
+    /* DM overlay panel */
+    .dm-panel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 500px; height: 60vh; background: #070707; border: 1px solid #e02020; box-shadow: 0 0 30px rgba(224,32,32,.15), 0 0 60px rgba(0,0,0,.8); z-index: 9995; flex-direction: column; }
+    .dm-panel.show { display: flex; }
+    .dm-panel-header { display: flex; align-items: center; padding: .4rem .6rem; background: #0a0a0a; border-bottom: 1px solid #1a0000; gap: .3rem; flex-shrink: 0; }
+    .dm-panel-name { font-size: clamp(.28rem, .9vw, .38rem); color: #ccc; letter-spacing: .08em; flex: 1; }
+    .dm-panel-close { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .32rem); background: transparent; border: 1px solid #333; color: #555; padding: .2rem .4rem; cursor: pointer; transition: all .15s; }
+    .dm-panel-close:hover { color: #e02020; border-color: #e02020; }
+    .dm-panel-messages { flex: 1; overflow-y: auto; padding: .5rem; display: flex; flex-direction: column; gap: .2rem; }
+    .dm-msg { font-size: clamp(.24rem, .8vw, .34rem); line-height: 1.6; padding: .2rem .3rem; display: flex; gap: .3rem; align-items: flex-start; }
+    .dm-msg.sent { flex-direction: row-reverse; }
+    .dm-msg .dm-msg-content { max-width: 75%; }
+    .dm-msg.sent .dm-msg-bubble { background: rgba(224,32,32,.08); border: 1px solid #2a0000; color: #999; padding: .3rem .5rem; }
+    .dm-msg.received .dm-msg-bubble { background: #0a0a0a; border: 1px solid #151515; color: #777; padding: .3rem .5rem; }
+    .dm-msg-time { font-size: .7em; color: #282828; margin-top: .1rem; display: block; }
+    .dm-msg.sent .dm-msg-time { text-align: right; }
+    .dm-panel-input-area { padding: .4rem; border-top: 1px solid #1a0000; display: flex; gap: 0; flex-shrink: 0; }
+    .dm-panel-input { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .34rem); background: #0a0a0a; border: 1px solid #1a0000; color: #888; padding: .4rem; flex: 1; outline: none; }
+    .dm-panel-input:focus { border-color: #e02020; color: #ccc; }
+    .dm-panel-send { font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .75vw, .3rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .4rem .6rem; cursor: pointer; transition: all .15s; }
+    .dm-panel-send:hover { background: #e02020; color: #000; }
+    .dm-panel-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.7); z-index: 9994; }
+    .dm-panel-overlay.show { display: block; }
+
+    /* New DM search modal */
+    .dm-search-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 350px; background: #070707; border: 1px solid #e02020; box-shadow: 0 0 20px rgba(224,32,32,.15); z-index: 9996; flex-direction: column; padding: .6rem; }
+    .dm-search-modal.show { display: flex; }
+    .dm-search-modal-title { font-size: clamp(.28rem, .9vw, .36rem); color: #e02020; letter-spacing: .1em; margin-bottom: .4rem; }
+    .dm-search-input { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .32rem); background: #0a0a0a; border: 1px solid #1a0000; color: #888; padding: .4rem; outline: none; margin-bottom: .3rem; }
+    .dm-search-input:focus { border-color: #e02020; color: #ccc; }
+    .dm-search-results { max-height: 200px; overflow-y: auto; }
+    .dm-search-result { font-size: clamp(.24rem, .75vw, .3rem); color: #666; padding: .3rem .4rem; cursor: pointer; display: flex; align-items: center; gap: .3rem; transition: all .1s; }
+    .dm-search-result:hover { color: #e02020; background: rgba(224,32,32,.05); }
+
+    /* Mobile responsive */
+    @media (max-width: 600px) {
+      .chat-sidebar { width: 44px; min-width: 44px; }
+      .chat-sidebar-header { font-size: .18rem; padding: .3rem .2rem; text-align: center; overflow: hidden; }
+      .chat-hub-item { padding: .3rem .2rem; justify-content: center; font-size: .18rem; }
+      .chat-hub-item span:not(.hub-icon) { display: none; }
+      .chat-dm-item { padding: .25rem .2rem; justify-content: center; }
+      .chat-dm-item span:not(.dm-avatar) { display: none; }
+      .chat-dm-new { text-align: center; font-size: .18rem; }
+      .chat-online-count span:not(.chat-online-dot) { display: none; }
+      .chat-header-desc { display: none; }
+    }
 
     /* ===== ADMIN PANEL ===== */
     .admin-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: .8rem; }
@@ -422,10 +551,16 @@
       .edit-preview-name { font-size: .9rem; }
       .edit-label { font-size: .42rem; }
       .edit-select { font-size: .42rem; max-width: 340px; }
-      .chat-msg { font-size: .42rem; }
-      #chat-input { font-size: .45rem; }
-      .chat-send-btn { font-size: .4rem; }
+      .chat-msg { font-size: .4rem; }
+      .chat-sidebar { width: 200px; }
+      #chat-input { font-size: .42rem; }
+      .chat-send-btn { font-size: .38rem; }
       .emoji-option { font-size: .85rem; }
+      .chat-msg-avatar { width: 30px; height: 30px; }
+      .chat-hub-item { font-size: .34rem; padding: .4rem .7rem; }
+      .chat-dm-item { font-size: .32rem; }
+      .chat-header-name { font-size: .4rem; }
+      .mention-suggestion { font-size: .34rem; }
       .release-art { width: 260px; height: 260px; }
       .release-info { font-size: .55rem; }
       .release-status { font-size: .6rem; }
@@ -588,19 +723,73 @@
 
     <!-- CHAT -->
     <div id="screen-chat" class="screen">
-      <h2 class="menu-title rgb-split">CHAT</h2>
-      <div class="menu-subtitle">- COMMS CHANNEL -</div>
-      <div class="pixel-divider"></div>
-      <div class="chat-container">
-        <div class="chat-messages" id="chat-messages"><div class="chat-system">LOADING MESSAGES...</div></div>
-        <div class="chat-input-area">
-          <div class="chat-input-wrap"><input type="text" id="chat-input" placeholder="TYPE MESSAGE..." maxlength="500" autocomplete="off"></div>
-          <button class="emoji-toggle-btn" id="emoji-toggle" title="Emojis">&#9786;</button>
-          <button class="chat-send-btn" id="chat-send">SEND</button>
+      <div class="chat-layout">
+        <!-- Sidebar: Hubs + DMs -->
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-header">&#9776; HUBS</div>
+          <ul class="chat-hub-list" id="chat-hub-list">
+            <li class="chat-hub-item active" data-channel="general"><span class="hub-icon">&#9670;</span><span>GENERAL</span><span class="hub-unread"></span></li>
+            <li class="chat-hub-item" data-channel="music"><span class="hub-icon">&#9835;</span><span>MUSIC</span><span class="hub-unread"></span></li>
+            <li class="chat-hub-item" data-channel="trading"><span class="hub-icon">&#9733;</span><span>TRADING</span><span class="hub-unread"></span></li>
+            <li class="chat-hub-item" data-channel="offtopic"><span class="hub-icon">&#9788;</span><span>OFF-TOPIC</span><span class="hub-unread"></span></li>
+          </ul>
+          <div class="chat-sidebar-divider"></div>
+          <div class="chat-sidebar-header">&#9993; DMs</div>
+          <ul class="chat-dm-list" id="chat-dm-list"></ul>
+          <div class="chat-dm-new" id="chat-dm-new" title="New DM">+ NEW DM</div>
+          <div class="chat-sidebar-divider"></div>
+          <div class="chat-online-count" id="chat-online-count"><span class="chat-online-dot"></span><span>0 ONLINE</span></div>
         </div>
-        <div class="emoji-picker" id="emoji-picker"></div>
+
+        <!-- Main chat area -->
+        <div class="chat-main">
+          <div class="chat-header">
+            <span class="chat-header-icon">&#9670;</span>
+            <span class="chat-header-name" id="chat-header-name">GENERAL</span>
+            <span class="chat-header-desc" id="chat-header-desc">Main chat for the tribe</span>
+            <div class="chat-header-actions">
+              <button class="chat-header-btn" id="chat-members-btn" title="Members">&#9632; USERS</button>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages"><div class="chat-system">LOADING MESSAGES...</div></div>
+          <div class="chat-input-area">
+            <div class="mention-suggestions" id="mention-suggestions"></div>
+            <div class="chat-input-row">
+              <div class="chat-input-wrap">
+                <input type="text" id="chat-input" placeholder="TYPE A MESSAGE... ( /help for commands )" maxlength="500" autocomplete="off">
+              </div>
+              <button class="emoji-toggle-btn" id="emoji-toggle" title="Emojis">&#9786;</button>
+              <button class="chat-send-btn" id="chat-send">SEND</button>
+            </div>
+            <div class="emoji-picker" id="emoji-picker"></div>
+            <div class="chat-commands-bar">
+              <span class="chat-cmd-hint">/help /me /roll /shrug /tableflip</span>
+            </div>
+          </div>
+        </div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
+    <!-- DM Panel (overlay) -->
+    <div class="dm-panel-overlay" id="dm-panel-overlay"></div>
+    <div class="dm-panel" id="dm-panel">
+      <div class="dm-panel-header">
+        <span class="dm-panel-name" id="dm-panel-name">DM</span>
+        <button class="dm-panel-close" id="dm-panel-close">&#10005; CLOSE</button>
+      </div>
+      <div class="dm-panel-messages" id="dm-panel-messages"></div>
+      <div class="dm-panel-input-area">
+        <input type="text" class="dm-panel-input" id="dm-panel-input" placeholder="TYPE DM..." maxlength="500" autocomplete="off">
+        <button class="dm-panel-send" id="dm-panel-send">SEND</button>
+      </div>
+    </div>
+
+    <!-- New DM search modal -->
+    <div class="dm-search-modal" id="dm-search-modal">
+      <div class="dm-search-modal-title">&#9993; NEW DIRECT MESSAGE</div>
+      <input type="text" class="dm-search-input" id="dm-search-input" placeholder="SEARCH USERNAME..." autocomplete="off">
+      <div class="dm-search-results" id="dm-search-results"></div>
     </div>
 
     <!-- PROFILE EDITOR -->

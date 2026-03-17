@@ -166,6 +166,54 @@ CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id_num ON public.profiles(user_id_num);
 CREATE INDEX IF NOT EXISTS idx_profiles_is_admin ON public.profiles(is_admin);
 
--- 7. SET allcontempt AS ADMIN
+-- 7. ADD CHANNEL COLUMN TO MESSAGES (for hub support)
+DO $$ BEGIN
+  ALTER TABLE public.messages ADD COLUMN channel text DEFAULT 'general';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_messages_channel ON public.messages(channel);
+
+-- 8. DIRECT MESSAGES TABLE
+CREATE TABLE IF NOT EXISTS public.direct_messages (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  from_user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  to_user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  content text NOT NULL,
+  is_read boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.direct_messages ENABLE ROW LEVEL SECURITY;
+
+-- Users can view DMs they sent or received
+DROP POLICY IF EXISTS "Users can view their own DMs" ON public.direct_messages;
+CREATE POLICY "Users can view their own DMs"
+  ON public.direct_messages FOR SELECT TO authenticated
+  USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
+
+-- Users can send DMs
+DROP POLICY IF EXISTS "Users can send DMs" ON public.direct_messages;
+CREATE POLICY "Users can send DMs"
+  ON public.direct_messages FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = from_user_id);
+
+-- Users can mark DMs as read
+DROP POLICY IF EXISTS "Users can update their own received DMs" ON public.direct_messages;
+CREATE POLICY "Users can update their own received DMs"
+  ON public.direct_messages FOR UPDATE TO authenticated
+  USING (auth.uid() = to_user_id) WITH CHECK (auth.uid() = to_user_id);
+
+CREATE INDEX IF NOT EXISTS idx_dm_from_user ON public.direct_messages(from_user_id);
+CREATE INDEX IF NOT EXISTS idx_dm_to_user ON public.direct_messages(to_user_id);
+CREATE INDEX IF NOT EXISTS idx_dm_created_at ON public.direct_messages(created_at DESC);
+
+-- Add DMs to realtime
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.direct_messages;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+-- 9. SET allcontempt AS ADMIN
 -- (Will update once this username registers. Re-run after registration.)
 UPDATE public.profiles SET is_admin = true WHERE LOWER(username) = 'allcontempt';

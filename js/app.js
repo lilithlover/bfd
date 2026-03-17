@@ -174,7 +174,7 @@
         AudioSystem.sfxError(); showToast('LOGIN REQUIRED TO ACCESS CHAT'); return;
       }
       if (target === 'screen-chat') {
-        loadChat();
+        switchHub(currentChannel);
         SupabaseClient.markMentionsRead();
         updateChatBadge(0);
       }
@@ -405,11 +405,26 @@
   const chatMessages = document.getElementById('chat-messages');
   const chatInput = document.getElementById('chat-input');
   const chatSendBtn = document.getElementById('chat-send');
+  const mentionSuggestions = document.getElementById('mention-suggestions');
   let chatLoaded = false;
+  let currentChannel = 'general';
+  let cachedUsers = []; // for @mention autocomplete
+  let mentionSelIndex = -1;
+
+  // Hub metadata
+  const HUBS = {
+    general:  { name: 'GENERAL',  icon: '\u25C6', desc: 'Main chat for the tribe' },
+    music:    { name: 'MUSIC',    icon: '\u266B', desc: 'Talk about music, beats, production' },
+    trading:  { name: 'TRADING',  icon: '\u2605', desc: 'Trade effects, items, and more' },
+    offtopic: { name: 'OFF-TOPIC', icon: '\u263C', desc: 'Anything goes' },
+  };
+
+  // Hub unread tracking
+  const hubUnread = { general: 0, music: 0, trading: 0, offtopic: 0 };
 
   // Cooldown state
   let lastMsgTime = 0;
-  let recentMessages = []; // timestamps + content for spam detection
+  let recentMessages = [];
   let spamCooldownUntil = 0;
 
   const COOLDOWN_MS = 5000;
@@ -426,12 +441,24 @@
     ':triangle:': '\u25B2', ':wave:': '\u223F', ':eye:': '\u25C9', ':skull2:': '\u2623',
   };
 
+  // Chat commands
+  const CHAT_COMMANDS = {
+    '/help': () => {
+      addSystemMessage('COMMANDS: /me [action] \u2022 /roll [max] \u2022 /shrug \u2022 /tableflip \u2022 /lenny \u2022 /disapproval \u2022 /help');
+      return null;
+    },
+    '/shrug': () => '\u00AF\\_(\u30C4)_/\u00AF',
+    '/tableflip': () => '(\u256F\u00B0\u25A1\u00B0)\u256F\uFE35 \u253B\u2501\u253B',
+    '/lenny': () => '( \u0361\u00B0 \u035C\u0296 \u0361\u00B0)',
+    '/disapproval': () => '\u0CA0_\u0CA0',
+  };
+
   function parseEmojis(text) {
     let result = escapeHtml(text);
     for (const [code, emoji] of Object.entries(RETRO_EMOJIS)) {
       result = result.replace(new RegExp(code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), `<span class="retro-emoji">${emoji}</span>`);
     }
-    result = result.replace(/@(\w+)/g, '<span class="chat-mention">@$1</span>');
+    result = result.replace(/@(\w+)/g, '<span class="chat-mention" data-user="$1">@$1</span>');
     return result;
   }
 
@@ -443,69 +470,201 @@
     const effect = p ? getEffectClass(p.name_effect) : '';
     const color = p ? p.name_color : '#aaa';
     const username = p ? p.username : 'UNKNOWN';
+    const avatarUrl = p ? p.avatar_url : '';
     const idNum = p && p.user_id_num ? ('#' + String(p.user_id_num).padStart(4, '0')) : '';
     const adminTag = p && p.is_admin ? '<span class="chat-admin-tag">[ADMIN]</span>' : '';
     const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+    // Check if it's an action message (/me)
+    const isAction = msg.content.startsWith('/me ');
+    const content = isAction ? msg.content.slice(4) : msg.content;
+    const textClass = isAction ? 'chat-text chat-cmd-msg' : 'chat-text';
+
     div.innerHTML = `
-      <span class="chat-time">${time}</span>
-      <span class="chat-user ${effect}" style="color:${escapeHtml(color)}">${escapeHtml(username)}</span>
-      <span class="chat-id">${idNum}</span>
-      ${adminTag}
-      <span class="chat-text">${parseEmojis(msg.content)}</span>
+      <div class="chat-msg-avatar">
+        ${avatarUrl
+          ? `<img src="${escapeHtml(avatarUrl)}" alt="">`
+          : '<span class="chat-msg-avatar-placeholder">\u25C9</span>'}
+      </div>
+      <div class="chat-msg-body">
+        <div class="chat-msg-header">
+          <span class="chat-user ${effect}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${escapeHtml(username)}</span>
+          <span class="chat-id">${idNum}</span>
+          ${adminTag}
+          <span class="chat-time">${time}</span>
+        </div>
+        <span class="${textClass}">${isAction ? `* ${escapeHtml(username)} ${parseEmojis(content)}` : parseEmojis(content)}</span>
+      </div>
     `;
+
+    // Click username to insert @mention
+    const userSpan = div.querySelector('.chat-user');
+    if (userSpan) {
+      userSpan.addEventListener('click', () => {
+        chatInput.value += '@' + username + ' ';
+        chatInput.focus();
+      });
+    }
+
+    // Click @mention in message to insert @mention
+    div.querySelectorAll('.chat-mention').forEach(m => {
+      m.addEventListener('click', () => {
+        const u = m.dataset.user;
+        if (u) { chatInput.value += '@' + u + ' '; chatInput.focus(); }
+      });
+    });
+
     return div;
   }
+
+  function addSystemMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'chat-system';
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // --- Hub switching ---
+  function switchHub(channel) {
+    if (channel === currentChannel && chatLoaded) return;
+    currentChannel = channel;
+    const hub = HUBS[channel];
+
+    // Update sidebar active state
+    document.querySelectorAll('.chat-hub-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.channel === channel);
+    });
+
+    // Update header
+    document.getElementById('chat-header-icon')?.remove();
+    const headerIcon = document.querySelector('.chat-header-icon');
+    if (headerIcon) headerIcon.textContent = hub.icon;
+    document.getElementById('chat-header-name').textContent = hub.name;
+    document.getElementById('chat-header-desc').textContent = hub.desc;
+
+    // Clear unread for this hub
+    hubUnread[channel] = 0;
+    updateHubUnreadBadges();
+
+    // Reload messages for this channel
+    chatLoaded = false;
+    loadChat();
+    AudioSystem.sfxNavigate();
+  }
+
+  function updateHubUnreadBadges() {
+    document.querySelectorAll('.chat-hub-item').forEach(item => {
+      const ch = item.dataset.channel;
+      const badge = item.querySelector('.hub-unread');
+      if (badge) {
+        if (hubUnread[ch] > 0 && ch !== currentChannel) {
+          badge.textContent = hubUnread[ch];
+          badge.classList.add('show');
+        } else {
+          badge.classList.remove('show');
+        }
+      }
+    });
+  }
+
+  // Wire up hub clicks
+  document.querySelectorAll('.chat-hub-item').forEach(item => {
+    item.addEventListener('click', () => switchHub(item.dataset.channel));
+  });
 
   async function loadChat() {
     if (chatLoaded) return;
     chatLoaded = true;
     try {
-      const messages = await SupabaseClient.fetchMessages(50);
+      const messages = await SupabaseClient.fetchMessages(50, currentChannel);
       chatMessages.innerHTML = '';
-      messages.forEach(msg => chatMessages.appendChild(renderMessage(msg)));
+      if (messages.length === 0) {
+        addSystemMessage('NO MESSAGES YET. BE THE FIRST TO SPEAK.');
+      } else {
+        messages.forEach(msg => chatMessages.appendChild(renderMessage(msg)));
+      }
       chatMessages.scrollTop = chatMessages.scrollHeight;
     } catch (err) {
       chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
     }
+
+    // Subscribe to ALL messages (filter by channel client-side)
     SupabaseClient.subscribeChat((msg) => {
-      chatMessages.appendChild(renderMessage(msg));
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-      AudioSystem.sfxChat();
+      const msgChannel = msg.channel || 'general';
+      if (msgChannel === currentChannel) {
+        chatMessages.appendChild(renderMessage(msg));
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        AudioSystem.sfxChat();
+      } else {
+        // Unread badge for other hub
+        if (hubUnread[msgChannel] !== undefined) {
+          hubUnread[msgChannel]++;
+          updateHubUnreadBadges();
+        }
+      }
     });
+
+    // Load cached users for @mention autocomplete
+    try {
+      cachedUsers = await SupabaseClient.fetchAllProfiles(100);
+    } catch (e) { cachedUsers = []; }
+
+    // Load DM conversations
+    loadDMList();
+
+    // Subscribe to DMs
+    SupabaseClient.subscribeDMs((dm) => {
+      const user = SupabaseClient.getUser();
+      if (!user) return;
+      const partnerId = dm.from_user_id === user.id ? dm.to_user_id : dm.from_user_id;
+
+      // If DM panel is open for this partner, show message
+      if (activeDMPartner === partnerId) {
+        appendDMMessage(dm);
+        // Mark as read
+        if (dm.to_user_id === user.id) SupabaseClient.markDMsRead(dm.from_user_id);
+      }
+      // Refresh DM list
+      loadDMList();
+      if (dm.to_user_id === user.id) AudioSystem.sfxMention();
+    });
+
+    // Online count (estimate from cached users)
+    updateOnlineCount();
   }
 
+  function updateOnlineCount() {
+    const el = document.getElementById('chat-online-count');
+    if (el) {
+      const count = Math.max(1, cachedUsers.length);
+      el.innerHTML = `<span class="chat-online-dot"></span><span>${count} MEMBERS</span>`;
+    }
+  }
+
+  // --- Cooldown ---
   function checkCooldown(content) {
     const now = Date.now();
-
-    // Check spam mute
     if (spamCooldownUntil > now) {
       const secs = Math.ceil((spamCooldownUntil - now) / 1000);
       showToast(`SPAM COOLDOWN: ${secs}S`);
       AudioSystem.sfxError();
       return false;
     }
-
-    // Check base cooldown (5 seconds)
     if (now - lastMsgTime < COOLDOWN_MS) {
       const secs = Math.ceil((COOLDOWN_MS - (now - lastMsgTime)) / 1000);
       showToast(`WAIT ${secs}S`);
       AudioSystem.sfxError();
       return false;
     }
-
-    // Spam detection: check last messages for repeats
     const trimmed = content.trim().toLowerCase();
     recentMessages.push({ time: now, content: trimmed });
-    // Keep only last 60 seconds of messages
     recentMessages = recentMessages.filter(m => now - m.time < 60000);
-
     const repeatCount = recentMessages.filter(m => m.content === trimmed).length;
     if (repeatCount >= SPAM_REPEAT_LIMIT) {
       spamOffenseCount++;
       if (spamOffenseCount >= SPAM_MUTE_OFFENSES) {
-        // Server-side mute for 30 minutes
-        SupabaseClient.updateProfile({ is_muted: true, muted_until: new Date(now + 30 * 60000).toISOString() })
-          .catch(() => {});
+        SupabaseClient.updateProfile({ is_muted: true, muted_until: new Date(now + 30 * 60000).toISOString() }).catch(() => {});
         showToast('MUTED FOR 30 MINUTES (SPAM)');
         spamCooldownUntil = now + 30 * 60000;
       } else {
@@ -515,18 +674,70 @@
       AudioSystem.sfxError();
       return false;
     }
-
     return true;
   }
 
+  // --- Send message with command support ---
   async function sendChatMessage() {
     const content = chatInput.value.trim();
     if (!content) return;
+    hideMentionSuggestions();
+
+    // Handle commands
+    if (content.startsWith('/')) {
+      const parts = content.split(' ');
+      const cmd = parts[0].toLowerCase();
+
+      // /help
+      if (cmd === '/help') {
+        CHAT_COMMANDS['/help']();
+        chatInput.value = '';
+        return;
+      }
+
+      // /roll [max]
+      if (cmd === '/roll') {
+        const max = parseInt(parts[1]) || 100;
+        const roll = Math.floor(Math.random() * max) + 1;
+        const profile = SupabaseClient.getProfile();
+        const name = profile ? profile.username : 'USER';
+        addSystemMessage(`\u2605 ${name} rolled ${roll} (1-${max})`);
+        chatInput.value = '';
+        AudioSystem.sfxSelect();
+        return;
+      }
+
+      // Text replacement commands
+      const textCmd = CHAT_COMMANDS[cmd];
+      if (textCmd && cmd !== '/help') {
+        const result = textCmd();
+        if (result) {
+          if (!checkCooldown(result)) return;
+          chatInput.value = '';
+          lastMsgTime = Date.now();
+          try { await SupabaseClient.sendMessage(result, currentChannel); }
+          catch (err) { showToast('SEND FAILED'); AudioSystem.sfxError(); }
+        }
+        return;
+      }
+
+      // /me action
+      if (cmd === '/me' && parts.length > 1) {
+        if (!checkCooldown(content)) return;
+        chatInput.value = '';
+        lastMsgTime = Date.now();
+        try { await SupabaseClient.sendMessage(content, currentChannel); }
+        catch (err) { showToast('SEND FAILED'); AudioSystem.sfxError(); }
+        return;
+      }
+    }
+
+    // Regular message
     if (!checkCooldown(content)) return;
     chatInput.value = '';
     lastMsgTime = Date.now();
     try {
-      await SupabaseClient.sendMessage(content);
+      await SupabaseClient.sendMessage(content, currentChannel);
     } catch (err) {
       showToast(err.message ? err.message.toUpperCase().slice(0, 60) : 'SEND FAILED');
       AudioSystem.sfxError();
@@ -535,10 +746,101 @@
 
   chatSendBtn.addEventListener('click', sendChatMessage);
   chatInput.addEventListener('keydown', (e) => {
+    // Handle mention suggestion navigation
+    if (mentionSuggestions.classList.contains('show')) {
+      const items = mentionSuggestions.querySelectorAll('.mention-suggestion');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        mentionSelIndex = Math.min(mentionSelIndex + 1, items.length - 1);
+        updateMentionSelection(items);
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        mentionSelIndex = Math.max(mentionSelIndex - 1, 0);
+        updateMentionSelection(items);
+        return;
+      }
+      if ((e.key === 'Tab' || e.key === 'Enter') && mentionSelIndex >= 0 && items[mentionSelIndex]) {
+        e.preventDefault();
+        selectMention(items[mentionSelIndex].dataset.username);
+        return;
+      }
+      if (e.key === 'Escape') {
+        hideMentionSuggestions();
+        return;
+      }
+    }
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
   });
 
-  // Emoji picker
+  // --- @Mention autocomplete ---
+  chatInput.addEventListener('input', () => {
+    const val = chatInput.value;
+    const cursorPos = chatInput.selectionStart;
+    const textBefore = val.slice(0, cursorPos);
+
+    // Find the @mention being typed
+    const mentionMatch = textBefore.match(/@(\w*)$/);
+    if (mentionMatch) {
+      const query = mentionMatch[1].toLowerCase();
+      const matches = cachedUsers.filter(u =>
+        u.username.toLowerCase().includes(query)
+      ).slice(0, 6);
+
+      if (matches.length > 0) {
+        showMentionSuggestions(matches);
+      } else {
+        hideMentionSuggestions();
+      }
+    } else {
+      hideMentionSuggestions();
+    }
+  });
+
+  function showMentionSuggestions(users) {
+    mentionSelIndex = 0;
+    mentionSuggestions.innerHTML = '';
+    users.forEach((u, i) => {
+      const div = document.createElement('div');
+      div.className = 'mention-suggestion' + (i === 0 ? ' selected' : '');
+      div.dataset.username = u.username;
+      const effect = getEffectClass(u.name_effect);
+      div.innerHTML = `
+        <span class="mention-av">${u.avatar_url
+          ? `<img src="${escapeHtml(u.avatar_url)}" alt="">`
+          : '<span style="color:#333;font-size:.25rem;">\u25C9</span>'}</span>
+        <span class="${effect}" style="color:${escapeHtml(u.name_color)}">${escapeHtml(u.username)}</span>
+        ${u.is_admin ? '<span style="color:#e02020;font-size:.7em;">[A]</span>' : ''}
+      `;
+      div.addEventListener('click', () => selectMention(u.username));
+      mentionSuggestions.appendChild(div);
+    });
+    mentionSuggestions.classList.add('show');
+  }
+
+  function hideMentionSuggestions() {
+    mentionSuggestions.classList.remove('show');
+    mentionSelIndex = -1;
+  }
+
+  function updateMentionSelection(items) {
+    items.forEach((item, i) => item.classList.toggle('selected', i === mentionSelIndex));
+  }
+
+  function selectMention(username) {
+    const val = chatInput.value;
+    const cursorPos = chatInput.selectionStart;
+    const textBefore = val.slice(0, cursorPos);
+    const textAfter = val.slice(cursorPos);
+    const newBefore = textBefore.replace(/@\w*$/, '@' + username + ' ');
+    chatInput.value = newBefore + textAfter;
+    chatInput.focus();
+    chatInput.selectionStart = chatInput.selectionEnd = newBefore.length;
+    hideMentionSuggestions();
+  }
+
+  // --- Emoji picker ---
   const emojiBtn = document.getElementById('emoji-toggle');
   const emojiPicker = document.getElementById('emoji-picker');
   emojiBtn.addEventListener('click', () => { AudioSystem.sfxNavigate(); emojiPicker.classList.toggle('show'); });
@@ -551,13 +853,171 @@
     emojiPicker.appendChild(btn);
   }
 
-  // Chat badge
+  // --- Chat badge (mentions) ---
   function updateChatBadge(count) {
     const badge = document.getElementById('chat-badge');
     if (count > 0) { badge.textContent = '+' + count; badge.classList.add('show'); }
     else { badge.classList.remove('show'); }
   }
   SupabaseClient.setOnMentionUpdate(updateChatBadge);
+
+  // --- DM System ---
+  let activeDMPartner = null;
+  const dmPanel = document.getElementById('dm-panel');
+  const dmOverlay = document.getElementById('dm-panel-overlay');
+  const dmMessages = document.getElementById('dm-panel-messages');
+  const dmInput = document.getElementById('dm-panel-input');
+  const dmSendBtn = document.getElementById('dm-panel-send');
+  const dmSearchModal = document.getElementById('dm-search-modal');
+  const dmSearchInput = document.getElementById('dm-search-input');
+  const dmSearchResults = document.getElementById('dm-search-results');
+
+  async function loadDMList() {
+    const list = document.getElementById('chat-dm-list');
+    if (!list) return;
+    try {
+      const convos = await SupabaseClient.fetchDMConversations();
+      list.innerHTML = '';
+      convos.forEach(c => {
+        const li = document.createElement('li');
+        li.className = 'chat-dm-item' + (activeDMPartner === c.partnerId ? ' active' : '');
+        const partner = c.partner;
+        li.innerHTML = `
+          <span class="dm-avatar">${partner && partner.avatar_url
+            ? `<img src="${escapeHtml(partner.avatar_url)}" alt="">`
+            : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}</span>
+          <span>${escapeHtml(partner ? partner.username : 'USER')}</span>
+          <span class="dm-unread${c.unread > 0 ? ' show' : ''}"></span>
+        `;
+        li.addEventListener('click', () => {
+          openDMPanel(c.partnerId, partner ? partner.username : 'USER');
+          AudioSystem.sfxNavigate();
+        });
+        list.appendChild(li);
+      });
+    } catch (e) { /* silently fail */ }
+  }
+
+  async function openDMPanel(partnerId, partnerName) {
+    activeDMPartner = partnerId;
+    document.getElementById('dm-panel-name').textContent = '\u2709 ' + escapeHtml(partnerName);
+    dmMessages.innerHTML = '<div class="chat-system">LOADING...</div>';
+    dmPanel.classList.add('show');
+    dmOverlay.classList.add('show');
+
+    try {
+      await SupabaseClient.markDMsRead(partnerId);
+      const messages = await SupabaseClient.fetchDMsWith(partnerId, 50);
+      dmMessages.innerHTML = '';
+      if (messages.length === 0) {
+        dmMessages.innerHTML = '<div class="chat-system">NO MESSAGES YET</div>';
+      } else {
+        messages.forEach(dm => appendDMMessage(dm));
+      }
+      dmMessages.scrollTop = dmMessages.scrollHeight;
+    } catch (e) {
+      dmMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD</div>';
+    }
+
+    loadDMList();
+    dmInput.focus();
+  }
+
+  function appendDMMessage(dm) {
+    const user = SupabaseClient.getUser();
+    if (!user) return;
+    const isSent = dm.from_user_id === user.id;
+    const div = document.createElement('div');
+    div.className = 'dm-msg ' + (isSent ? 'sent' : 'received');
+    const time = new Date(dm.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    div.innerHTML = `
+      <div class="dm-msg-content">
+        <div class="dm-msg-bubble">${parseEmojis(dm.content)}</div>
+        <span class="dm-msg-time">${time}</span>
+      </div>
+    `;
+    dmMessages.appendChild(div);
+    dmMessages.scrollTop = dmMessages.scrollHeight;
+  }
+
+  function closeDMPanel() {
+    activeDMPartner = null;
+    dmPanel.classList.remove('show');
+    dmOverlay.classList.remove('show');
+    AudioSystem.sfxBack();
+  }
+
+  document.getElementById('dm-panel-close').addEventListener('click', closeDMPanel);
+  dmOverlay.addEventListener('click', closeDMPanel);
+
+  async function sendDM() {
+    const content = dmInput.value.trim();
+    if (!content || !activeDMPartner) return;
+    dmInput.value = '';
+    try {
+      await SupabaseClient.sendDM(activeDMPartner, content);
+    } catch (err) {
+      showToast('DM FAILED');
+      AudioSystem.sfxError();
+    }
+  }
+
+  dmSendBtn.addEventListener('click', sendDM);
+  dmInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); sendDM(); }
+  });
+
+  // --- New DM search ---
+  document.getElementById('chat-dm-new').addEventListener('click', () => {
+    dmSearchModal.classList.add('show');
+    dmOverlay.classList.add('show');
+    dmSearchInput.value = '';
+    dmSearchResults.innerHTML = '';
+    dmSearchInput.focus();
+    AudioSystem.sfxNavigate();
+  });
+
+  let dmSearchTimeout;
+  dmSearchInput.addEventListener('input', () => {
+    clearTimeout(dmSearchTimeout);
+    dmSearchTimeout = setTimeout(async () => {
+      const q = dmSearchInput.value.trim();
+      if (!q) { dmSearchResults.innerHTML = ''; return; }
+      const users = await SupabaseClient.searchUsers(q, 8);
+      const currentUserId = SupabaseClient.getUser()?.id;
+      dmSearchResults.innerHTML = '';
+      users.filter(u => u.id !== currentUserId).forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'dm-search-result';
+        div.innerHTML = `
+          <span class="dm-avatar" style="width:16px;height:16px;border:1px solid #330000;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+            ${u.avatar_url ? `<img src="${escapeHtml(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;" alt="">` : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}
+          </span>
+          <span style="color:${escapeHtml(u.name_color)}">${escapeHtml(u.username)}</span>
+          ${u.is_admin ? '<span style="color:#e02020;font-size:.7em;">[A]</span>' : ''}
+        `;
+        div.addEventListener('click', () => {
+          dmSearchModal.classList.remove('show');
+          openDMPanel(u.id, u.username);
+          AudioSystem.sfxSelect();
+        });
+        dmSearchResults.appendChild(div);
+      });
+      if (users.filter(u => u.id !== currentUserId).length === 0) {
+        dmSearchResults.innerHTML = '<div class="chat-system">NO USERS FOUND</div>';
+      }
+    }, 300);
+  });
+
+  // Close search modal on overlay click (when DM panel is not open)
+  dmOverlay.addEventListener('click', () => {
+    if (dmSearchModal.classList.contains('show')) {
+      dmSearchModal.classList.remove('show');
+      if (!dmPanel.classList.contains('show')) {
+        dmOverlay.classList.remove('show');
+      }
+    }
+  });
 
   /* ===== ADMIN PANEL ===== */
   const adminUserList = document.getElementById('admin-user-list');

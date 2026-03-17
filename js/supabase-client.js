@@ -139,21 +139,22 @@ const SupabaseClient = (() => {
   }
 
   // --- CHAT ---
-  async function fetchMessages(limit = 50) {
+  async function fetchMessages(limit = 50, channel = 'general') {
     const { data, error } = await sb.from('messages')
       .select(`
-        id, content, created_at, user_id,
+        id, content, created_at, user_id, channel,
         profiles:user_id (
           username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin
         )
       `)
+      .eq('channel', channel)
       .order('created_at', { ascending: false })
       .limit(limit);
     if (error) throw error;
     return (data || []).reverse();
   }
 
-  async function sendMessage(content) {
+  async function sendMessage(content, channel = 'general') {
     if (!currentUser) throw new Error('Not logged in');
 
     // Check if muted
@@ -173,7 +174,7 @@ const SupabaseClient = (() => {
     if (!sanitized) return;
 
     const { data, error } = await sb.from('messages')
-      .insert({ user_id: currentUser.id, content: sanitized })
+      .insert({ user_id: currentUser.id, content: sanitized, channel })
       .select()
       .single();
     if (error) throw error;
@@ -207,7 +208,7 @@ const SupabaseClient = (() => {
         async (payload) => {
           const { data } = await sb.from('messages')
             .select(`
-              id, content, created_at, user_id,
+              id, content, created_at, user_id, channel,
               profiles:user_id ( username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin )
             `)
             .eq('id', payload.new.id)
@@ -220,6 +221,126 @@ const SupabaseClient = (() => {
 
   function unsubscribeChat() {
     if (chatSubscription) { chatSubscription.unsubscribe(); chatSubscription = null; }
+  }
+
+  // --- DIRECT MESSAGES ---
+  let dmSubscription = null;
+  let onNewDM = null;
+
+  async function fetchDMConversations() {
+    if (!currentUser) return [];
+    // Get all DMs involving current user, grouped by the other user
+    const { data, error } = await sb.from('direct_messages')
+      .select(`
+        id, content, created_at, from_user_id, to_user_id, is_read,
+        from_profile:from_user_id ( username, avatar_url, name_color, name_effect, user_id_num ),
+        to_profile:to_user_id ( username, avatar_url, name_color, name_effect, user_id_num )
+      `)
+      .or(`from_user_id.eq.${currentUser.id},to_user_id.eq.${currentUser.id}`)
+      .order('created_at', { ascending: false })
+      .limit(200);
+    if (error) throw error;
+
+    // Group by conversation partner
+    const convos = {};
+    (data || []).forEach(dm => {
+      const partnerId = dm.from_user_id === currentUser.id ? dm.to_user_id : dm.from_user_id;
+      if (!convos[partnerId]) {
+        const partner = dm.from_user_id === currentUser.id ? dm.to_profile : dm.from_profile;
+        convos[partnerId] = {
+          partnerId,
+          partner,
+          lastMessage: dm,
+          unread: 0,
+        };
+      }
+      if (dm.to_user_id === currentUser.id && !dm.is_read) {
+        convos[partnerId].unread++;
+      }
+    });
+    return Object.values(convos).sort((a, b) =>
+      new Date(b.lastMessage.created_at) - new Date(a.lastMessage.created_at)
+    );
+  }
+
+  async function fetchDMsWith(userId, limit = 50) {
+    if (!currentUser) return [];
+    const { data, error } = await sb.from('direct_messages')
+      .select(`
+        id, content, created_at, from_user_id, to_user_id, is_read,
+        from_profile:from_user_id ( username, avatar_url, name_color, name_effect, user_id_num )
+      `)
+      .or(`and(from_user_id.eq.${currentUser.id},to_user_id.eq.${userId}),and(from_user_id.eq.${userId},to_user_id.eq.${currentUser.id})`)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return (data || []).reverse();
+  }
+
+  async function sendDM(toUserId, content) {
+    if (!currentUser) throw new Error('Not logged in');
+    const sanitized = content.trim().slice(0, 500);
+    if (!sanitized) return;
+    const { data, error } = await sb.from('direct_messages')
+      .insert({ from_user_id: currentUser.id, to_user_id: toUserId, content: sanitized })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async function markDMsRead(fromUserId) {
+    if (!currentUser) return;
+    await sb.from('direct_messages')
+      .update({ is_read: true })
+      .eq('to_user_id', currentUser.id)
+      .eq('from_user_id', fromUserId)
+      .eq('is_read', false);
+  }
+
+  function subscribeDMs(callback) {
+    if (!currentUser) return;
+    if (dmSubscription) dmSubscription.unsubscribe();
+    onNewDM = callback;
+    dmSubscription = sb.channel('dms:' + currentUser.id)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'direct_messages' },
+        async (payload) => {
+          const dm = payload.new;
+          if (dm.from_user_id === currentUser.id || dm.to_user_id === currentUser.id) {
+            // Fetch with profile info
+            const { data } = await sb.from('direct_messages')
+              .select(`
+                id, content, created_at, from_user_id, to_user_id, is_read,
+                from_profile:from_user_id ( username, avatar_url, name_color, name_effect, user_id_num )
+              `)
+              .eq('id', dm.id)
+              .single();
+            if (data && onNewDM) onNewDM(data);
+          }
+        }
+      )
+      .subscribe();
+  }
+
+  // --- USER SEARCH (for @mentions and DMs) ---
+  async function searchUsers(query, limit = 10) {
+    if (!query) return [];
+    const { data, error } = await sb.from('profiles')
+      .select('id, username, avatar_url, name_color, name_effect, user_id_num, is_admin')
+      .ilike('username', `%${query}%`)
+      .limit(limit);
+    if (error) return [];
+    return data || [];
+  }
+
+  async function fetchAllProfiles(limit = 50) {
+    const { data, error } = await sb.from('profiles')
+      .select('id, username, avatar_url, name_color, name_effect, user_id_num, is_admin')
+      .order('username')
+      .limit(limit);
+    if (error) return [];
+    return data || [];
   }
 
   // --- MENTIONS ---
@@ -264,6 +385,7 @@ const SupabaseClient = (() => {
   function unsubscribeAll() {
     unsubscribeChat();
     if (mentionSubscription) { mentionSubscription.unsubscribe(); mentionSubscription = null; }
+    if (dmSubscription) { dmSubscription.unsubscribe(); dmSubscription = null; }
   }
 
   // --- ADMIN FUNCTIONS ---
@@ -342,6 +464,8 @@ const SupabaseClient = (() => {
     fetchProfile, updateProfile, uploadAvatar,
     fetchMessages, sendMessage, subscribeChat, unsubscribeChat,
     fetchUnreadMentions, markMentionsRead,
+    fetchDMConversations, fetchDMsWith, sendDM, markDMsRead, subscribeDMs,
+    searchUsers, fetchAllProfiles,
     setOnAuthChange, setOnMentionUpdate,
     getUser, getProfile, getUnreadCount, isAdmin,
     adminFetchAllUsers, adminUpdateUser,
