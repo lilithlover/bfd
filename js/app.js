@@ -447,7 +447,12 @@
         document.getElementById('edit-avatar-preview').innerHTML = `<img src="${escapeHtml(url)}" alt="Avatar">`;
       }
       showToast('AVATAR UPDATED'); AudioSystem.sfxSelect();
-    } catch (err) { AudioSystem.sfxError(); showToast('UPLOAD FAILED'); }
+    } catch (err) {
+      AudioSystem.sfxError();
+      const errMsg = err.message || err.error || 'UNKNOWN ERROR';
+      showToast('UPLOAD FAILED: ' + String(errMsg).toUpperCase().slice(0, 50));
+      console.error('Avatar upload error:', err);
+    }
   });
   document.getElementById('edit-save').addEventListener('click', async () => {
     try {
@@ -652,9 +657,21 @@
       SupabaseClient.subscribeChat((msg) => {
         const msgChannel = msg.channel || 'general';
         if (msgChannel === currentChannel) {
-          chatMessages.appendChild(renderMessage(msg));
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-          AudioSystem.sfxChat();
+          const content = msg.content || '';
+          let el;
+          if (isDropMessage(content)) {
+            el = renderDropMessage(msg);
+            if (el) AudioSystem.sfxMention();
+          } else if (isClaimMessage(content)) {
+            el = renderClaimMessage(msg);
+          } else {
+            el = renderMessage(msg);
+            AudioSystem.sfxChat();
+          }
+          if (el) {
+            chatMessages.appendChild(el);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
         } else {
           // Unread badge for other hub
           if (hubUnread[msgChannel] !== undefined) {
@@ -705,7 +722,26 @@
       if (messages.length === 0) {
         addSystemMessage('NO MESSAGES YET. BE THE FIRST TO SPEAK.');
       } else {
-        messages.forEach(msg => chatMessages.appendChild(renderMessage(msg)));
+        // First pass: find all claim messages to mark drops as claimed
+        messages.forEach(msg => {
+          if (isClaimMessage(msg.content)) {
+            const info = parseClaimMessage(msg.content);
+            claimedDropIds.add(info.dropMsgId);
+          }
+        });
+        // Second pass: render all messages
+        messages.forEach(msg => {
+          const content = msg.content || '';
+          let el;
+          if (isDropMessage(content)) {
+            el = renderDropMessage(msg);
+          } else if (isClaimMessage(content)) {
+            el = renderClaimMessage(msg);
+          } else {
+            el = renderMessage(msg);
+          }
+          if (el) chatMessages.appendChild(el);
+        });
       }
       chatMessages.scrollTop = chatMessages.scrollHeight;
     } catch (err) {
@@ -750,127 +786,197 @@
   const DROP_CLAIM_WINDOW_MS = 5 * 60 * 1000; // 5 minutes to claim
   const DROP_DUPE_REWARD = 100; // coins for owning the effect already
   let dropTimer = null;
-  let activeDropEffect = null;
-  let activeDropExpiry = 0;
-  let activeDropElement = null;
+  // Track claimed drops locally so we don't double-claim
+  const claimedDropIds = new Set();
+
+  // Drop message format: __DROP__:effectId
+  // Claim message format: __CLAIMED__:effectId:dropMsgId:claimerUsername
+  const DROP_PREFIX = '__DROP__:';
+  const CLAIM_PREFIX = '__CLAIMED__:';
+
+  function isDropMessage(content) { return content.startsWith(DROP_PREFIX); }
+  function isClaimMessage(content) { return content.startsWith(CLAIM_PREFIX); }
+  function isSystemDropMessage(content) { return isDropMessage(content) || isClaimMessage(content); }
+
+  function parseDropMessage(content) {
+    // __DROP__:effectId
+    const effectId = content.slice(DROP_PREFIX.length);
+    return DROPPABLE_EFFECTS.find(e => e.id === effectId) || null;
+  }
+
+  function parseClaimMessage(content) {
+    // __CLAIMED__:effectId:dropMsgId:claimerUsername
+    const parts = content.slice(CLAIM_PREFIX.length).split(':');
+    return { effectId: parts[0], dropMsgId: parts[1], claimer: parts.slice(2).join(':') };
+  }
 
   function startDropTimer() {
     if (dropTimer) clearInterval(dropTimer);
     dropTimer = setInterval(() => {
       if (currentScreen === 'screen-chat' && SupabaseClient.getUser()) {
-        spawnDrop();
+        spawnDropMessage();
       }
     }, DROP_INTERVAL_MS);
   }
 
-  function spawnDrop(specificEffectId) {
-    // Pick a random droppable effect, or use a specific one
+  // Spawn a drop by inserting a special message into the current channel
+  async function spawnDropMessage(specificEffectId) {
     let effect;
     if (specificEffectId) {
       effect = DROPPABLE_EFFECTS.find(e => e.id === specificEffectId);
-      if (!effect) effect = DROPPABLE_EFFECTS[Math.floor(Math.random() * DROPPABLE_EFFECTS.length)];
-    } else {
+    }
+    if (!effect) {
       effect = DROPPABLE_EFFECTS[Math.floor(Math.random() * DROPPABLE_EFFECTS.length)];
     }
-
-    activeDropEffect = effect;
-    activeDropExpiry = Date.now() + DROP_CLAIM_WINDOW_MS;
-
-    // Create the drop message element
-    const div = document.createElement('div');
-    div.className = 'chat-drop';
-    div.innerHTML = `
-      <div class="chat-drop-inner">
-        <div class="chat-drop-icon">\u2605</div>
-        <div class="chat-drop-info">
-          <div class="chat-drop-title">RARE EFFECT DROP!</div>
-          <div class="chat-drop-effect ${getEffectClass(effect.id)}">${escapeHtml(effect.name)}</div>
-          <div class="chat-drop-timer" id="drop-timer-text">5:00 REMAINING</div>
-        </div>
-        <button class="chat-drop-claim" id="drop-claim-btn">\u2605 CLAIM</button>
-      </div>
-    `;
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    activeDropElement = div;
-    AudioSystem.sfxMention();
-
-    // Claim button
-    div.querySelector('#drop-claim-btn').addEventListener('click', () => claimDrop());
-
-    // Countdown timer
-    const timerEl = div.querySelector('#drop-timer-text');
-    const countdownInterval = setInterval(() => {
-      const remaining = activeDropExpiry - Date.now();
-      if (remaining <= 0 || !activeDropEffect) {
-        clearInterval(countdownInterval);
-        if (activeDropEffect && activeDropElement) {
-          // Expired unclaimed
-          activeDropElement.querySelector('.chat-drop-inner').classList.add('expired');
-          timerEl.textContent = 'EXPIRED';
-          const claimBtn = activeDropElement.querySelector('.chat-drop-claim');
-          if (claimBtn) claimBtn.remove();
-          activeDropEffect = null;
-          activeDropElement = null;
-        }
-        return;
-      }
-      const mins = Math.floor(remaining / 60000);
-      const secs = Math.floor((remaining % 60000) / 1000);
-      timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')} REMAINING`;
-    }, 1000);
+    try {
+      await SupabaseClient.sendMessage(DROP_PREFIX + effect.id, currentChannel);
+    } catch (err) {
+      showToast('DROP SPAWN FAILED');
+      AudioSystem.sfxError();
+    }
   }
 
-  async function claimDrop() {
-    if (!activeDropEffect) { showToast('DROP EXPIRED'); AudioSystem.sfxError(); return; }
-    if (Date.now() > activeDropExpiry) { showToast('DROP EXPIRED'); AudioSystem.sfxError(); return; }
+  // Claim a drop by inserting a claim message + updating profile
+  async function claimDrop(dropMsgId, effectId, dropTime) {
+    // Check if expired (5 min window)
+    const dropDate = new Date(dropTime).getTime();
+    if (Date.now() - dropDate > DROP_CLAIM_WINDOW_MS) {
+      showToast('DROP EXPIRED');
+      AudioSystem.sfxError();
+      return;
+    }
+
+    if (claimedDropIds.has(dropMsgId)) {
+      showToast('ALREADY CLAIMED');
+      AudioSystem.sfxError();
+      return;
+    }
+
     const user = SupabaseClient.getUser();
     const profile = SupabaseClient.getProfile();
     if (!user || !profile) { showToast('LOGIN REQUIRED'); AudioSystem.sfxError(); return; }
 
-    const effectId = activeDropEffect.id;
-    const effectName = activeDropEffect.name;
     const owned = parseOwnedEffects(profile.owned_effects || '');
     const alreadyOwned = owned.includes(effectId);
+    const effect = DROPPABLE_EFFECTS.find(e => e.id === effectId);
+    const effectName = effect ? effect.name : effectId.toUpperCase();
 
     try {
+      // Update profile first
       if (alreadyOwned) {
-        // Already own it - get coins instead
         const newBalance = (profile.balance || 0) + DROP_DUPE_REWARD;
         await SupabaseClient.updateProfile({ balance: newBalance });
-        showToast(`ALREADY OWNED! +$${DROP_DUPE_REWARD} COINS`);
       } else {
-        // Add to owned effects
         owned.push(effectId);
         await SupabaseClient.updateProfile({ owned_effects: owned.join(',') });
-        showToast(`\u2605 CLAIMED: ${effectName}!`);
+      }
+
+      // Send claim message so all users see it
+      await SupabaseClient.sendMessage(
+        CLAIM_PREFIX + effectId + ':' + dropMsgId + ':' + profile.username,
+        currentChannel
+      );
+
+      claimedDropIds.add(dropMsgId);
+
+      if (alreadyOwned) {
+        showToast('ALREADY OWNED! +$' + DROP_DUPE_REWARD + ' COINS');
+      } else {
+        showToast('\u2605 CLAIMED: ' + effectName + '!');
       }
       AudioSystem.sfxSelect();
-
-      // Mark drop as claimed in UI
-      if (activeDropElement) {
-        const inner = activeDropElement.querySelector('.chat-drop-inner');
-        inner.classList.add('claimed');
-        const claimBtn = activeDropElement.querySelector('.chat-drop-claim');
-        if (claimBtn) claimBtn.remove();
-        const timerEl = activeDropElement.querySelector('#drop-timer-text');
-        if (timerEl) {
-          timerEl.textContent = alreadyOwned
-            ? `CLAIMED BY ${escapeHtml(profile.username)} (+$${DROP_DUPE_REWARD})`
-            : `CLAIMED BY ${escapeHtml(profile.username)}`;
-        }
-      }
-
-      // Clear drop
-      activeDropEffect = null;
-      activeDropElement = null;
 
       // Refresh profile
       await SupabaseClient.fetchProfile();
     } catch (err) {
-      showToast('CLAIM FAILED');
+      showToast('CLAIM FAILED: ' + (err.message || 'ERROR').toUpperCase().slice(0, 50));
       AudioSystem.sfxError();
     }
+  }
+
+  // Render a drop message (called from renderMessage)
+  function renderDropMessage(msg) {
+    const effect = parseDropMessage(msg.content);
+    if (!effect) return null;
+
+    const div = document.createElement('div');
+    div.className = 'chat-drop';
+    div.dataset.msgId = msg.id;
+    div.dataset.effectId = effect.id;
+
+    const dropTime = new Date(msg.created_at).getTime();
+    const remaining = DROP_CLAIM_WINDOW_MS - (Date.now() - dropTime);
+    const isExpired = remaining <= 0;
+    const isClaimed = claimedDropIds.has(String(msg.id));
+
+    div.innerHTML = `
+      <div class="chat-drop-inner${isClaimed ? ' claimed' : ''}${isExpired && !isClaimed ? ' expired' : ''}">
+        <div class="chat-drop-icon">\u2605</div>
+        <div class="chat-drop-info">
+          <div class="chat-drop-title">RARE EFFECT DROP!</div>
+          <div class="chat-drop-effect ${getEffectClass(effect.id)}">${escapeHtml(effect.name)}</div>
+          <div class="chat-drop-timer" data-drop-timer="${msg.id}">${isExpired ? 'EXPIRED' : isClaimed ? 'CLAIMED' : ''}</div>
+        </div>
+        ${!isExpired && !isClaimed ? `<button class="chat-drop-claim" data-drop-claim="${msg.id}">\u2605 CLAIM</button>` : ''}
+      </div>
+    `;
+
+    // Wire up claim button
+    const claimBtn = div.querySelector('[data-drop-claim]');
+    if (claimBtn) {
+      claimBtn.addEventListener('click', () => claimDrop(String(msg.id), effect.id, msg.created_at));
+    }
+
+    // Start countdown if not expired
+    if (!isExpired && !isClaimed) {
+      const timerEl = div.querySelector('[data-drop-timer]');
+      const countdownInterval = setInterval(() => {
+        const rem = DROP_CLAIM_WINDOW_MS - (Date.now() - dropTime);
+        if (rem <= 0 || claimedDropIds.has(String(msg.id))) {
+          clearInterval(countdownInterval);
+          if (!claimedDropIds.has(String(msg.id))) {
+            if (timerEl) timerEl.textContent = 'EXPIRED';
+            const inner = div.querySelector('.chat-drop-inner');
+            if (inner) inner.classList.add('expired');
+            const btn = div.querySelector('.chat-drop-claim');
+            if (btn) btn.remove();
+          }
+          return;
+        }
+        const mins = Math.floor(rem / 60000);
+        const secs = Math.floor((rem % 60000) / 1000);
+        timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')} REMAINING`;
+      }, 1000);
+    }
+
+    return div;
+  }
+
+  // Render a claim message (called from renderMessage)
+  function renderClaimMessage(msg) {
+    const info = parseClaimMessage(msg.content);
+    const effect = DROPPABLE_EFFECTS.find(e => e.id === info.effectId);
+    const effectName = effect ? effect.name : info.effectId.toUpperCase();
+
+    // Mark the original drop as claimed
+    claimedDropIds.add(info.dropMsgId);
+
+    // Update the original drop element if it exists in DOM
+    const dropEl = chatMessages.querySelector(`.chat-drop[data-msg-id="${info.dropMsgId}"]`);
+    if (dropEl) {
+      const inner = dropEl.querySelector('.chat-drop-inner');
+      if (inner) inner.classList.add('claimed');
+      const btn = dropEl.querySelector('.chat-drop-claim');
+      if (btn) btn.remove();
+      const timer = dropEl.querySelector('[data-drop-timer]');
+      if (timer) timer.textContent = 'CLAIMED BY ' + info.claimer;
+    }
+
+    // Render a system-style claim announcement
+    const div = document.createElement('div');
+    div.className = 'chat-system chat-claim-msg';
+    div.innerHTML = `\u2605 <span style="color:#e02020;">${escapeHtml(info.claimer)}</span> CLAIMED THE <span class="${getEffectClass(info.effectId)}" style="color:#e02020;">${escapeHtml(effectName)}</span> EFFECT!`;
+    return div;
   }
 
   // Admin spawn drop controls
@@ -883,10 +989,8 @@
   if (spawnDropBtn) {
     spawnDropBtn.addEventListener('click', () => {
       if (!SupabaseClient.isAdmin()) return;
-      // Show spawn modal
       const modal = document.getElementById('spawn-drop-modal');
       if (modal) {
-        // Populate effect select
         const sel = document.getElementById('spawn-drop-select');
         if (sel) {
           sel.innerHTML = '<option value="random">RANDOM</option>' +
@@ -905,11 +1009,7 @@
       const sel = document.getElementById('spawn-drop-select');
       const val = sel ? sel.value : 'random';
       document.getElementById('spawn-drop-modal')?.classList.remove('show');
-      if (val === 'random') {
-        spawnDrop();
-      } else {
-        spawnDrop(val);
-      }
+      spawnDropMessage(val === 'random' ? null : val);
       showToast('DROP SPAWNED!');
     });
   }
@@ -1585,7 +1685,7 @@
         row.innerHTML = `
           <span class="admin-msg-user" data-uid="${msg.user_id}">${escapeHtml(username)}</span>
           <span style="color:#282828;font-size:7px;">[${channel}]</span>
-          <span class="admin-msg-text">${escapeHtml(msg.content.slice(0, 120))}</span>
+          <span class="admin-msg-text">${isDropMessage(msg.content) ? '\u2605 EFFECT DROP' : isClaimMessage(msg.content) ? '\u2605 DROP CLAIMED' : escapeHtml(msg.content.slice(0, 120))}</span>
           <span class="admin-msg-time">${date} ${time}</span>
           <button class="admin-msg-delete" data-msgid="${msg.id}" title="Delete">\u2718</button>
         `;
