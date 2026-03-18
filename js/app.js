@@ -8,60 +8,119 @@
   'use strict';
 
   /* ===== EFFECTS REGISTRY ===== */
-  // rarity: 'free' = always available, 'drop' = rare drop only, 'admin' = admin only
+  // rarity: 'free' = always available, 'drop' = rare drop only, 'shop' = buy in shop, 'admin' = admin only
   const EFFECTS = [
     // FREE - always available to everyone
-    { id: 'none',       name: 'NONE',        rarity: 'free' },
-    { id: 'glow',       name: 'GLOW',        rarity: 'free' },
-    { id: 'pulse',      name: 'PULSE',       rarity: 'free' },
-    { id: 'shadow',     name: 'SHADOW',      rarity: 'free' },
-    { id: 'flicker',    name: 'FLICKER',     rarity: 'free' },
-    { id: 'outline',    name: 'OUTLINE',     rarity: 'free' },
+    { id: 'none',       name: 'NONE',                      rarity: 'free' },
+    { id: 'glow',       name: 'SOFT AURA',                 rarity: 'free' },
+    { id: 'pulse',      name: 'HEARTBEAT',                 rarity: 'free' },
+    { id: 'shadow',     name: 'DARK CAST',                 rarity: 'free' },
+    { id: 'flicker',    name: 'STATIC GHOST',              rarity: 'free' },
+    { id: 'outline',    name: 'HOLLOW SHELL',              rarity: 'free' },
     // RARE DROPS - obtained from chat drops only
-    { id: 'neon',       name: 'NEON',        rarity: 'drop' },
-    { id: 'ice',        name: 'ICE',         rarity: 'drop' },
-    { id: 'fire',       name: 'FIRE',        rarity: 'drop' },
-    { id: 'glitch',     name: 'GLITCH',      rarity: 'drop' },
-    { id: 'radioactive',name: 'RADIOACTIVE', rarity: 'drop' },
-    { id: 'phantom',    name: 'PHANTOM',     rarity: 'drop' },
-    { id: 'lightning',  name: 'LIGHTNING',   rarity: 'drop' },
-    { id: 'blood',      name: 'BLOOD',       rarity: 'drop' },
-    { id: 'ember',      name: 'EMBER',       rarity: 'drop' },
-    { id: 'toxic',      name: 'TOXIC',       rarity: 'drop' },
-    { id: 'chrome',     name: 'CHROME',      rarity: 'drop' },
-    { id: 'matrix',     name: 'MATRIX',      rarity: 'drop' },
-    { id: 'voidfx',     name: 'VOID',        rarity: 'drop' },
-    { id: 'thunder',    name: 'THUNDER',     rarity: 'drop' },
-    { id: 'crystal',    name: 'CRYSTAL',     rarity: 'drop' },
-    { id: 'magma',      name: 'MAGMA',       rarity: 'drop' },
-    { id: 'spectrum',   name: 'SPECTRUM',    rarity: 'drop' },
-    { id: 'storm',      name: 'STORM',       rarity: 'drop' },
-    { id: 'inferno',    name: 'INFERNO',     rarity: 'drop' },
-    { id: 'plasma',     name: 'PLASMA',      rarity: 'drop' },
-    { id: 'eclipse',    name: 'ECLIPSE',     rarity: 'drop' },
-    { id: 'cyber',      name: 'CYBER',       rarity: 'drop' },
-    { id: 'frost',      name: 'FROST',       rarity: 'drop' },
-    { id: 'nova',       name: 'NOVA',        rarity: 'drop' },
-    { id: 'vortex',     name: 'VORTEX',      rarity: 'drop' },
-    { id: 'demon',      name: 'DEMON',       rarity: 'drop' },
-    { id: 'wraith',     name: 'WRAITH',      rarity: 'drop' },
-    { id: 'titan',      name: 'TITAN',       rarity: 'drop' },
-    { id: 'reaper',     name: 'REAPER',      rarity: 'drop' },
-    { id: 'dragon',     name: 'DRAGON',      rarity: 'drop' },
-    { id: 'celestial',  name: 'CELESTIAL',   rarity: 'drop' },
-    { id: 'oblivion',   name: 'OBLIVION',    rarity: 'drop' },
-    { id: 'eternal',    name: 'ETERNAL',     rarity: 'drop' },
-    { id: 'supernova',  name: 'SUPERNOVA',   rarity: 'drop' },
-    { id: 'god',        name: 'GOD',         rarity: 'drop' },
+    { id: 'neon',       name: 'NEON BLEED',                rarity: 'drop' },
+    { id: 'ice',        name: 'FROSTBITE KISS',            rarity: 'drop' },
+    { id: 'fire',       name: 'HELLFIRE TONGUE',           rarity: 'drop' },
+    { id: 'glitch',     name: 'BROKEN SIGNAL',             rarity: 'drop' },
+    { id: 'radioactive',name: 'NUCLEAR DECAY',             rarity: 'drop' },
+    { id: 'phantom',    name: 'SOUL FADING',               rarity: 'drop' },
+    { id: 'lightning',  name: 'THUNDERSTRIKE',              rarity: 'drop' },
+    { id: 'blood',      name: 'CRIMSON DRIP',              rarity: 'drop' },
+    { id: 'ember',      name: 'DYING EMBER',               rarity: 'drop' },
+    { id: 'toxic',      name: 'VENOMSPILL',                rarity: 'drop' },
+    { id: 'chrome',     name: 'LIQUID METAL',              rarity: 'drop' },
+    { id: 'matrix',     name: 'DIGITAL RAIN',              rarity: 'drop' },
+    { id: 'voidfx',     name: 'ABYSSAL VOID',              rarity: 'drop' },
+    { id: 'thunder',    name: 'WRATH OF ZEUS',             rarity: 'drop' },
+    { id: 'crystal',    name: 'DIAMOND DUST',              rarity: 'drop' },
+    { id: 'magma',      name: 'MOLTEN CORE',               rarity: 'drop' },
+    { id: 'spectrum',   name: 'PRISM SHIFT',               rarity: 'drop' },
+    { id: 'storm',      name: 'CHAOS TEMPEST',             rarity: 'drop' },
+    { id: 'inferno',    name: 'NINE CIRCLES',              rarity: 'drop' },
+    { id: 'plasma',     name: 'PLASMA SURGE',              rarity: 'drop' },
+    { id: 'eclipse',    name: 'SOLAR ECLIPSE',             rarity: 'drop' },
+    { id: 'cyber',      name: 'CYBERPUNK WIRE',            rarity: 'drop' },
+    { id: 'frost',      name: 'ARCTIC BREATH',             rarity: 'drop' },
+    { id: 'nova',       name: 'DYING STAR',                rarity: 'drop' },
+    { id: 'vortex',     name: 'BLACK HOLE',                rarity: 'drop' },
+    { id: 'demon',      name: 'DEMON SIGIL',               rarity: 'drop' },
+    { id: 'wraith',     name: 'WRAITH WALK',               rarity: 'drop' },
+    { id: 'titan',      name: 'TITAN\'S CROWN',            rarity: 'drop' },
+    { id: 'reaper',     name: 'DEATH\'S TOUCH',            rarity: 'drop' },
+    { id: 'dragon',     name: 'DRAGONBREATH',              rarity: 'drop' },
+    { id: 'celestial',  name: 'HEAVEN\'S GATE',            rarity: 'drop' },
+    { id: 'oblivion',   name: 'OBLIVION CALL',             rarity: 'drop' },
+    { id: 'eternal',    name: 'ETERNAL FLAME',             rarity: 'drop' },
+    { id: 'supernova',  name: 'SUPERNOVA BURST',           rarity: 'drop' },
+    { id: 'god',        name: 'GOD MODE',                  rarity: 'drop' },
+    // SHOP-EXCLUSIVE EFFECTS - buy with coins
+    { id: 'bloodmoon',  name: 'BLOOD MOON RISING',         rarity: 'shop', price: 500 },
+    { id: 'witchfire',  name: 'WITCHFIRE HEX',             rarity: 'shop', price: 600 },
+    { id: 'deadpixel',  name: 'DEAD PIXEL CURSE',          rarity: 'shop', price: 400 },
+    { id: 'nightterror',name: 'NIGHT TERROR',              rarity: 'shop', price: 750 },
+    { id: 'acidrain',   name: 'ACID RAIN',                 rarity: 'shop', price: 550 },
+    { id: 'hologram',   name: 'HOLOGRAM GHOST',            rarity: 'shop', price: 800 },
+    { id: 'soulchain',  name: 'SOULCHAIN BIND',            rarity: 'shop', price: 900 },
+    { id: 'pixelrift',  name: 'PIXEL RIFT',                rarity: 'shop', price: 450 },
+    { id: 'cosmicrot',  name: 'COSMIC ROT',                rarity: 'shop', price: 1000 },
+    { id: 'deathwish',  name: 'DEATH WISH',                rarity: 'shop', price: 1200 },
     // ADMIN-ONLY
-    { id: 'divine',     name: 'DIVINE',      rarity: 'admin' },
-    { id: 'corrupted',  name: 'CORRUPTED',   rarity: 'admin' },
-    { id: 'ancient',    name: 'ANCIENT',     rarity: 'admin' },
-    { id: 'overlord',   name: 'OVERLORD',    rarity: 'admin' },
-    { id: 'omega',      name: 'OMEGA',       rarity: 'admin' },
+    { id: 'divine',     name: 'DIVINE ASCENSION',          rarity: 'admin' },
+    { id: 'corrupted',  name: 'CORRUPTED DATA',            rarity: 'admin' },
+    { id: 'ancient',    name: 'ANCIENT RUNE',              rarity: 'admin' },
+    { id: 'overlord',   name: 'OVERLORD\'S WRATH',         rarity: 'admin' },
+    { id: 'omega',      name: 'OMEGA PROTOCOL',            rarity: 'admin' },
   ];
 
   const DROPPABLE_EFFECTS = EFFECTS.filter(e => e.rarity === 'drop');
+  const SHOP_EFFECTS = EFFECTS.filter(e => e.rarity === 'shop');
+
+  /* ===== SHOP ITEMS REGISTRY ===== */
+  // Categories: effects, fonts, titles, flair
+  const SHOP_FONTS = [
+    { id: 'font-default',   name: 'DEFAULT (PRESS START)',     price: 0,    css: "'Press Start 2P', monospace", preview: 'ABCDEF' },
+    { id: 'font-bloodcrow', name: 'BLOOD CROW',                price: 300,  css: "'Blood Crow', Impact, sans-serif", preview: 'ABCDEF' },
+    { id: 'font-retro',     name: 'RETRO ARCADE',              price: 250,  css: "'Retro Arcade', 'Press Start 2P', monospace", preview: 'ABCDEF' },
+    { id: 'font-vt323',     name: 'VT323 TERMINAL',            price: 400,  css: "'VT323', monospace", preview: 'ABCDEF' },
+    { id: 'font-silkscreen',name: 'SILKSCREEN',                price: 350,  css: "'Silkscreen', monospace", preview: 'ABCDEF' },
+    { id: 'font-dotgothic', name: 'DOT GOTHIC',                price: 500,  css: "'DotGothic16', monospace", preview: 'ABCDEF' },
+    { id: 'font-monoton',   name: 'MONOTON NEON',              price: 600,  css: "'Monoton', cursive", preview: 'ABCDEF' },
+    { id: 'font-bungee',    name: 'BUNGEE SHADE',              price: 550,  css: "'Bungee Shade', cursive", preview: 'ABCDEF' },
+  ];
+
+  const SHOP_TITLES = [
+    { id: 'title-newcomer',  name: 'NEWCOMER',       price: 0,    color: '#666' },
+    { id: 'title-shadow',    name: 'SHADOW WALKER',  price: 200,  color: '#555' },
+    { id: 'title-blade',     name: 'BLADE RUNNER',   price: 300,  color: '#88aacc' },
+    { id: 'title-phantom',   name: 'PHANTOM LORD',   price: 400,  color: '#9966ff' },
+    { id: 'title-warlord',   name: 'WARLORD',        price: 500,  color: '#cc4400' },
+    { id: 'title-mystic',    name: 'MYSTIC SAGE',    price: 600,  color: '#44cc88' },
+    { id: 'title-reaper',    name: 'GRIM REAPER',    price: 800,  color: '#880000' },
+    { id: 'title-overlord',  name: 'DARK OVERLORD',  price: 1000, color: '#aa00aa' },
+    { id: 'title-legend',    name: 'LIVING LEGEND',  price: 1500, color: '#ffaa00' },
+    { id: 'title-god',       name: 'GODSLAYER',      price: 2500, color: '#ff0000' },
+    { id: 'title-void',      name: 'VOID EMPEROR',   price: 3000, color: '#220044' },
+    { id: 'title-eternal',   name: 'ETERNAL ONE',    price: 5000, color: '#ffd700' },
+  ];
+
+  const SHOP_FLAIR = [
+    { id: 'flair-skull',     name: '\u2620 SKULL TAG',          price: 150,  prefix: '\u2620 ' },
+    { id: 'flair-crown',     name: '\u265B ROYAL CROWN',       price: 250,  prefix: '\u265B ' },
+    { id: 'flair-star',      name: '\u2605 STAR MARK',         price: 200,  prefix: '\u2605 ' },
+    { id: 'flair-lightning', name: '\u26A1 LIGHTNING BOLT',     price: 300,  prefix: '\u26A1 ' },
+    { id: 'flair-sword',     name: '\u2694 CROSSED SWORDS',    price: 350,  prefix: '\u2694 ' },
+    { id: 'flair-diamond',   name: '\u25C6 BLACK DIAMOND',     price: 400,  prefix: '\u25C6 ' },
+    { id: 'flair-fire',      name: '\u2739 FIRE SIGIL',        price: 450,  prefix: '\u2739 ' },
+    { id: 'flair-biohazard', name: '\u2623 BIOHAZARD',         price: 500,  prefix: '\u2623 ' },
+    { id: 'flair-eye',       name: '\u25C9 ALL-SEEING EYE',    price: 600,  prefix: '\u25C9 ' },
+    { id: 'flair-moon',      name: '\u263E DARK MOON',         price: 350,  prefix: '\u263E ' },
+  ];
+
+  // Parse owned items from comma-separated string (stored in owned_effects field)
+  function parseOwnedItems(str) {
+    if (!str) return [];
+    return str.split(',').map(s => s.trim()).filter(Boolean);
+  }
 
   function getEffectClass(effectId) {
     return effectId && effectId !== 'none' ? 'fx-' + effectId : '';
@@ -78,7 +137,7 @@
     return EFFECTS.filter(e => {
       if (e.rarity === 'admin') return isAdmin;
       if (e.rarity === 'free') return true;
-      // 'drop' effects: must own it, or be admin
+      // 'drop' or 'shop' effects: must own it, or be admin
       return isAdmin || owned.includes(e.id);
     });
   }
@@ -192,6 +251,10 @@
     item.addEventListener('click', () => {
       const target = item.dataset.target;
       if (!target) return;
+      if (target === 'screen-shop' && !SupabaseClient.getUser()) {
+        AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
+      }
+      if (target === 'screen-shop') loadShop();
       if (target === 'screen-chat') {
         if (SupabaseClient.getUser()) {
           switchHub(currentChannel);
@@ -290,6 +353,7 @@
   SupabaseClient.setOnAuthChange((user, profile) => {
     updateHUD(user, profile);
     updateNavMenu(user, profile);
+    updateShopMenu(user);
     updatePurgeBtn();
     updateSpawnDropBtn();
 
@@ -389,9 +453,54 @@
       let label = e.name;
       if (e.rarity === 'admin') label += ' [ADMIN]';
       else if (e.rarity === 'drop') label += ' \u2605';
+      else if (e.rarity === 'shop') label += ' \u2605 SHOP';
       opt.textContent = label;
       if (e.id === profile.name_effect) opt.selected = true;
       effectSelect.appendChild(opt);
+    });
+
+    // Get user preferences from localStorage
+    const ownedItems = parseOwnedItems(profile.owned_effects || '');
+    const user = SupabaseClient.getUser();
+    const prefs = user ? getUserPrefs(user.id) : { font: 'font-default', flair: 'none', titleId: 'title-newcomer' };
+
+    // Populate font selector
+    const fontSelect = document.getElementById('edit-font');
+    fontSelect.innerHTML = '';
+    SHOP_FONTS.forEach(f => {
+      if (f.price === 0 || ownedItems.includes(f.id) || profile.is_admin) {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        if (f.id === prefs.font) opt.selected = true;
+        fontSelect.appendChild(opt);
+      }
+    });
+
+    // Populate title selector - match by rank name
+    const titleSelect = document.getElementById('edit-title');
+    titleSelect.innerHTML = '';
+    SHOP_TITLES.forEach(t => {
+      if (t.price === 0 || ownedItems.includes(t.id) || profile.is_admin) {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        if (t.name === profile.rank || t.id === prefs.titleId) opt.selected = true;
+        titleSelect.appendChild(opt);
+      }
+    });
+
+    // Populate flair selector
+    const flairSelect = document.getElementById('edit-flair');
+    flairSelect.innerHTML = '<option value="none">NONE</option>';
+    SHOP_FLAIR.forEach(f => {
+      if (ownedItems.includes(f.id) || profile.is_admin) {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        if (f.id === prefs.flair) opt.selected = true;
+        flairSelect.appendChild(opt);
+      }
     });
 
     document.getElementById('edit-color').value = profile.name_color || '#e02020';
@@ -412,7 +521,7 @@
       <span class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(profile.rank)}</span>
       <span class="profile-detail"><span class="label">LEVEL:</span> ${profile.level} / 100</span>
       <span class="profile-detail"><span class="label">BALANCE:</span> $${profile.balance}</span>
-      <span class="profile-detail"><span class="label">EFFECTS OWNED:</span> ${parseOwnedEffects(profile.owned_effects).length} / ${DROPPABLE_EFFECTS.length}</span>
+      <span class="profile-detail"><span class="label">ITEMS OWNED:</span> ${parseOwnedEffects(profile.owned_effects).length}</span>
       <span class="profile-detail"><span class="label">JOINED:</span> ${created}</span>
       ${profile.is_admin ? '<span class="profile-detail"><span class="label">STATUS:</span> ADMINISTRATOR</span>' : ''}
     `;
@@ -458,14 +567,55 @@
   });
   document.getElementById('edit-save').addEventListener('click', async () => {
     try {
+      const titleId = document.getElementById('edit-title').value;
+      const titleObj = SHOP_TITLES.find(t => t.id === titleId);
+      const rankName = titleObj ? titleObj.name : 'NEWCOMER';
+
       await SupabaseClient.updateProfile({
         name_color: document.getElementById('edit-color').value,
         name_effect: document.getElementById('edit-effect').value,
+        rank: rankName,
       });
+
+      // Store font and flair in localStorage (no DB column needed)
+      const user = SupabaseClient.getUser();
+      if (user) {
+        const prefs = getUserPrefs(user.id);
+        prefs.font = document.getElementById('edit-font').value;
+        prefs.flair = document.getElementById('edit-flair').value;
+        prefs.titleId = titleId;
+        saveUserPrefs(user.id, prefs);
+      }
+
       AudioSystem.sfxSelect(); showToast('PROFILE SAVED');
       switchScreen('screen-editor', 'screen-nav');
     } catch (err) { AudioSystem.sfxError(); showToast('SAVE FAILED'); }
   });
+
+  // User preferences (stored in localStorage for font/flair)
+  function getUserPrefs(userId) {
+    try {
+      const data = localStorage.getItem('rune-prefs-' + userId);
+      return data ? JSON.parse(data) : { font: 'font-default', flair: 'none', titleId: 'title-newcomer' };
+    } catch (_) { return { font: 'font-default', flair: 'none', titleId: 'title-newcomer' }; }
+  }
+  function saveUserPrefs(userId, prefs) {
+    try { localStorage.setItem('rune-prefs-' + userId, JSON.stringify(prefs)); } catch (_) {}
+  }
+  function getActiveFlair() {
+    const user = SupabaseClient.getUser();
+    if (!user) return '';
+    const prefs = getUserPrefs(user.id);
+    const flair = SHOP_FLAIR.find(f => f.id === prefs.flair);
+    return flair ? flair.prefix : '';
+  }
+  function getActiveFont() {
+    const user = SupabaseClient.getUser();
+    if (!user) return '';
+    const prefs = getUserPrefs(user.id);
+    const font = SHOP_FONTS.find(f => f.id === prefs.font);
+    return font && prefs.font !== 'font-default' ? 'chat-font-' + prefs.font.replace('font-', '') : '';
+  }
 
   /* ===== CHAT ===== */
   const chatMessages = document.getElementById('chat-messages');
@@ -542,6 +692,12 @@
     const adminTag = p && p.is_admin ? '<span class="chat-admin-tag">[ADMIN]</span>' : '';
     const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
+    // Check for flair/font (current user's own messages)
+    const currentUser = SupabaseClient.getUser();
+    const isOwnMsg = currentUser && msg.user_id === currentUser.id;
+    const flairPrefix = isOwnMsg ? getActiveFlair() : '';
+    const fontClass = isOwnMsg ? getActiveFont() : '';
+
     // Check if it's an action message (/me)
     const isAction = msg.content.startsWith('/me ');
     const content = isAction ? msg.content.slice(4) : msg.content;
@@ -555,12 +711,12 @@
       </div>
       <div class="chat-msg-body">
         <div class="chat-msg-header">
-          <span class="chat-user ${effect}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${escapeHtml(username)}</span>
+          <span class="chat-user ${effect}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairPrefix}${escapeHtml(username)}</span>
           <span class="chat-id">${idNum}</span>
           ${adminTag}
           <span class="chat-time">${time}</span>
         </div>
-        <span class="${textClass}">${isAction ? `* ${escapeHtml(username)} ${parseEmojis(content)}` : parseEmojis(content)}</span>
+        <span class="${textClass} ${fontClass}">${isAction ? `* ${escapeHtml(username)} ${parseEmojis(content)}` : parseEmojis(content)}</span>
       </div>
     `;
 
@@ -1994,6 +2150,201 @@
     membersLoaded = false; // Reload each time to catch new registrations
     loadMembers();
   });
+
+  /* ===== SHOP SYSTEM ===== */
+  let currentShopTab = 'effects';
+
+  // Show/hide shop in nav
+  function updateShopMenu(user) {
+    const shopLi = document.getElementById('shop-menu-li');
+    if (shopLi) shopLi.style.display = user ? '' : 'none';
+  }
+
+  // Open shop
+  document.querySelector('[data-target="screen-shop"]')?.addEventListener('click', () => {
+    if (!SupabaseClient.getUser()) {
+      AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
+    }
+    loadShop();
+  });
+
+  // Shop tab switching
+  document.querySelectorAll('[data-shop-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioSystem.sfxNavigate();
+      currentShopTab = btn.dataset.shopTab;
+      document.querySelectorAll('[data-shop-tab]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderShopItems();
+    });
+  });
+
+  function loadShop() {
+    const profile = SupabaseClient.getProfile();
+    if (!profile) return;
+    document.getElementById('shop-balance').textContent = '$' + (profile.balance || 0);
+    renderShopItems();
+  }
+
+  function renderShopItems() {
+    const grid = document.getElementById('shop-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const profile = SupabaseClient.getProfile();
+    if (!profile) return;
+    const owned = parseOwnedItems(profile.owned_effects || '');
+
+    switch (currentShopTab) {
+      case 'effects':
+        renderShopEffects(grid, owned, profile);
+        break;
+      case 'fonts':
+        renderShopFonts(grid, owned, profile);
+        break;
+      case 'titles':
+        renderShopTitles(grid, owned, profile);
+        break;
+      case 'flair':
+        renderShopFlair(grid, owned, profile);
+        break;
+    }
+  }
+
+  function renderShopEffects(grid, owned, profile) {
+    SHOP_EFFECTS.forEach(effect => {
+      const isOwned = owned.includes(effect.id);
+      const canAfford = (profile.balance || 0) >= effect.price;
+      const rarity = effect.price >= 1000 ? 'legendary' : effect.price >= 700 ? 'epic' : effect.price >= 400 ? 'rare' : 'common';
+
+      const item = document.createElement('div');
+      item.className = 'shop-item' + (isOwned ? ' owned' : '');
+      item.innerHTML = `
+        <div class="shop-item-rarity ${rarity}">${rarity.toUpperCase()}</div>
+        <div class="shop-item-name">${escapeHtml(effect.name)}</div>
+        <div class="shop-item-preview">
+          <span class="${getEffectClass(effect.id)}" style="color:#e02020;">${escapeHtml(effect.name)}</span>
+        </div>
+        <div class="shop-item-price">$${effect.price}</div>
+        <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
+          ${isOwned ? '\u2714 OWNED' : canAfford ? '\u2605 BUY' : 'NOT ENOUGH'}
+        </button>
+      `;
+      if (!isOwned && canAfford) {
+        item.querySelector('.shop-buy-btn').addEventListener('click', () => buyItem('effect', effect.id, effect.price, effect.name));
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function renderShopFonts(grid, owned, profile) {
+    SHOP_FONTS.forEach(font => {
+      const isOwned = font.price === 0 || owned.includes(font.id);
+      const canAfford = (profile.balance || 0) >= font.price;
+      const rarity = font.price >= 500 ? 'epic' : font.price >= 300 ? 'rare' : 'common';
+
+      const item = document.createElement('div');
+      item.className = 'shop-item' + (isOwned ? ' owned' : '');
+      item.innerHTML = `
+        <div class="shop-item-rarity ${rarity}">${font.price === 0 ? 'FREE' : rarity.toUpperCase()}</div>
+        <div class="shop-item-name">${escapeHtml(font.name)}</div>
+        <div class="shop-item-preview" style="font-family:${font.css};">
+          ${escapeHtml(font.preview)}
+        </div>
+        <div class="shop-item-price ${font.price === 0 ? 'free' : ''}">${font.price === 0 ? 'FREE' : '$' + font.price}</div>
+        <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
+          ${isOwned ? '\u2714 OWNED' : canAfford ? '\u2605 BUY' : 'NOT ENOUGH'}
+        </button>
+      `;
+      if (!isOwned && canAfford && font.price > 0) {
+        item.querySelector('.shop-buy-btn').addEventListener('click', () => buyItem('font', font.id, font.price, font.name));
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function renderShopTitles(grid, owned, profile) {
+    SHOP_TITLES.forEach(title => {
+      const isOwned = title.price === 0 || owned.includes(title.id);
+      const canAfford = (profile.balance || 0) >= title.price;
+      const rarity = title.price >= 2500 ? 'legendary' : title.price >= 800 ? 'epic' : title.price >= 300 ? 'rare' : 'common';
+
+      const item = document.createElement('div');
+      item.className = 'shop-item' + (isOwned ? ' owned' : '');
+      item.innerHTML = `
+        <div class="shop-item-rarity ${rarity}">${title.price === 0 ? 'FREE' : rarity.toUpperCase()}</div>
+        <div class="shop-item-name">${escapeHtml(title.name)}</div>
+        <div class="shop-item-preview">
+          <span style="color:${title.color};letter-spacing:.08em;">${escapeHtml(title.name)}</span>
+        </div>
+        <div class="shop-item-price ${title.price === 0 ? 'free' : ''}">${title.price === 0 ? 'FREE' : '$' + title.price}</div>
+        <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
+          ${isOwned ? '\u2714 OWNED' : canAfford ? '\u2605 BUY' : 'NOT ENOUGH'}
+        </button>
+      `;
+      if (!isOwned && canAfford && title.price > 0) {
+        item.querySelector('.shop-buy-btn').addEventListener('click', () => buyItem('title', title.id, title.price, title.name));
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function renderShopFlair(grid, owned, profile) {
+    SHOP_FLAIR.forEach(flair => {
+      const isOwned = owned.includes(flair.id);
+      const canAfford = (profile.balance || 0) >= flair.price;
+      const rarity = flair.price >= 500 ? 'epic' : flair.price >= 300 ? 'rare' : 'common';
+
+      const item = document.createElement('div');
+      item.className = 'shop-item' + (isOwned ? ' owned' : '');
+      item.innerHTML = `
+        <div class="shop-item-rarity ${rarity}">${rarity.toUpperCase()}</div>
+        <div class="shop-item-name">${escapeHtml(flair.name)}</div>
+        <div class="shop-item-preview">
+          <span style="color:#ccc;font-size:1.3em;">${flair.prefix}USERNAME</span>
+        </div>
+        <div class="shop-item-desc">Shows ${flair.prefix}before your name in chat</div>
+        <div class="shop-item-price">$${flair.price}</div>
+        <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
+          ${isOwned ? '\u2714 OWNED' : canAfford ? '\u2605 BUY' : 'NOT ENOUGH'}
+        </button>
+      `;
+      if (!isOwned && canAfford) {
+        item.querySelector('.shop-buy-btn').addEventListener('click', () => buyItem('flair', flair.id, flair.price, flair.name));
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  async function buyItem(type, itemId, price, itemName) {
+    const profile = SupabaseClient.getProfile();
+    if (!profile) return;
+    if ((profile.balance || 0) < price) {
+      showToast('NOT ENOUGH COINS'); AudioSystem.sfxError(); return;
+    }
+
+    const owned = parseOwnedItems(profile.owned_effects || '');
+    if (owned.includes(itemId)) {
+      showToast('ALREADY OWNED'); AudioSystem.sfxError(); return;
+    }
+
+    try {
+      owned.push(itemId);
+      const newBalance = (profile.balance || 0) - price;
+      await SupabaseClient.updateProfile({
+        owned_effects: owned.join(','),
+        balance: newBalance,
+      });
+      showToast('\u2605 PURCHASED: ' + itemName);
+      AudioSystem.sfxSelect();
+      // Refresh shop display
+      await SupabaseClient.fetchProfile();
+      loadShop();
+    } catch (err) {
+      showToast('PURCHASE FAILED');
+      AudioSystem.sfxError();
+    }
+  }
 
   /* ===== GUEST CHAT (READ-ONLY) ===== */
   let guestChatLoaded = false;

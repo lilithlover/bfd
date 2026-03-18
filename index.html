@@ -6,7 +6,7 @@
   <title>RUNE TRIBE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Silkscreen&family=DotGothic16&family=Monoton&family=Bungee+Shade&display=swap" rel="stylesheet">
   <style>
     /* ===== FONTS ===== */
     @font-face { font-family: 'Blood Crow'; src: url('bloodcrowe.ttf') format('truetype'); font-display: swap; }
@@ -266,6 +266,67 @@
       filter: drop-shadow(0 0 12px rgba(255,0,0,.9)) drop-shadow(0 0 24px rgba(0,0,0,.8));
     }
     @keyframes fx-omega { 0%,100%{background-position:0% 50%}50%{background-position:300% 50%} }
+
+    /* SHOP-EXCLUSIVE EFFECTS */
+    .fx-bloodmoon { text-shadow: 0 0 6px #cc0000, 0 0 12px #880000, 0 0 24px #440000, 0 0 36px #220000 !important; animation: fx-bloodmoon 4s ease-in-out infinite !important; }
+    @keyframes fx-bloodmoon { 0%,100%{text-shadow:0 0 6px #cc0000,0 0 12px #880000;filter:brightness(.8)}50%{text-shadow:0 0 12px #ff0000,0 0 24px #cc0000,0 0 48px #880000;filter:brightness(1.3) hue-rotate(-10deg)} }
+    .fx-witchfire { text-shadow: 0 -2px 6px #9900ff, 0 -4px 12px #6600cc, 0 0 8px #33ff00 !important; animation: fx-witchfire .5s ease-in-out infinite alternate !important; }
+    @keyframes fx-witchfire { 0%{text-shadow:0 -2px 6px #9900ff,0 -4px 12px #6600cc,0 0 8px #33ff00}100%{text-shadow:0 -4px 10px #bb22ff,0 -8px 20px #9900ff,0 0 16px #66ff33} }
+    .fx-deadpixel { animation: fx-deadpixel .15s steps(4) infinite !important; }
+    @keyframes fx-deadpixel { 0%{text-shadow:-2px 0 #f00,2px 0 #0ff;opacity:1}25%{text-shadow:2px -1px #0f0,-2px 1px #f0f;opacity:.7}50%{text-shadow:0 2px #ff0,-1px -2px #00f;opacity:.9}75%{text-shadow:1px 1px #f00,-1px -1px #0ff;opacity:.5}100%{text-shadow:-2px 0 #f00,2px 0 #0ff;opacity:1} }
+    .fx-nightterror { text-shadow: 0 0 8px #000, 0 0 16px #220022, 0 0 32px #440044 !important; animation: fx-nightterror 3s ease-in-out infinite !important; }
+    @keyframes fx-nightterror { 0%,100%{filter:brightness(.4) saturate(.5);transform:scale(1)}30%{filter:brightness(1.5) saturate(2);transform:scale(1.05)}35%{filter:brightness(.2);transform:scale(1)}70%{filter:brightness(.6) saturate(.5);transform:scale(.98)} }
+    .fx-acidrain { text-shadow: 0 2px 4px #88ff00, 0 4px 8px #66cc00, 0 -2px 6px #ccff00 !important; animation: fx-acidrain 1.5s ease-in-out infinite !important; }
+    @keyframes fx-acidrain { 0%,100%{text-shadow:0 2px 4px #88ff00,0 4px 8px #66cc00;transform:translateY(0)}50%{text-shadow:0 4px 8px #aaff22,0 6px 12px #88ff00,0 -2px 8px #ccff00;transform:translateY(1px)} }
+    .fx-hologram { background: linear-gradient(90deg, #0ff, #f0f, #0ff, #ff0, #0ff); background-size: 400% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-hologram 2s linear infinite !important; filter: drop-shadow(0 0 4px rgba(0,255,255,.4)); }
+    @keyframes fx-hologram { 0%{background-position:0% 50%;opacity:.9}50%{background-position:200% 50%;opacity:.6}100%{background-position:400% 50%;opacity:.9} }
+    .fx-soulchain { text-shadow: 0 0 4px #8800aa, 0 0 8px #660088, 0 2px 12px #440066, 0 4px 16px #220044 !important; animation: fx-soulchain 2s ease-in-out infinite !important; }
+    @keyframes fx-soulchain { 0%,100%{text-shadow:0 0 4px #8800aa,0 0 8px #660088,0 2px 12px #440066;transform:translateY(0)}50%{text-shadow:0 0 8px #aa22cc,0 0 16px #8800aa,0 4px 20px #660088;transform:translateY(-1px)} }
+    .fx-pixelrift { animation: fx-pixelrift .3s steps(6) infinite !important; }
+    @keyframes fx-pixelrift { 0%{transform:translate(0);clip-path:inset(0 0 0 0)}16%{transform:translate(-3px,1px);clip-path:inset(0 0 40% 0)}33%{transform:translate(2px,-1px);clip-path:inset(30% 0 0 0)}50%{transform:translate(-1px,2px);clip-path:inset(0 30% 0 0)}66%{transform:translate(3px,0);clip-path:inset(0 0 0 40%)}83%{transform:translate(-2px,-1px);clip-path:inset(20% 0 20% 0)}100%{transform:translate(0);clip-path:inset(0 0 0 0)} }
+    .fx-cosmicrot { text-shadow: 0 0 8px #4400ff, 0 0 16px #8800ff, 0 0 32px #cc00ff !important; animation: fx-cosmicrot 3s linear infinite !important; }
+    @keyframes fx-cosmicrot { 0%{filter:hue-rotate(0deg) brightness(1)}33%{filter:hue-rotate(120deg) brightness(.6)}66%{filter:hue-rotate(240deg) brightness(1.3)}100%{filter:hue-rotate(360deg) brightness(1)} }
+    .fx-deathwish { text-shadow: 0 0 4px #f00, 0 0 8px #800, 0 0 16px #400 !important; animation: fx-deathwish 1s steps(2) infinite !important; }
+    @keyframes fx-deathwish { 0%{text-shadow:0 0 4px #f00,0 0 8px #800;transform:scale(1);filter:brightness(1)}25%{text-shadow:0 0 16px #ff0000,0 0 32px #cc0000;transform:scale(1.15);filter:brightness(2)}50%{text-shadow:0 0 2px #400;transform:scale(.95);filter:brightness(.3)}75%{text-shadow:0 0 8px #f00,0 0 16px #800,0 0 24px #400;transform:scale(1.05);filter:brightness(1.5)}100%{text-shadow:0 0 4px #f00,0 0 8px #800;transform:scale(1);filter:brightness(1)} }
+
+    /* ===== SHOP FONTS (Google Fonts loaded dynamically) ===== */
+    .chat-font-bloodcrow { font-family: 'Blood Crow', Impact, sans-serif !important; }
+    .chat-font-retro { font-family: 'Retro Arcade', 'Press Start 2P', monospace !important; }
+    .chat-font-vt323 { font-family: 'VT323', monospace !important; font-size: 1.4em !important; }
+    .chat-font-silkscreen { font-family: 'Silkscreen', monospace !important; }
+    .chat-font-dotgothic { font-family: 'DotGothic16', monospace !important; }
+    .chat-font-monoton { font-family: 'Monoton', cursive !important; }
+    .chat-font-bungee { font-family: 'Bungee Shade', cursive !important; font-size: 1.1em !important; }
+
+    /* ===== SHOP ===== */
+    .shop-container { width: 100%; max-width: 800px; }
+    .shop-tabs { display: flex; gap: .3rem; margin-bottom: .8rem; flex-wrap: wrap; justify-content: center; }
+    .shop-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .4rem); background: transparent; border: 1px solid #222; color: #444; padding: .35rem .6rem; cursor: pointer; transition: all .15s; }
+    .shop-tab:hover { color: #e02020; border-color: #e02020; }
+    .shop-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.08); }
+    .shop-balance { text-align: center; margin-bottom: .6rem; }
+    .shop-balance-amount { font-size: clamp(.5rem, 1.6vw, .8rem); color: #e02020; letter-spacing: .1em; }
+    .shop-balance-label { font-size: clamp(.25rem, .8vw, .35rem); color: #444; letter-spacing: .1em; margin-top: .15rem; }
+    .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .6rem; max-height: 55vh; overflow-y: auto; padding: .2rem; }
+    .shop-item { background: #060606; border: 1px solid #1a0000; padding: .6rem; display: flex; flex-direction: column; gap: .3rem; transition: border-color .2s; }
+    .shop-item:hover { border-color: #330000; }
+    .shop-item.owned { border-color: #002200; opacity: .7; }
+    .shop-item-name { font-size: clamp(.3rem, 1vw, .45rem); color: #ccc; letter-spacing: .06em; }
+    .shop-item-preview { font-size: clamp(.4rem, 1.3vw, .6rem); padding: .3rem; border: 1px solid #111; background: #0a0a0a; text-align: center; min-height: 2rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .shop-item-price { font-size: clamp(.28rem, .9vw, .38rem); color: #e02020; letter-spacing: .08em; }
+    .shop-item-price.free { color: #0a0; }
+    .shop-item-desc { font-size: clamp(.22rem, .7vw, .3rem); color: #444; letter-spacing: .04em; line-height: 1.6; }
+    .shop-buy-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .3rem .5rem; cursor: pointer; transition: all .15s; margin-top: auto; }
+    .shop-buy-btn:hover { background: #e02020; color: #000; }
+    .shop-buy-btn.owned { border-color: #0a0; color: #0a0; cursor: default; }
+    .shop-buy-btn.owned:hover { background: transparent; color: #0a0; }
+    .shop-buy-btn:disabled { border-color: #333; color: #333; cursor: not-allowed; }
+    .shop-buy-btn:disabled:hover { background: transparent; color: #333; }
+    .shop-item-rarity { font-size: clamp(.2rem, .65vw, .28rem); letter-spacing: .08em; text-transform: uppercase; }
+    .shop-item-rarity.common { color: #666; }
+    .shop-item-rarity.rare { color: #4488ff; }
+    .shop-item-rarity.epic { color: #aa44ff; }
+    .shop-item-rarity.legendary { color: #ff8800; }
 
     /* ===== MEMBERS ===== */
     .members-list { list-style: none; text-align: center; width: 100%; max-height: 60vh; overflow-y: auto; padding: 0 .5rem; }
@@ -711,6 +772,12 @@
       .user-popup-name { font-size: 13px; }
       .user-popup-info { font-size: 10px; }
       .user-popup-btn { font-size: 9px; }
+      .shop-tab { font-size: .42rem; }
+      .shop-item-name { font-size: .48rem; }
+      .shop-item-preview { font-size: .65rem; }
+      .shop-item-price { font-size: .4rem; }
+      .shop-buy-btn { font-size: .38rem; }
+      .shop-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
       .sound-toggle { font-size: .42rem; }
       .hud-avatar { width: 48px; height: 48px; }
       .hud-username { font-size: .55rem; }
@@ -762,6 +829,7 @@
         <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
         <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
         <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
+        <li id="shop-menu-li" style="display:none;"><span class="menu-item" data-target="screen-shop">SHOP</span></li>
         <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin">ADMIN PANEL</span></li>
         <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
       </ul>
@@ -1006,6 +1074,27 @@
       </div>
     </div>
 
+    <!-- SHOP -->
+    <div id="screen-shop" class="screen">
+      <h2 class="menu-title rgb-split">SHOP</h2>
+      <div class="menu-subtitle">- SPEND YOUR COINS -</div>
+      <div class="pixel-divider"></div>
+      <div class="shop-container">
+        <div class="shop-balance">
+          <div class="shop-balance-amount" id="shop-balance">$0</div>
+          <div class="shop-balance-label">YOUR BALANCE</div>
+        </div>
+        <div class="shop-tabs" id="shop-tabs">
+          <button class="shop-tab active" data-shop-tab="effects">&#9733; EFFECTS</button>
+          <button class="shop-tab" data-shop-tab="fonts">&#9998; FONTS</button>
+          <button class="shop-tab" data-shop-tab="titles">&#9813; TITLES</button>
+          <button class="shop-tab" data-shop-tab="flair">&#9670; FLAIR</button>
+        </div>
+        <div class="shop-grid" id="shop-grid"></div>
+      </div>
+      <span class="back-btn" data-target="screen-nav">BACK</span>
+    </div>
+
     <!-- PROFILE EDITOR -->
     <div id="screen-editor" class="screen">
       <h2 class="menu-title rgb-split">EDIT PROFILE</h2>
@@ -1020,6 +1109,9 @@
         </div>
         <div class="edit-field"><span class="edit-label">NAME COLOR</span><input type="color" id="edit-color" value="#e02020" class="edit-color-input"></div>
         <div class="edit-field"><span class="edit-label">NAME EFFECT</span><select id="edit-effect" class="edit-select"></select></div>
+        <div class="edit-field"><span class="edit-label">CHAT FONT</span><select id="edit-font" class="edit-select"></select></div>
+        <div class="edit-field"><span class="edit-label">TITLE</span><select id="edit-title" class="edit-select"></select></div>
+        <div class="edit-field"><span class="edit-label">CHAT FLAIR</span><select id="edit-flair" class="edit-select"></select></div>
         <div class="edit-info" id="edit-info"></div>
         <button class="auth-btn" id="edit-save">SAVE</button>
       </div>
