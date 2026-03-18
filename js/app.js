@@ -378,33 +378,37 @@
     switchScreen('screen-title', 'screen-nav');
   });
 
-  // All clickable menu items
-  document.querySelectorAll('.menu-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const target = item.dataset.target;
-      if (!target) return;
-      if (target === 'screen-shop' && !SupabaseClient.getUser()) {
-        AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
+  // All clickable nav cards + menu items
+  function handleNavClick(target) {
+    if (!target) return;
+    if (target === 'screen-shop' && !SupabaseClient.getUser()) {
+      AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
+    }
+    if (target === 'screen-shop') loadShop();
+    if (target === 'screen-chat') {
+      if (SupabaseClient.getUser()) {
+        switchHub(currentChannel);
+        SupabaseClient.markMentionsRead();
+        updateChatBadge(0);
+      } else {
+        enterGuestChat();
       }
-      if (target === 'screen-shop') loadShop();
-      if (target === 'screen-chat') {
-        if (SupabaseClient.getUser()) {
-          switchHub(currentChannel);
-          SupabaseClient.markMentionsRead();
-          updateChatBadge(0);
-        } else {
-          // Guest chat - read-only
-          enterGuestChat();
-        }
-      }
-      switchScreen(currentScreen, target);
-    });
-    item.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+    }
+    switchScreen(currentScreen, target);
+  }
+  document.querySelectorAll('.nav-card').forEach(card => {
+    card.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(card.dataset.target); });
+    card.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+  });
+  document.querySelectorAll('.nav-footer-back').forEach(btn => {
+    btn.addEventListener('click', () => { AudioSystem.sfxBack(); handleNavClick(btn.dataset.target); });
+    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
 
   // Back buttons
-  document.querySelectorAll('.back-btn').forEach(btn => {
+  document.querySelectorAll('.back-btn, .inv-footer-back').forEach(btn => {
     btn.addEventListener('click', () => {
+      AudioSystem.sfxBack();
       const target = btn.dataset.target;
       if (target) switchScreen(currentScreen, target);
     });
@@ -511,44 +515,39 @@
   });
 
   function updateNavMenu(user, profile) {
-    const authItem = document.querySelector('[data-target="screen-auth"]');
-    const shopLi = document.getElementById('shop-menu-li');
-    const adminLi = document.getElementById('admin-menu-li');
-    const extrasDivider = document.getElementById('menu-extras-divider');
-    const chatLi = document.getElementById('chat-menu-li');
-    if (!authItem) return;
+    const authCard = document.getElementById('nav-auth-card');
+    const shopCard = document.getElementById('shop-menu-card');
+    const adminCard = document.getElementById('admin-menu-card');
 
-    if (user) {
-      authItem.textContent = 'LOGOUT';
-      authItem.dataset.target = '';
-      authItem.onclick = async () => {
-        await SupabaseClient.logout();
-        authItem.textContent = 'LOGIN / REGISTER';
-        authItem.dataset.target = 'screen-auth';
-        authItem.onclick = null;
-        AudioSystem.sfxBack();
-        showToast('LOGGED OUT');
-        updateHUD(null, null);
-        updateNavMenu(null, null);
-      };
-    } else {
-      authItem.textContent = 'LOGIN / REGISTER';
-      authItem.dataset.target = 'screen-auth';
-      authItem.onclick = null;
+    if (authCard) {
+      const label = authCard.querySelector('.nav-card-label');
+      const desc = authCard.querySelector('.nav-card-desc');
+      const icon = authCard.querySelector('.nav-card-icon');
+      if (user) {
+        label.textContent = 'LOGOUT';
+        desc.textContent = 'Sign out of your account';
+        icon.innerHTML = '&#9654;';
+        authCard.dataset.target = '';
+        authCard.onclick = async (e) => {
+          e.stopPropagation();
+          await SupabaseClient.logout();
+          AudioSystem.sfxBack();
+          showToast('LOGGED OUT');
+          updateHUD(null, null);
+          updateNavMenu(null, null);
+        };
+      } else {
+        label.textContent = 'LOGIN / REGISTER';
+        desc.textContent = 'Access your account';
+        icon.innerHTML = '&#9670;';
+        authCard.dataset.target = 'screen-auth';
+        authCard.onclick = null;
+      }
     }
 
-    // Chat is always visible (guest = read-only, logged-in = full access)
-    if (chatLi) chatLi.style.display = '';
-
-    // Show/hide shop + admin
-    if (shopLi) shopLi.style.display = user ? '' : 'none';
-    if (adminLi) adminLi.style.display = (profile && profile.is_admin) ? '' : 'none';
-
-    // Show divider above extras only if shop or admin is visible
-    if (extrasDivider) {
-      const showExtras = (shopLi && shopLi.style.display !== 'none') || (adminLi && adminLi.style.display !== 'none');
-      extrasDivider.style.display = showExtras ? '' : 'none';
-    }
+    // Show/hide shop + admin cards
+    if (shopCard) shopCard.style.display = user ? '' : 'none';
+    if (adminCard) adminCard.style.display = (profile && profile.is_admin) ? '' : 'none';
   }
 
   /* ===== PLAYER HUD ===== */
@@ -610,13 +609,14 @@
     // Stats
     const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
     const created = new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+    const itemCount = parseOwnedItems(profile.owned_effects || '').length;
     document.getElementById('edit-info').innerHTML = `
-      <span class="profile-detail"><span class="label">USER ID:</span> ${idNum}</span>
-      <span class="profile-detail"><span class="label">LEVEL:</span> ${profile.level} / 100</span>
-      <span class="profile-detail"><span class="label">BALANCE:</span> $${profile.balance}</span>
-      <span class="profile-detail"><span class="label">ITEMS:</span> ${parseOwnedItems(profile.owned_effects || '').length}</span>
-      <span class="profile-detail"><span class="label">JOINED:</span> ${created}</span>
-      ${profile.is_admin ? '<span class="profile-detail"><span class="label">STATUS:</span> ADMIN</span>' : ''}
+      <div class="inv-stat"><span class="inv-stat-val">${idNum}</span><span class="inv-stat-label">ID</span></div>
+      <div class="inv-stat"><span class="inv-stat-val">${profile.level}</span><span class="inv-stat-label">LEVEL</span></div>
+      <div class="inv-stat"><span class="inv-stat-val">$${profile.balance}</span><span class="inv-stat-label">BALANCE</span></div>
+      <div class="inv-stat"><span class="inv-stat-val">${itemCount}</span><span class="inv-stat-label">ITEMS</span></div>
+      <div class="inv-stat"><span class="inv-stat-val">${created}</span><span class="inv-stat-label">JOINED</span></div>
+      ${profile.is_admin ? '<div class="inv-stat"><span class="inv-stat-val" style="color:#e02020">ADMIN</span><span class="inv-stat-label">STATUS</span></div>' : ''}
     `;
 
     // Render equipped slots + inventory
@@ -645,7 +645,6 @@
     const titleObj = SHOP_TITLES.find(t => t.id === invSelections.title);
     const flairObj = SHOP_FLAIR.find(f => f.id === invSelections.flair);
     el.innerHTML = `
-      <div class="inv-equipped-label">\u2605 EQUIPPED LOADOUT \u2605</div>
       <div class="inv-equipped-slot"><span class="slot-label">EFFECT</span><span class="slot-value ${effectObj ? '' : 'empty'}">${effectObj ? escapeHtml(effectObj.name) : 'NONE'}</span></div>
       <div class="inv-equipped-slot"><span class="slot-label">FONT</span><span class="slot-value ${fontObj ? '' : 'empty'}">${fontObj ? escapeHtml(fontObj.name) : 'DEFAULT'}</span></div>
       <div class="inv-equipped-slot"><span class="slot-label">TITLE</span><span class="slot-value ${titleObj ? '' : 'empty'}">${titleObj ? escapeHtml(titleObj.name) : 'NEWCOMER'}</span></div>
@@ -2387,15 +2386,8 @@
 
   // Show/hide shop in nav
   function updateShopMenu(user) {
-    const shopLi = document.getElementById('shop-menu-li');
-    if (shopLi) shopLi.style.display = user ? '' : 'none';
-    // Update extras divider
-    const extrasDivider = document.getElementById('menu-extras-divider');
-    const adminLi = document.getElementById('admin-menu-li');
-    if (extrasDivider) {
-      const showExtras = (shopLi && shopLi.style.display !== 'none') || (adminLi && adminLi.style.display !== 'none');
-      extrasDivider.style.display = showExtras ? '' : 'none';
-    }
+    const shopCard = document.getElementById('shop-menu-card');
+    if (shopCard) shopCard.style.display = user ? '' : 'none';
   }
 
   // Open shop

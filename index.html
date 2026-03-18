@@ -112,22 +112,46 @@
       letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; text-align: center;
     }
     .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.2vw, .55rem); color: #661111; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
-    .menu-list { list-style: none; text-align: center; width: 100%; }
-    .menu-list li { margin: .7rem 0; }
-    .menu-divider { width: 40%; height: 1px; background: #1a0000; margin: .3rem auto; }
-    .menu-divider-li { margin: .3rem 0 !important; }
-    .menu-item {
-      font-size: clamp(.55rem, 1.8vw, .85rem); color: #777; cursor: pointer;
-      letter-spacing: .15em; text-transform: uppercase;
-      transition: color .15s, text-shadow .15s; user-select: none;
-      display: inline-block; padding: .3rem 0; position: relative;
+
+    /* Nav card grid */
+    .nav-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: .8rem; }
+    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    .nav-card {
+      display: flex; align-items: center; gap: .7rem; padding: .7rem .9rem;
+      background: #080808; border: 1px solid #151515; cursor: pointer; user-select: none;
+      transition: border-color .2s, background .2s, box-shadow .2s; position: relative; overflow: hidden;
     }
-    .menu-item:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5), 0 0 2px rgba(224,32,32,.8); }
-    .menu-item::before { content: '\25BA '; opacity: 0; transition: opacity .15s; color: #e02020; }
-    .menu-item:hover::before { opacity: 1; }
-    .menu-item .menu-icon { margin-right: .3em; }
-    .chat-badge { display: none; font-size: .4rem; color: #000; background: #e02020; padding: .1rem .25rem; margin-left: .3rem; vertical-align: top; animation: blink 1.5s step-end infinite; }
+    .nav-card::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%; background: transparent; transition: background .2s; }
+    .nav-card:hover { border-color: #2a0a0a; background: #0c0606; box-shadow: 0 0 12px rgba(224,32,32,.06); }
+    .nav-card:hover::before { background: #e02020; }
+    .nav-card:hover .nav-card-icon { color: #e02020; }
+    .nav-card:hover .nav-card-label { color: #ddd; }
+    .nav-card-icon { font-size: clamp(.7rem, 2.2vw, 1.1rem); color: #444; transition: color .2s; min-width: 1.5rem; text-align: center; }
+    .nav-card-text { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+    .nav-card-label { font-size: clamp(.38rem, 1.2vw, .55rem); color: #999; letter-spacing: .1em; text-transform: uppercase; transition: color .2s; }
+    .nav-card-desc { font-size: clamp(.24rem, .75vw, .32rem); color: #444; letter-spacing: .04em; line-height: 1.4; }
+    .nav-card.full-width { grid-column: 1 / -1; }
+    .nav-card.accent { border-color: #1a0a00; }
+    .nav-card.accent:hover { border-color: #e02020; }
+    .nav-card.accent .nav-card-icon { color: #993300; }
+    .nav-card.accent:hover .nav-card-icon { color: #ff6622; }
+    .nav-card.muted { border-color: #111; }
+    .nav-card.muted .nav-card-icon { color: #333; }
+    .nav-card.muted .nav-card-label { color: #555; }
+    .nav-card.muted:hover .nav-card-icon { color: #888; }
+    .nav-card.muted:hover .nav-card-label { color: #aaa; }
+    .nav-card.muted:hover::before { background: #555; }
+    .nav-footer { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; }
+    .nav-footer-left { font-size: clamp(.25rem, .8vw, .34rem); color: #333; letter-spacing: .08em; }
+    .nav-footer-back { font-size: clamp(.32rem, 1vw, .45rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
+    .nav-footer-back:hover { color: #e02020; }
+    .nav-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
+    .chat-badge { display: none; font-size: .35rem; color: #000; background: #e02020; padding: .08rem .2rem; margin-left: .4rem; vertical-align: middle; animation: blink 1.5s step-end infinite; border-radius: 1px; }
     .chat-badge.show { display: inline; }
+    @media (max-width: 500px) {
+      .nav-grid { grid-template-columns: 1fr; }
+      .nav-card { padding: .6rem .7rem; }
+    }
 
     /* ===== HUD ===== */
     .player-hud { position: fixed; top: 10px; left: 10px; z-index: 9990; display: none; cursor: pointer; }
@@ -720,48 +744,47 @@
     .auth-btn:hover { background: #e02020; color: #000; }
 
     /* ===== INVENTORY / PROFILE EDITOR ===== */
-    .inv-layout { display: flex; gap: 1rem; width: 100%; max-width: 950px; min-height: 60vh; }
-    .inv-sidebar { width: 250px; min-width: 220px; display: flex; flex-direction: column; gap: .6rem; }
-    .inv-player-card { background: #080808; border: 1px solid #1a0000; padding: .8rem; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
-    .inv-avatar { width: 80px; height: 80px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(224,32,32,.2); }
+    .inv-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: .6rem; }
+    .inv-top { display: flex; gap: .8rem; align-items: stretch; }
+    .inv-player-card { background: #080808; border: 1px solid #151515; padding: .8rem; display: flex; align-items: center; gap: .8rem; flex: 1; }
+    .inv-avatar { width: 72px; height: 72px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(224,32,32,.15); flex-shrink: 0; }
     .inv-avatar img, .inv-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .36rem); background: transparent; border: 1px solid #444; color: #777; padding: .25rem .6rem; cursor: pointer; transition: all .15s; }
-    .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
-    .inv-preview-box { padding: .6rem; border: 1px solid #181818; background: #0a0a0a; width: 100%; text-align: center; min-height: 2.2rem; display: flex; align-items: center; justify-content: center; }
+    .inv-player-info { display: flex; flex-direction: column; gap: .3rem; flex: 1; min-width: 0; }
+    .inv-preview-box { padding: .4rem .6rem; border: 1px solid #181818; background: #0a0a0a; display: inline-flex; align-items: center; }
     .edit-preview-name { font-size: clamp(.5rem, 1.5vw, .75rem); letter-spacing: .08em; }
-    .inv-color-row { display: flex; align-items: center; gap: .5rem; }
-    .inv-label { font-size: clamp(.28rem, .9vw, .36rem); color: #e02020; letter-spacing: .1em; }
-    .edit-color-input { width: 40px; height: 26px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
-    .inv-stats { background: #080808; border: 1px solid #1a0000; padding: .6rem; display: flex; flex-direction: column; gap: .25rem; }
-    .inv-stats .profile-detail { font-size: clamp(.28rem, .9vw, .38rem); color: #888; }
-    .inv-stats .profile-detail .label { color: #e02020; }
-    .inv-equipped-list { background: #080808; border: 1px solid #1a0000; padding: .6rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
-    .inv-equipped-label { font-size: clamp(.28rem, .9vw, .36rem); color: #662222; letter-spacing: .15em; text-align: center; margin-bottom: .3rem; }
-    .inv-equipped-slot { display: flex; align-items: center; gap: .5rem; padding: .35rem .5rem; border: 1px solid #181818; background: #0a0a0a; font-size: clamp(.28rem, .9vw, .36rem); }
-    .inv-equipped-slot .slot-label { color: #777; min-width: 55px; letter-spacing: .06em; }
-    .inv-equipped-slot .slot-value { color: #e02020; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .inv-equipped-slot .slot-value.empty { color: #444; }
-    .inv-save-btn {
-      font-family: 'Press Start 2P', monospace; font-size: clamp(.35rem, 1.1vw, .5rem);
-      background: transparent; border: 2px solid #e02020; color: #e02020;
-      padding: .6rem 1rem; cursor: pointer; transition: all .2s; letter-spacing: .1em; text-align: center;
-    }
-    .inv-save-btn:hover { background: #e02020; color: #000; box-shadow: 0 0 16px rgba(224,32,32,.4); }
-    .inv-main { flex: 1; display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
-    .inv-tabs { display: flex; gap: .3rem; flex-wrap: wrap; }
-    .inv-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.3rem, .95vw, .42rem); background: transparent; border: 1px solid #1a0000; color: #666; padding: .4rem .7rem; cursor: pointer; transition: all .15s; }
-    .inv-tab:hover { color: #e02020; border-color: #440000; }
-    .inv-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.06); }
-    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .5rem; overflow-y: auto; flex: 1; padding: .2rem; max-height: 58vh; }
-    .inv-item { background: #080808; border: 1px solid #1a0000; padding: .5rem; display: flex; flex-direction: column; gap: .25rem; cursor: pointer; transition: all .2s; position: relative; }
-    .inv-item:hover { border-color: #440000; background: #0c0808; }
-    .inv-item.equipped { border-color: #e02020; background: rgba(224,32,32,.05); box-shadow: 0 0 10px rgba(224,32,32,.2); }
-    .inv-item.equipped::after { content: 'EQUIPPED'; position: absolute; top: .25rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); color: #e02020; letter-spacing: .05em; }
-    .inv-item.locked { opacity: .3; cursor: default; }
-    .inv-item.locked::after { content: 'LOCKED'; position: absolute; top: .25rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); color: #444; letter-spacing: .05em; }
-    .inv-item-name { font-size: clamp(.28rem, .9vw, .38rem); color: #bbb; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .inv-item-preview { font-size: clamp(.4rem, 1.3vw, .6rem); padding: .4rem; border: 1px solid #181818; background: #0a0a0a; text-align: center; min-height: 2rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .inv-item-rarity { font-size: clamp(.22rem, .7vw, .3rem); letter-spacing: .06em; }
+    .inv-player-actions { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .8vw, .32rem); background: transparent; border: 1px solid #252525; color: #777; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
+    .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
+    .inv-label { font-size: clamp(.24rem, .8vw, .32rem); color: #888; letter-spacing: .08em; }
+    .edit-color-input { width: 34px; height: 22px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
+    .inv-stats-bar { background: #080808; border: 1px solid #151515; padding: .5rem .8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; min-width: 220px; }
+    .inv-stat { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
+    .inv-stat-val { font-size: clamp(.38rem, 1.2vw, .55rem); color: #e02020; letter-spacing: .06em; }
+    .inv-stat-label { font-size: clamp(.2rem, .65vw, .26rem); color: #555; letter-spacing: .06em; }
+    .inv-equipped-bar { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .inv-equipped-slot { display: flex; align-items: center; gap: .4rem; padding: .35rem .6rem; border: 1px solid #151515; background: #080808; font-size: clamp(.26rem, .85vw, .35rem); flex: 1; min-width: 120px; }
+    .inv-equipped-slot .slot-label { color: #555; letter-spacing: .06em; white-space: nowrap; }
+    .inv-equipped-slot .slot-value { color: #ccc; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-equipped-slot .slot-value.empty { color: #333; }
+    .inv-bottom { display: flex; gap: .6rem; flex: 1; min-height: 0; }
+    .inv-tabs-col { display: flex; flex-direction: column; gap: .3rem; min-width: 130px; }
+    .inv-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem); background: transparent; border: 1px solid #151515; color: #555; padding: .5rem .7rem; cursor: pointer; transition: all .15s; text-align: left; display: flex; align-items: center; gap: .4rem; }
+    .inv-tab:hover { color: #ccc; border-color: #2a0a0a; background: #0c0606; }
+    .inv-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.04); border-left: 3px solid #e02020; }
+    .inv-tab-icon { font-size: 1.1em; min-width: 1rem; text-align: center; }
+    .inv-grid-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .inv-grid-header { display: flex; justify-content: space-between; align-items: center; padding: .3rem .1rem; }
+    .inv-grid-title { font-size: clamp(.28rem, .9vw, .38rem); color: #666; letter-spacing: .1em; }
+    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: .4rem; overflow-y: auto; flex: 1; padding: .2rem; max-height: 50vh; }
+    .inv-item { background: #080808; border: 1px solid #151515; padding: .5rem; display: flex; flex-direction: column; gap: .2rem; cursor: pointer; transition: all .2s; position: relative; }
+    .inv-item:hover { border-color: #2a0a0a; background: #0c0606; }
+    .inv-item.equipped { border-color: #e02020; background: rgba(224,32,32,.04); box-shadow: inset 0 0 8px rgba(224,32,32,.08); }
+    .inv-item.equipped::after { content: 'EQUIPPED'; position: absolute; top: .2rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.18rem, .6vw, .24rem); color: #e02020; letter-spacing: .04em; }
+    .inv-item.locked { opacity: .25; cursor: default; }
+    .inv-item.locked::after { content: 'LOCKED'; position: absolute; top: .2rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.18rem, .6vw, .24rem); color: #444; letter-spacing: .04em; }
+    .inv-item-name { font-size: clamp(.24rem, .8vw, .34rem); color: #bbb; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-item-preview { font-size: clamp(.4rem, 1.2vw, .55rem); padding: .35rem; border: 1px solid #111; background: #0a0a0a; text-align: center; min-height: 1.8rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .inv-item-rarity { font-size: clamp(.2rem, .65vw, .26rem); letter-spacing: .06em; }
     .inv-item-rarity.common { color: #777; }
     .inv-item-rarity.rare { color: #5599ff; }
     .inv-item-rarity.epic { color: #bb66ff; }
@@ -771,16 +794,29 @@
     .inv-item-rarity.free { color: #0c0; }
     .inv-item-rarity.drop { color: #ffcc00; }
     @keyframes omega-rarity-shimmer { 0%{background-position:0% 50%}100%{background-position:300% 50%} }
-    .inv-item.omega-item { border-color: #442200; }
-    .inv-item.omega-item:hover { border-color: #ff8800; box-shadow: 0 0 12px rgba(255,136,0,.2); }
-    .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: 0 0 16px rgba(255,215,0,.3), 0 0 32px rgba(255,136,0,.15); }
+    .inv-item.omega-item { border-color: #332200; }
+    .inv-item.omega-item:hover { border-color: #ff8800; box-shadow: 0 0 12px rgba(255,136,0,.15); }
+    .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: inset 0 0 8px rgba(255,215,0,.1), 0 0 12px rgba(255,215,0,.2); }
+    .inv-save-btn {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.32rem, 1vw, .45rem);
+      background: transparent; border: 1px solid #e02020; color: #e02020;
+      padding: .5rem 1.2rem; cursor: pointer; transition: all .2s; letter-spacing: .1em;
+    }
+    .inv-save-btn:hover { background: #e02020; color: #000; box-shadow: 0 0 16px rgba(224,32,32,.3); }
+    .inv-footer { display: flex; justify-content: space-between; align-items: center; padding: .3rem 0; }
+    .inv-footer-back { font-size: clamp(.3rem, .95vw, .42rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
+    .inv-footer-back:hover { color: #e02020; }
+    .inv-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
     @media (max-width: 700px) {
-      .inv-layout { flex-direction: column; min-height: auto; }
-      .inv-sidebar { width: 100%; min-width: unset; flex-direction: row; flex-wrap: wrap; gap: .4rem; }
-      .inv-player-card { flex: 1; min-width: 180px; }
-      .inv-stats { flex: 1; min-width: 140px; }
-      .inv-equipped-list { width: 100%; flex: unset; }
-      .inv-grid { max-height: 45vh; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+      .inv-top { flex-direction: column; }
+      .inv-player-card { flex-direction: column; text-align: center; }
+      .inv-player-info { align-items: center; }
+      .inv-stats-bar { justify-content: center; }
+      .inv-bottom { flex-direction: column; }
+      .inv-tabs-col { flex-direction: row; overflow-x: auto; min-width: unset; }
+      .inv-tab { white-space: nowrap; border-left: none !important; border-bottom: 2px solid transparent; }
+      .inv-tab.active { border-left: 1px solid #e02020 !important; border-bottom-color: #e02020; }
+      .inv-grid { max-height: 40vh; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
     }
 
     /* ===== CHAT - FULL LAYOUT ===== */
@@ -1173,20 +1209,42 @@
       <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
       <div class="menu-subtitle">- SELECT OPTION -</div>
       <div class="pixel-divider"></div>
-      <ul class="menu-list">
-        <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
-        <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
-        <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
-        <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
-        <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
-        <li class="menu-divider-li" id="menu-extras-divider" style="display:none;"><div class="menu-divider"></div></li>
-        <li id="shop-menu-li" style="display:none;"><span class="menu-item" data-target="screen-shop"><span class="menu-icon">&#9733;</span>SHOP</span></li>
-        <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin"><span class="menu-icon">&#9881;</span>ADMIN PANEL</span></li>
-        <li class="menu-divider-li"><div class="menu-divider"></div></li>
-        <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
-      </ul>
-      <div class="pixel-divider"></div>
-      <div class="screen-footer"><p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE</p></div>
+      <div class="nav-container">
+        <div class="nav-grid">
+          <div class="nav-card" data-target="screen-auth" id="nav-auth-card">
+            <span class="nav-card-icon">&#9670;</span>
+            <div class="nav-card-text"><span class="nav-card-label">LOGIN / REGISTER</span><span class="nav-card-desc">Access your account</span></div>
+          </div>
+          <div class="nav-card" data-target="screen-members">
+            <span class="nav-card-icon">&#9733;</span>
+            <div class="nav-card-text"><span class="nav-card-label">MEMBERS</span><span class="nav-card-desc">View the roster</span></div>
+          </div>
+          <div class="nav-card" data-target="screen-releases">
+            <span class="nav-card-icon">&#9835;</span>
+            <div class="nav-card-text"><span class="nav-card-label">RELEASES</span><span class="nav-card-desc">Music &amp; projects</span></div>
+          </div>
+          <div class="nav-card" data-target="screen-about">
+            <span class="nav-card-icon">&#9881;</span>
+            <div class="nav-card-text"><span class="nav-card-label">ABOUT US</span><span class="nav-card-desc">Our story</span></div>
+          </div>
+          <div class="nav-card full-width" data-target="screen-chat" id="chat-menu-card">
+            <span class="nav-card-icon">&#9993;</span>
+            <div class="nav-card-text"><span class="nav-card-label">CHAT<span class="chat-badge" id="chat-badge"></span></span><span class="nav-card-desc">Join the conversation</span></div>
+          </div>
+          <div class="nav-card accent" data-target="screen-shop" id="shop-menu-card" style="display:none;">
+            <span class="nav-card-icon">&#9733;</span>
+            <div class="nav-card-text"><span class="nav-card-label">SHOP</span><span class="nav-card-desc">Effects, fonts &amp; more</span></div>
+          </div>
+          <div class="nav-card accent" data-target="screen-admin" id="admin-menu-card" style="display:none;">
+            <span class="nav-card-icon">&#9888;</span>
+            <div class="nav-card-text"><span class="nav-card-label">ADMIN PANEL</span><span class="nav-card-desc">Manage users</span></div>
+          </div>
+        </div>
+        <div class="nav-footer">
+          <span class="nav-footer-left">TM&amp;&#169; 2025 RUNE TRIBE</span>
+          <span class="nav-footer-back" data-target="screen-title" data-is-back="true">BACK</span>
+        </div>
+      </div>
     </div>
 
     <!-- AUTH -->
@@ -1449,39 +1507,44 @@
 
     <!-- PROFILE EDITOR (INVENTORY) -->
     <div id="screen-editor" class="screen">
-      <h2 class="menu-title rgb-split">LOADOUT</h2>
-      <div class="menu-subtitle">- INVENTORY &amp; CUSTOMIZATION -</div>
-      <div class="pixel-divider"></div>
-      <div class="inv-layout">
-        <!-- LEFT: Player card + equipped loadout -->
-        <div class="inv-sidebar">
-          <div class="inv-player-card pixel-border">
+      <div class="inv-container">
+        <!-- TOP: Player card + stats bar -->
+        <div class="inv-top">
+          <div class="inv-player-card">
             <div class="inv-avatar" id="edit-avatar-preview"><span class="hud-avatar-placeholder">?</span></div>
-            <label class="inv-avatar-upload-btn">CHANGE<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
-            <div class="inv-preview-box">
-              <span class="edit-preview-name" id="edit-preview-name">USERNAME</span>
-            </div>
-            <div class="inv-color-row">
-              <span class="inv-label">COLOR</span>
-              <input type="color" id="edit-color" value="#e02020" class="edit-color-input">
+            <div class="inv-player-info">
+              <div class="inv-preview-box">
+                <span class="edit-preview-name" id="edit-preview-name">USERNAME</span>
+              </div>
+              <div class="inv-player-actions">
+                <label class="inv-avatar-upload-btn">CHANGE<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
+                <span class="inv-label">COLOR</span>
+                <input type="color" id="edit-color" value="#e02020" class="edit-color-input">
+              </div>
             </div>
           </div>
-          <div class="inv-stats" id="edit-info"></div>
-          <div class="inv-equipped-list" id="inv-equipped"></div>
-          <button class="inv-save-btn" id="edit-save">&#9733; SAVE LOADOUT</button>
+          <div class="inv-stats-bar" id="edit-info"></div>
         </div>
-        <!-- RIGHT: Inventory grid -->
-        <div class="inv-main">
-          <div class="inv-tabs" id="inv-tabs">
-            <button class="inv-tab active" data-inv-tab="effects">&#9733; EFFECTS</button>
-            <button class="inv-tab" data-inv-tab="fonts">&#9998; FONTS</button>
-            <button class="inv-tab" data-inv-tab="titles">&#9813; TITLES</button>
-            <button class="inv-tab" data-inv-tab="flair">&#9670; FLAIR</button>
+        <!-- EQUIPPED BAR -->
+        <div class="inv-equipped-bar" id="inv-equipped"></div>
+        <!-- BOTTOM: Tabs column + inventory grid -->
+        <div class="inv-bottom">
+          <div class="inv-tabs-col" id="inv-tabs">
+            <button class="inv-tab active" data-inv-tab="effects"><span class="inv-tab-icon">&#9733;</span> EFFECTS</button>
+            <button class="inv-tab" data-inv-tab="fonts"><span class="inv-tab-icon">&#9998;</span> FONTS</button>
+            <button class="inv-tab" data-inv-tab="titles"><span class="inv-tab-icon">&#9813;</span> TITLES</button>
+            <button class="inv-tab" data-inv-tab="flair"><span class="inv-tab-icon">&#9670;</span> FLAIR</button>
           </div>
-          <div class="inv-grid" id="inv-grid"></div>
+          <div class="inv-grid-wrap">
+            <div class="inv-grid" id="inv-grid"></div>
+          </div>
+        </div>
+        <!-- FOOTER: Save + Back -->
+        <div class="inv-footer">
+          <button class="inv-save-btn" id="edit-save">&#9733; SAVE LOADOUT</button>
+          <span class="inv-footer-back" data-target="screen-nav" data-is-back="true">BACK</span>
         </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <!-- ADMIN PANEL -->
