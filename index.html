@@ -112,22 +112,10 @@
       letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; text-align: center;
     }
     .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.2vw, .55rem); color: #661111; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
-    .menu-layout { display: flex; gap: 1.5rem; width: 100%; max-width: 700px; align-items: stretch; }
-    .menu-sidebar { display: none; flex-direction: column; gap: .5rem; min-width: 140px; border-right: 1px solid #1a0000; padding-right: 1rem; justify-content: center; }
-    .menu-sidebar.show { display: flex; }
-    .menu-sidebar-label { font-size: clamp(.3rem, .9vw, .4rem); color: #662222; letter-spacing: .2em; text-align: center; margin-bottom: .3rem; }
-    .menu-sidebar-btn {
-      font-family: 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.3vw, .6rem);
-      color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase;
-      transition: color .15s, text-shadow .15s, border-color .15s; user-select: none;
-      display: flex; align-items: center; gap: .4rem; padding: .5rem .6rem;
-      border: 1px solid #1a0000; background: rgba(10,0,0,.4); text-align: left;
-    }
-    .menu-sidebar-btn:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5); border-color: #330000; background: rgba(224,32,32,.04); }
-    .menu-sidebar-btn .sidebar-icon { font-size: clamp(.5rem, 1.5vw, .7rem); }
-    .menu-main { flex: 1; }
     .menu-list { list-style: none; text-align: center; width: 100%; }
     .menu-list li { margin: .7rem 0; }
+    .menu-divider { width: 40%; height: 1px; background: #1a0000; margin: .3rem auto; }
+    .menu-divider-li { margin: .3rem 0 !important; }
     .menu-item {
       font-size: clamp(.55rem, 1.8vw, .85rem); color: #777; cursor: pointer;
       letter-spacing: .15em; text-transform: uppercase;
@@ -137,6 +125,7 @@
     .menu-item:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5), 0 0 2px rgba(224,32,32,.8); }
     .menu-item::before { content: '\25BA '; opacity: 0; transition: opacity .15s; color: #e02020; }
     .menu-item:hover::before { opacity: 1; }
+    .menu-item .menu-icon { margin-right: .3em; }
     .chat-badge { display: none; font-size: .4rem; color: #000; background: #e02020; padding: .1rem .25rem; margin-left: .3rem; vertical-align: top; animation: blink 1.5s step-end infinite; }
     .chat-badge.show { display: inline; }
 
@@ -955,9 +944,6 @@
 
     /* Mobile responsive */
     @media (max-width: 600px) {
-      .menu-layout { flex-direction: column; gap: .8rem; }
-      .menu-sidebar { border-right: none; border-bottom: 1px solid #1a0000; padding-right: 0; padding-bottom: .6rem; flex-direction: row; justify-content: center; flex-wrap: wrap; min-width: unset; }
-      .menu-sidebar-btn { font-size: clamp(.35rem, 1.1vw, .5rem); padding: .4rem .5rem; }
       .chat-sidebar { width: 48px; min-width: 48px; }
       .chat-sidebar-header { font-size: 7px; padding: .3rem .2rem; text-align: center; overflow: hidden; }
       .chat-hub-item { padding: .4rem .2rem; justify-content: center; font-size: 7px; }
@@ -1187,27 +1173,18 @@
       <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
       <div class="menu-subtitle">- SELECT OPTION -</div>
       <div class="pixel-divider"></div>
-      <div class="menu-layout">
-        <div class="menu-sidebar" id="menu-sidebar">
-          <div class="menu-sidebar-label">&#9670; EXTRAS &#9670;</div>
-          <div class="menu-sidebar-btn" id="shop-menu-btn" data-target="screen-shop" style="display:none;">
-            <span class="sidebar-icon">&#9733;</span> SHOP
-          </div>
-          <div class="menu-sidebar-btn" id="admin-menu-btn" data-target="screen-admin" style="display:none;">
-            <span class="sidebar-icon">&#9881;</span> ADMIN
-          </div>
-        </div>
-        <div class="menu-main">
-          <ul class="menu-list">
-            <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
-            <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
-            <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
-            <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
-            <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
-            <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
-          </ul>
-        </div>
-      </div>
+      <ul class="menu-list">
+        <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
+        <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
+        <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
+        <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
+        <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
+        <li class="menu-divider-li" id="menu-extras-divider" style="display:none;"><div class="menu-divider"></div></li>
+        <li id="shop-menu-li" style="display:none;"><span class="menu-item" data-target="screen-shop"><span class="menu-icon">&#9733;</span>SHOP</span></li>
+        <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin"><span class="menu-icon">&#9881;</span>ADMIN PANEL</span></li>
+        <li class="menu-divider-li"><div class="menu-divider"></div></li>
+        <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
+      </ul>
       <div class="pixel-divider"></div>
       <div class="screen-footer"><p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE</p></div>
     </div>

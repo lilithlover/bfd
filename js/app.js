@@ -402,21 +402,6 @@
     item.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
 
-  // Sidebar buttons (shop, admin)
-  document.querySelectorAll('.menu-sidebar-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.dataset.target;
-      if (!target) return;
-      if (target === 'screen-shop' && !SupabaseClient.getUser()) {
-        AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
-      }
-      if (target === 'screen-shop') loadShop();
-      AudioSystem.sfxSelect();
-      switchScreen(currentScreen, target);
-    });
-    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
-  });
-
   // Back buttons
   document.querySelectorAll('.back-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -527,7 +512,9 @@
 
   function updateNavMenu(user, profile) {
     const authItem = document.querySelector('[data-target="screen-auth"]');
-    const adminLi = document.getElementById('admin-menu-btn');
+    const shopLi = document.getElementById('shop-menu-li');
+    const adminLi = document.getElementById('admin-menu-li');
+    const extrasDivider = document.getElementById('menu-extras-divider');
     const chatLi = document.getElementById('chat-menu-li');
     if (!authItem) return;
 
@@ -551,22 +538,16 @@
     }
 
     // Chat is always visible (guest = read-only, logged-in = full access)
-    if (chatLi) {
-      chatLi.style.display = '';
-    }
+    if (chatLi) chatLi.style.display = '';
 
-    // Show/hide admin panel option
-    if (adminLi) {
-      adminLi.style.display = (profile && profile.is_admin) ? '' : 'none';
-    }
+    // Show/hide shop + admin
+    if (shopLi) shopLi.style.display = user ? '' : 'none';
+    if (adminLi) adminLi.style.display = (profile && profile.is_admin) ? '' : 'none';
 
-    // Show/hide sidebar (visible when shop or admin is available)
-    const sidebar = document.getElementById('menu-sidebar');
-    const shopBtn = document.getElementById('shop-menu-btn');
-    if (sidebar) {
-      const shopVisible = shopBtn && shopBtn.style.display !== 'none';
-      const adminVisible = adminLi && adminLi.style.display !== 'none';
-      sidebar.classList.toggle('show', shopVisible || adminVisible);
+    // Show divider above extras only if shop or admin is visible
+    if (extrasDivider) {
+      const showExtras = (shopLi && shopLi.style.display !== 'none') || (adminLi && adminLi.style.display !== 'none');
+      extrasDivider.style.display = showExtras ? '' : 'none';
     }
   }
 
@@ -2406,15 +2387,14 @@
 
   // Show/hide shop in nav
   function updateShopMenu(user) {
-    const shopBtn = document.getElementById('shop-menu-btn');
-    if (shopBtn) shopBtn.style.display = user ? '' : 'none';
-    // Update sidebar visibility
-    const sidebar = document.getElementById('menu-sidebar');
-    const adminBtn = document.getElementById('admin-menu-btn');
-    if (sidebar) {
-      const shopVisible = shopBtn && shopBtn.style.display !== 'none';
-      const adminVisible = adminBtn && adminBtn.style.display !== 'none';
-      sidebar.classList.toggle('show', shopVisible || adminVisible);
+    const shopLi = document.getElementById('shop-menu-li');
+    if (shopLi) shopLi.style.display = user ? '' : 'none';
+    // Update extras divider
+    const extrasDivider = document.getElementById('menu-extras-divider');
+    const adminLi = document.getElementById('admin-menu-li');
+    if (extrasDivider) {
+      const showExtras = (shopLi && shopLi.style.display !== 'none') || (adminLi && adminLi.style.display !== 'none');
+      extrasDivider.style.display = showExtras ? '' : 'none';
     }
   }
 
