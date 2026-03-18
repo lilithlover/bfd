@@ -146,7 +146,7 @@ const SupabaseClient = (() => {
       .select(`
         id, content, created_at, user_id, channel,
         profiles:user_id (
-          username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin
+          username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, rank, user_id_num, is_admin
         )
       `)
       .eq('channel', channel)
@@ -213,7 +213,7 @@ const SupabaseClient = (() => {
           const { data } = await sb.from('messages')
             .select(`
               id, content, created_at, user_id, channel,
-              profiles:user_id ( username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin )
+              profiles:user_id ( username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, rank, user_id_num, is_admin )
             `)
             .eq('id', payload.new.id)
             .single();
@@ -340,7 +340,7 @@ const SupabaseClient = (() => {
 
   async function fetchAllProfiles(limit = 50) {
     const { data, error } = await sb.from('profiles')
-      .select('id, username, avatar_url, name_color, name_effect, user_id_num, is_admin')
+      .select('id, username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, user_id_num, is_admin, rank, level, owned_effects, created_at')
       .order('username')
       .limit(limit);
     if (error) return [];

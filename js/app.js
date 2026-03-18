@@ -811,6 +811,10 @@
         name_color: document.getElementById('edit-color').value,
         name_effect: invSelections.effect,
         rank: rankName,
+        name_font: invSelections.nameFont || 'font-default',
+        chat_font: invSelections.chatFont || 'font-default',
+        text_color: invSelections.textColor || '#aaaaaa',
+        flair: invSelections.flair || 'none',
       });
 
       const user = SupabaseClient.getUser();
@@ -884,6 +888,7 @@
   let chatLoaded = false;
   let chatSubscribed = false; // true once realtime subscriptions are set up
   let currentChannel = 'general';
+  let chatLoadId = 0; // incremented to cancel stale loads
   let cachedUsers = []; // for @mention autocomplete
   let mentionSelIndex = -1;
 
@@ -951,13 +956,16 @@
     const adminTag = p && p.is_admin ? '<span class="chat-admin-tag">[ADMIN]</span>' : '';
     const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-    // Check for flair/font/textColor (current user's own messages)
+    // Apply font/flair/textColor from profile data (synced to Supabase)
+    // Fall back to localStorage prefs for own messages if profile fields missing
     const currentUser = SupabaseClient.getUser();
     const isOwnMsg = currentUser && msg.user_id === currentUser.id;
-    const flairPrefix = isOwnMsg ? getActiveFlair() : '';
-    const userFontClass = isOwnMsg ? getActiveNameFont() : '';
-    const msgFontClass = isOwnMsg ? getActiveChatFont() : '';
-    const textColor = isOwnMsg ? getActiveTextColor() : '';
+    const flairPrefix = p && p.flair && p.flair !== 'none'
+      ? (SHOP_FLAIR.find(f => f.id === p.flair)?.prefix || '')
+      : (isOwnMsg ? getActiveFlair() : '');
+    const userFontClass = p && p.name_font ? fontIdToClass(p.name_font) : (isOwnMsg ? getActiveNameFont() : '');
+    const msgFontClass = p && p.chat_font ? fontIdToClass(p.chat_font) : (isOwnMsg ? getActiveChatFont() : '');
+    const textColor = p && p.text_color && p.text_color !== '#aaaaaa' ? p.text_color : (isOwnMsg ? getActiveTextColor() : '');
     const textColorStyle = textColor ? `color:${escapeHtml(textColor)}` : '';
 
     // Check if it's an action message (/me)
@@ -1039,8 +1047,10 @@
     hubUnread[channel] = 0;
     updateHubUnreadBadges();
 
-    // Reload messages for this channel
+    // Cancel any in-flight load and reload messages for this channel
+    chatLoadId++;
     chatLoaded = false;
+    chatMessages.innerHTML = '<div class="chat-system">LOADING...</div>';
     loadChat();
     AudioSystem.sfxNavigate();
   }
@@ -1136,9 +1146,15 @@
       startDropTimer();
     }
 
+    // Capture load ID so stale fetches are discarded on rapid switching
+    const thisLoadId = chatLoadId;
+    const channelToLoad = currentChannel;
+
     // Load messages for current channel
     try {
-      const messages = await SupabaseClient.fetchMessages(50, currentChannel);
+      const messages = await SupabaseClient.fetchMessages(50, channelToLoad);
+      // If user switched rooms while we were fetching, discard this result
+      if (thisLoadId !== chatLoadId) return;
       chatMessages.innerHTML = '';
       if (messages.length === 0) {
         addSystemMessage('NO MESSAGES YET. BE THE FIRST TO SPEAK.');
@@ -1166,6 +1182,7 @@
       }
       chatMessages.scrollTop = chatMessages.scrollHeight;
     } catch (err) {
+      if (thisLoadId !== chatLoadId) return;
       chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
     }
   }
@@ -1177,6 +1194,54 @@
       el.innerHTML = `<span class="chat-online-dot"></span><span>${count} MEMBERS</span>`;
     }
   }
+
+  // --- Online Users Panel ---
+  const chatUsersPanel = document.getElementById('chat-users-panel');
+  const chatUsersList = document.getElementById('chat-users-list');
+  const chatMembersBtn = document.getElementById('chat-members-btn');
+  const chatUsersPanelClose = document.getElementById('chat-users-panel-close');
+  const chatOnlineCountEl = document.getElementById('chat-online-count');
+
+  function renderUsersPanel() {
+    if (!chatUsersList) return;
+    chatUsersList.innerHTML = '';
+    if (cachedUsers.length === 0) {
+      chatUsersList.innerHTML = '<div class="chat-system" style="font-size:8px;">NO USERS FOUND</div>';
+      return;
+    }
+    const sorted = [...cachedUsers].sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+    sorted.forEach(u => {
+      const item = document.createElement('div');
+      item.className = 'chat-users-item';
+      const effect = getEffectClass(u.name_effect);
+      const color = u.name_color || '#aaa';
+      const rank = u.rank || 'MEMBER';
+      item.innerHTML = `
+        <div class="chat-users-item-avatar">
+          ${u.avatar_url ? renderAvatar(u.avatar_url) : '<span style="font-size:8px;color:#333;">\u25C9</span>'}
+        </div>
+        <div>
+          <div class="chat-users-item-name ${effect}" style="color:${escapeHtml(color)}">${escapeHtml(u.username)}</div>
+          <div class="chat-users-item-meta">${escapeHtml(rank)} \u2022 LV.${u.level || 1}</div>
+        </div>
+      `;
+      item.addEventListener('click', () => {
+        showUserPopup(u.id, u.username);
+      });
+      item.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+      chatUsersList.appendChild(item);
+    });
+  }
+
+  function toggleUsersPanel() {
+    if (!chatUsersPanel) return;
+    const showing = chatUsersPanel.classList.toggle('show');
+    if (showing) renderUsersPanel();
+  }
+
+  if (chatMembersBtn) chatMembersBtn.addEventListener('click', toggleUsersPanel);
+  if (chatUsersPanelClose) chatUsersPanelClose.addEventListener('click', () => chatUsersPanel?.classList.remove('show'));
+  if (chatOnlineCountEl) chatOnlineCountEl.addEventListener('click', toggleUsersPanel);
 
   // --- Admin Purge Channel ---
   const purgeBtn = document.getElementById('chat-purge-btn');
@@ -2347,6 +2412,7 @@
     card.className = 'member-card';
 
     const effect = member.placeholder ? '' : getEffectClass(member.name_effect);
+    const nameFont = member.placeholder ? '' : fontIdToClass(member.name_font);
     const color = member.name_color || '#aaa';
     const idNum = member.user_id_num ? ('#' + String(member.user_id_num).padStart(4, '0')) : '';
     const rank = member.rank || (isCore ? 'CORE' : 'MEMBER');
@@ -2366,7 +2432,7 @@
       </div>
       <div class="member-card-info">
         <div class="member-card-name">
-          <span class="${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</span>
+          <span class="${effect} ${nameFont}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</span>
           ${member.is_admin ? '<span class="member-card-badge">[ADMIN]</span>' : ''}
           ${isCore ? '<span class="member-card-badge">CORE</span>' : ''}
           <span class="member-card-id">${idNum}</span>
@@ -2386,11 +2452,18 @@
   async function showMemberProfile(member, isCore) {
     const profileCard = document.getElementById('profile-card');
     const effect = member.placeholder ? '' : getEffectClass(member.name_effect);
+    const nameFont = member.placeholder ? '' : fontIdToClass(member.name_font);
     const color = member.name_color || '#e02020';
     const rank = member.rank || (isCore ? 'CORE CREW' : 'MEMBER');
     const joined = member.created_at
       ? new Date(member.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()
       : (isCore && member.crewInfo ? member.crewInfo.since : '???');
+
+    // Resolve font names for display
+    const nameFontObj = SHOP_FONTS.find(f => f.id === member.name_font);
+    const chatFontObj = SHOP_FONTS.find(f => f.id === member.chat_font);
+    const nameFontName = nameFontObj ? nameFontObj.name : 'DEFAULT';
+    const chatFontName = chatFontObj ? chatFontObj.name : 'DEFAULT';
 
     let msgCount = 0;
     if (member.id) {
@@ -2403,7 +2476,7 @@
           ? renderAvatar(member.avatar_url)
           : '<span class="profile-card-avatar-placeholder">\u25C9</span>'}
       </div>
-      <div class="profile-name ${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</div>
+      <div class="profile-name ${effect} ${nameFont}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</div>
       ${member.is_admin ? '<div style="font-size:.4rem;color:#e02020;letter-spacing:.1em;margin-bottom:.3rem;">[ADMINISTRATOR]</div>' : ''}
       <div class="pixel-divider"></div>
       ${isCore && member.crewInfo ? `<p class="profile-detail"><span class="label">ROLE:</span> ${escapeHtml(member.crewInfo.role)}</p>` : ''}
@@ -2414,6 +2487,8 @@
         <div class="profile-stat"><div class="profile-stat-value">${msgCount}</div><div class="profile-stat-label">MESSAGES</div></div>
       </div>
       <p class="profile-detail"><span class="label">EFFECT:</span> <span class="${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.name_effect || 'NONE').toUpperCase()}</span></p>
+      <p class="profile-detail"><span class="label">NAME FONT:</span> ${escapeHtml(nameFontName)}</p>
+      <p class="profile-detail"><span class="label">CHAT FONT:</span> ${escapeHtml(chatFontName)}</p>
       <p class="profile-detail"><span class="label">JOINED:</span> ${joined}</p>
     `;
     switchScreen('screen-members', 'screen-profile');
