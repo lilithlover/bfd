@@ -578,7 +578,7 @@
   // ===== INVENTORY / PROFILE EDITOR =====
   let invCurrentTab = 'effects';
   // Pending selections (applied on save)
-  let invSelections = { effect: 'none', font: 'font-default', title: 'title-newcomer', flair: 'none' };
+  let invSelections = { effect: 'none', nameFont: 'font-default', chatFont: 'font-default', title: 'title-newcomer', flair: 'none', textColor: '#aaaaaa' };
 
   function openProfileEditor() {
     const profile = SupabaseClient.getProfile();
@@ -589,12 +589,15 @@
     const prefs = user ? getUserPrefs(user.id) : { ...DEFAULT_PREFS };
 
     // Init selections from current profile
+    // Migrate old 'font' pref to nameFont if nameFont not set
+    const migratedNameFont = prefs.nameFont || prefs.font || 'font-default';
+    const migratedChatFont = prefs.chatFont || 'font-default';
     invSelections = {
       effect: profile.name_effect || 'none',
-      font: prefs.font || 'font-default',
+      nameFont: migratedNameFont,
+      chatFont: migratedChatFont,
       title: prefs.titleId || 'title-newcomer',
       flair: prefs.flair || 'none',
-      fontTarget: prefs.fontTarget || 'username',
       textColor: prefs.textColor || '#aaaaaa',
     };
 
@@ -608,11 +611,6 @@
     document.getElementById('edit-color').value = profile.name_color || '#e02020';
     document.getElementById('edit-text-color').value = invSelections.textColor;
     updateInvPreview();
-
-    // Font target toggles
-    document.querySelectorAll('[data-font-target]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.fontTarget === invSelections.fontTarget);
-    });
 
     // Stats
     const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
@@ -649,12 +647,14 @@
     const el = document.getElementById('inv-equipped');
     if (!el) return;
     const effectObj = EFFECTS.find(e => e.id === invSelections.effect);
-    const fontObj = SHOP_FONTS.find(f => f.id === invSelections.font);
+    const nameFontObj = SHOP_FONTS.find(f => f.id === invSelections.nameFont);
+    const chatFontObj = SHOP_FONTS.find(f => f.id === invSelections.chatFont);
     const titleObj = SHOP_TITLES.find(t => t.id === invSelections.title);
     const flairObj = SHOP_FLAIR.find(f => f.id === invSelections.flair);
     el.innerHTML = `
       <div class="inv-equipped-slot"><span class="slot-label">EFFECT</span><span class="slot-value ${effectObj ? '' : 'empty'}">${effectObj ? escapeHtml(effectObj.name) : 'NONE'}</span></div>
-      <div class="inv-equipped-slot"><span class="slot-label">FONT</span><span class="slot-value ${fontObj ? '' : 'empty'}">${fontObj ? escapeHtml(fontObj.name) : 'DEFAULT'}</span></div>
+      <div class="inv-equipped-slot"><span class="slot-label">NAME FONT</span><span class="slot-value ${nameFontObj ? '' : 'empty'}">${nameFontObj ? escapeHtml(nameFontObj.name) : 'DEFAULT'}</span></div>
+      <div class="inv-equipped-slot"><span class="slot-label">CHAT FONT</span><span class="slot-value ${chatFontObj ? '' : 'empty'}">${chatFontObj ? escapeHtml(chatFontObj.name) : 'DEFAULT'}</span></div>
       <div class="inv-equipped-slot"><span class="slot-label">TITLE</span><span class="slot-value ${titleObj ? '' : 'empty'}">${titleObj ? escapeHtml(titleObj.name) : 'NEWCOMER'}</span></div>
       <div class="inv-equipped-slot"><span class="slot-label">FLAIR</span><span class="slot-value ${flairObj ? '' : 'empty'}">${flairObj ? escapeHtml(flairObj.name) : 'NONE'}</span></div>
     `;
@@ -670,7 +670,8 @@
 
     switch (invCurrentTab) {
       case 'effects': renderInvEffects(grid, owned, profile); break;
-      case 'fonts': renderInvFonts(grid, owned, profile); break;
+      case 'namefonts': renderInvFonts(grid, owned, profile, 'nameFont'); break;
+      case 'chatfonts': renderInvFonts(grid, owned, profile, 'chatFont'); break;
       case 'titles': renderInvTitles(grid, owned, profile); break;
       case 'flair': renderInvFlair(grid, owned, profile); break;
     }
@@ -693,15 +694,15 @@
     });
   }
 
-  function renderInvFonts(grid, owned, profile) {
+  function renderInvFonts(grid, owned, profile, selKey) {
     SHOP_FONTS.forEach(f => {
       const isOwned = f.price === 0 || owned.includes(f.id) || profile.is_admin;
-      const isEquipped = invSelections.font === f.id;
+      const isEquipped = invSelections[selKey] === f.id;
       const rarity = f.price === 0 ? 'free' : f.price >= 500 ? 'epic' : f.price >= 300 ? 'rare' : 'common';
       const previewHtml = `<span style="font-family:${f.css}; font-size:clamp(.5rem, 1.5vw, .8rem);">AaBb 12</span>`;
       const item = createInvItem(f.name, previewHtml, f.id, isEquipped, isOwned, rarity);
       if (isOwned) {
-        item.addEventListener('click', () => { invSelections.font = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+        item.addEventListener('click', () => { invSelections[selKey] = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
       }
       grid.appendChild(item);
     });
@@ -769,15 +770,6 @@
     invSelections.textColor = e.target.value;
   });
 
-  // Font target toggles
-  document.querySelectorAll('[data-font-target]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      AudioSystem.sfxSelect();
-      invSelections.fontTarget = btn.dataset.fontTarget;
-      document.querySelectorAll('[data-font-target]').forEach(b => b.classList.toggle('active', b === btn));
-    });
-    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
-  });
 
   // Avatar upload
   document.getElementById('edit-avatar-input').addEventListener('change', async (e) => {
@@ -824,10 +816,11 @@
       const user = SupabaseClient.getUser();
       if (user) {
         const prefs = getUserPrefs(user.id);
-        prefs.font = invSelections.font;
+        prefs.nameFont = invSelections.nameFont;
+        prefs.chatFont = invSelections.chatFont;
+        prefs.font = invSelections.nameFont; // backwards compat
         prefs.flair = invSelections.flair;
         prefs.titleId = invSelections.title;
-        prefs.fontTarget = invSelections.fontTarget || 'username';
         prefs.textColor = invSelections.textColor || '#aaaaaa';
         saveUserPrefs(user.id, prefs);
       }
@@ -838,7 +831,7 @@
   });
 
   // User preferences (stored in localStorage for font/flair)
-  const DEFAULT_PREFS = { font: 'font-default', flair: 'none', titleId: 'title-newcomer', fontTarget: 'username', textColor: '#aaaaaa' };
+  const DEFAULT_PREFS = { font: 'font-default', nameFont: 'font-default', chatFont: 'font-default', flair: 'none', titleId: 'title-newcomer', textColor: '#aaaaaa' };
   function getUserPrefs(userId) {
     try {
       const data = localStorage.getItem('rune-prefs-' + userId);
@@ -855,20 +848,26 @@
     const flair = SHOP_FLAIR.find(f => f.id === prefs.flair);
     return flair ? flair.prefix : '';
   }
-  function getActiveFontClass(userId) {
-    const prefs = getUserPrefs(userId);
-    const font = SHOP_FONTS.find(f => f.id === prefs.font);
-    return font && prefs.font !== 'font-default' ? 'chat-font-' + prefs.font.replace('font-', '') : '';
+  function fontIdToClass(fontId) {
+    return fontId && fontId !== 'font-default' ? 'chat-font-' + fontId.replace('font-', '') : '';
   }
   function getActiveFont() {
     const user = SupabaseClient.getUser();
     if (!user) return '';
-    return getActiveFontClass(user.id);
+    const prefs = getUserPrefs(user.id);
+    return fontIdToClass(prefs.nameFont || prefs.font);
   }
-  function getActiveFontTarget() {
+  function getActiveNameFont() {
     const user = SupabaseClient.getUser();
-    if (!user) return 'username';
-    return getUserPrefs(user.id).fontTarget || 'username';
+    if (!user) return '';
+    const prefs = getUserPrefs(user.id);
+    return fontIdToClass(prefs.nameFont || prefs.font);
+  }
+  function getActiveChatFont() {
+    const user = SupabaseClient.getUser();
+    if (!user) return '';
+    const prefs = getUserPrefs(user.id);
+    return fontIdToClass(prefs.chatFont);
   }
   function getActiveTextColor() {
     const user = SupabaseClient.getUser();
@@ -956,13 +955,9 @@
     const currentUser = SupabaseClient.getUser();
     const isOwnMsg = currentUser && msg.user_id === currentUser.id;
     const flairPrefix = isOwnMsg ? getActiveFlair() : '';
-    const fontClass = isOwnMsg ? getActiveFont() : '';
-    const fontTarget = isOwnMsg ? getActiveFontTarget() : 'username';
+    const userFontClass = isOwnMsg ? getActiveNameFont() : '';
+    const msgFontClass = isOwnMsg ? getActiveChatFont() : '';
     const textColor = isOwnMsg ? getActiveTextColor() : '';
-
-    // Apply font to username, text, or both based on fontTarget
-    const userFontClass = (fontTarget === 'username' || fontTarget === 'both') ? fontClass : '';
-    const msgFontClass = (fontTarget === 'text' || fontTarget === 'both') ? fontClass : '';
     const textColorStyle = textColor ? `color:${escapeHtml(textColor)}` : '';
 
     // Check if it's an action message (/me)
@@ -2323,6 +2318,12 @@
       // Sort core crew by 'since' year
       coreMembers.sort((a, b) => parseInt(a.crewInfo.since) - parseInt(b.crewInfo.since));
 
+      // Update counts
+      const coreCountEl = document.getElementById('core-count');
+      const commCountEl = document.getElementById('community-count');
+      if (coreCountEl) coreCountEl.textContent = coreMembers.length + ' MEMBERS';
+      if (commCountEl) commCountEl.textContent = communityMembers.length + ' MEMBERS';
+
       // Render core crew
       coreMembers.forEach(m => {
         coreList.appendChild(renderMemberCard(m, true));
@@ -2342,7 +2343,6 @@
   }
 
   function renderMemberCard(member, isCore) {
-    const li = document.createElement('li');
     const card = document.createElement('div');
     card.className = 'member-card';
 
@@ -2380,8 +2380,7 @@
       showMemberProfile(member, isCore);
     });
 
-    li.appendChild(card);
-    return li;
+    return card;
   }
 
   async function showMemberProfile(member, isCore) {
