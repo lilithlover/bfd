@@ -268,8 +268,19 @@
     @keyframes fx-omega { 0%,100%{background-position:0% 50%}50%{background-position:300% 50%} }
 
     /* ===== MEMBERS ===== */
-    .members-list { list-style: none; text-align: center; width: 100%; max-height: 50vh; overflow-y: auto; }
-    .members-list li { margin: .5rem 0; }
+    .members-list { list-style: none; text-align: center; width: 100%; max-height: 60vh; overflow-y: auto; padding: 0 .5rem; }
+    .members-list li { margin: .4rem 0; }
+    .member-card { display: flex; align-items: center; gap: .6rem; padding: .5rem .7rem; border: 1px solid #1a0000; background: #060606; cursor: pointer; transition: border-color .2s, background .2s; }
+    .member-card:hover { border-color: #e02020; background: rgba(224,32,32,.03); }
+    .member-card-avatar { width: 40px; height: 40px; border: 1px solid #330000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .member-card-avatar img, .member-card-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .member-card-avatar-placeholder { font-size: 14px; color: #333; }
+    .member-card-info { flex: 1; text-align: left; min-width: 0; }
+    .member-card-name { font-size: clamp(.4rem, 1.4vw, .65rem); letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; gap: .3rem; }
+    .member-card-id { font-size: clamp(.25rem, .8vw, .35rem); color: #333; }
+    .member-card-meta { font-size: clamp(.22rem, .7vw, .32rem); color: #444; letter-spacing: .06em; margin-top: .15rem; }
+    .member-card-badge { font-size: .7em; padding: .05rem .2rem; background: rgba(224,32,32,.15); color: #e02020; }
+    .members-section-title { font-size: clamp(.3rem, 1vw, .45rem); color: #e02020; letter-spacing: .2em; margin: .8rem 0 .4rem; text-transform: uppercase; }
     .member-name { font-size: clamp(.45rem, 1.6vw, .7rem); color: #666; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .15s, text-shadow .15s; user-select: none; display: inline-block; padding: .2rem 0; }
     .member-name:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5); }
     .member-name.redacted { color: #330000; text-decoration: line-through; text-decoration-color: #660000; }
@@ -278,8 +289,15 @@
     /* ===== PROFILE ===== */
     .profile-card { text-align: center; width: 100%; max-width: 600px; }
     .profile-card .profile-name { font-family: 'Blood Crow', Impact, sans-serif !important; font-size: clamp(1.5rem, 5vw, 3rem); color: #e02020; text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; margin-bottom: .5rem; text-transform: uppercase; }
+    .profile-card-avatar { width: 80px; height: 80px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; margin: .5rem auto; box-shadow: 0 0 12px rgba(224,32,32,.2); }
+    .profile-card-avatar img, .profile-card-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .profile-card-avatar-placeholder { font-size: 24px; color: #333; }
     .profile-detail { font-size: clamp(.35rem, 1.2vw, .55rem); color: #666; margin: .6rem 0; line-height: 1.8; letter-spacing: .08em; display: block; }
     .profile-detail .label { color: #e02020; }
+    .profile-stats-row { display: flex; justify-content: center; gap: .8rem; margin: .8rem 0; flex-wrap: wrap; }
+    .profile-stat { text-align: center; padding: .3rem .5rem; border: 1px solid #1a0000; background: #060606; min-width: 60px; }
+    .profile-stat-value { font-size: clamp(.4rem, 1.3vw, .6rem); color: #e02020; }
+    .profile-stat-label { font-size: clamp(.2rem, .7vw, .3rem); color: #444; letter-spacing: .08em; margin-top: .1rem; }
 
     /* ===== CLASSIFIED ===== */
     .classified-screen { text-align: center; width: 100%; overflow: hidden; }
@@ -290,17 +308,40 @@
     .classified-watermark { font-size: clamp(.45rem, 1.4vw, .65rem); color: #330000; letter-spacing: .3em; margin: .5rem 0; text-transform: uppercase; }
 
     /* ===== RELEASES ===== */
-    .release-card { text-align: center; width: 100%; max-width: 500px; }
-    .release-art { width: 220px; height: 220px; margin: 1rem auto; border: 2px solid #e02020; box-shadow: 0 0 15px rgba(224,32,32,.2), inset 0 0 30px rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0a0a0a; }
+    .releases-grid { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 1.2rem; }
+    .release-card { text-align: center; width: 100%; border: 1px solid #1a0000; background: #060606; padding: 1rem; transition: border-color .2s; }
+    .release-card:hover { border-color: #330000; }
+    .release-card.featured { border-color: #e02020; box-shadow: 0 0 20px rgba(224,32,32,.1); }
+    .release-art { width: 220px; height: 220px; margin: .8rem auto; border: 2px solid #e02020; box-shadow: 0 0 15px rgba(224,32,32,.2), inset 0 0 30px rgba(0,0,0,.8); display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0a0a0a; }
     .release-art img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .release-art .placeholder { font-size: .4rem; color: #330000; text-align: center; padding: .5rem; }
     .release-title-text { font-family: 'Blood Crow', Impact, sans-serif !important; font-size: clamp(1.2rem, 4vw, 2.5rem); color: #e02020; text-shadow: 2px 2px 0 #8b0000, 4px 4px 0 #4a0000; margin: .8rem 0 .5rem; text-transform: uppercase; }
     .release-info { font-size: clamp(.32rem, 1.1vw, .5rem); color: #666; line-height: 2.2; letter-spacing: .08em; }
-    .release-status { font-size: clamp(.35rem, 1.2vw, .55rem); color: #e02020; margin-top: 1rem; animation: blink 1.5s step-end infinite; }
+    .release-status { font-size: clamp(.35rem, 1.2vw, .55rem); color: #e02020; margin-top: .8rem; animation: blink 1.5s step-end infinite; }
+    .release-tracklist { text-align: left; margin: .8rem auto; max-width: 300px; }
+    .release-track { font-size: clamp(.28rem, .9vw, .4rem); color: #555; padding: .25rem 0; border-bottom: 1px solid #111; display: flex; gap: .4rem; letter-spacing: .05em; }
+    .release-track-num { color: #e02020; min-width: 1.5em; }
+    .release-track-name { flex: 1; }
+    .release-track-dur { color: #333; }
+    .release-links { display: flex; gap: .4rem; justify-content: center; margin-top: .8rem; flex-wrap: wrap; }
+    .release-link { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #333; color: #555; padding: .3rem .6rem; cursor: pointer; transition: all .15s; text-decoration: none; display: inline-block; }
+    .release-link:hover { color: #e02020; border-color: #e02020; }
 
     /* ===== ABOUT ===== */
+    .about-container { width: 100%; max-width: 700px; }
     .about-text { font-size: clamp(.32rem, 1.2vw, .52rem); color: #666; line-height: 2.4; text-align: center; max-width: 650px; letter-spacing: .05em; margin: 0 auto; }
     .about-text p { margin-bottom: 1rem; }
+    .about-section { margin-bottom: 1.5rem; }
+    .about-section-title { font-size: clamp(.35rem, 1.2vw, .55rem); color: #e02020; letter-spacing: .2em; margin-bottom: .6rem; text-align: center; text-transform: uppercase; }
+    .about-timeline { position: relative; padding-left: 1.5rem; max-width: 500px; margin: 0 auto; }
+    .about-timeline::before { content: ''; position: absolute; left: .3rem; top: 0; bottom: 0; width: 2px; background: #1a0000; }
+    .about-timeline-item { position: relative; margin-bottom: .8rem; padding-left: .5rem; }
+    .about-timeline-item::before { content: ''; position: absolute; left: -.95rem; top: .35rem; width: 8px; height: 8px; background: #e02020; border: 1px solid #660000; }
+    .about-timeline-year { font-size: clamp(.3rem, 1vw, .45rem); color: #e02020; letter-spacing: .15em; margin-bottom: .15rem; }
+    .about-timeline-text { font-size: clamp(.28rem, .9vw, .42rem); color: #555; line-height: 2; letter-spacing: .04em; }
+    .about-links { display: flex; gap: .4rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+    .about-link { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); color: #555; border: 1px solid #333; padding: .3rem .6rem; text-decoration: none; transition: all .15s; cursor: pointer; }
+    .about-link:hover { color: #e02020; border-color: #e02020; }
 
     /* ===== AUTH ===== */
     .auth-container { text-align: center; width: 100%; max-width: 420px; }
@@ -577,6 +618,11 @@
     .back-btn::before { content: '\25C4 '; color: #e02020; }
     .screen-footer { margin-top: 1.2rem; }
 
+    /* ===== GUEST CHAT BANNER ===== */
+    .chat-guest-banner { background: linear-gradient(90deg, #1a0000, #0a0000, #1a0000); border: 1px solid #330000; padding: .5rem .8rem; text-align: center; font-size: clamp(.28rem, .9vw, .4rem); color: #666; letter-spacing: .06em; display: flex; align-items: center; justify-content: center; gap: .5rem; flex-shrink: 0; }
+    .chat-guest-banner .guest-login-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
+    .chat-guest-banner .guest-login-btn:hover { background: #e02020; color: #000; }
+
     /* ===== TOAST ===== */
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); font-size: clamp(.3rem, 1vw, .42rem); color: #e02020; background: #0a0a0a; border: 1px solid #e02020; padding: .5rem 1rem; z-index: 10000; transition: transform .3s ease; white-space: nowrap; box-shadow: 0 0 12px rgba(224,32,32,.3); }
     .toast.show { transform: translateX(-50%) translateY(0); }
@@ -607,6 +653,14 @@
       .copyright { font-size: .55rem; }
       .insert-coin { font-size: .5rem; }
       .member-name { font-size: .75rem; }
+      .member-card { padding: .6rem .9rem; }
+      .member-card-avatar { width: 48px; height: 48px; }
+      .member-card-name { font-size: .7rem; }
+      .member-card-meta { font-size: .36rem; }
+      .about-timeline-year { font-size: .48rem; }
+      .about-timeline-text { font-size: .45rem; }
+      .about-section-title { font-size: .58rem; }
+      .profile-card-avatar { width: 96px; height: 96px; }
       .profile-detail { font-size: .6rem; }
       .about-text { font-size: .55rem; max-width: 750px; }
       .auth-tab { font-size: .65rem; }
@@ -707,7 +761,7 @@
         <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
         <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
         <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
-        <li id="chat-menu-li" style="display:none;"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
+        <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
         <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin">ADMIN PANEL</span></li>
         <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
       </ul>
@@ -744,9 +798,12 @@
     <!-- MEMBERS -->
     <div id="screen-members" class="screen">
       <h2 class="menu-title rgb-split">MEMBERS</h2>
-      <div class="menu-subtitle"> </div>
+      <div class="menu-subtitle">- THE TRIBE -</div>
       <div class="pixel-divider"></div>
-      <ul class="members-list" id="members-list"></ul>
+      <div class="members-section-title">&#9670; CORE CREW</div>
+      <ul class="members-list" id="members-core-list"></ul>
+      <div class="members-section-title">&#9670; COMMUNITY</div>
+      <ul class="members-list" id="members-community-list"></ul>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
@@ -780,14 +837,27 @@
       <h2 class="menu-title rgb-split">RELEASES</h2>
       <div class="menu-subtitle">- DISCOGRAPHY -</div>
       <div class="pixel-divider"></div>
-      <div class="release-card">
-        <div class="release-art pixel-border">
-          <img src="https://cdn.lewd.host/L43Zlz4B.jpg" alt="EP Cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-          <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
+      <div class="releases-grid">
+        <div class="release-card featured">
+          <div class="release-status">&#9733; NEW RELEASE &#9733;</div>
+          <div class="release-art pixel-border">
+            <img src="https://cdn.lewd.host/L43Zlz4B.jpg" alt="EP Cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+            <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
+          </div>
+          <div class="release-title-text">COMING SOON</div>
+          <div class="release-info">
+            TYPE: EP &bull; RELEASE: END OF MARCH 2026<br>
+            ARTISTS: ALLCONTEMPT &bull; DEADBELIEF
+          </div>
+          <div class="release-tracklist">
+            <div class="release-track"><span class="release-track-num">01</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+            <div class="release-track"><span class="release-track-num">02</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+            <div class="release-track"><span class="release-track-num">03</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+            <div class="release-track"><span class="release-track-num">04</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+            <div class="release-track"><span class="release-track-num">05</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+          </div>
+          <div class="release-status">STAY TUNED...</div>
         </div>
-        <div class="release-title-text">COMING SOON</div>
-        <div class="release-info">TYPE: EP<br>RELEASE: END OF MARCH 2026</div>
-        <div class="release-status">STAY TUNED...</div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
@@ -797,11 +867,48 @@
       <h2 class="menu-title rgb-split">ABOUT US</h2>
       <div class="menu-subtitle">- WHO WE ARE -</div>
       <div class="pixel-divider"></div>
-      <div class="about-text">
-        <p>Rune tribe is collective made back in 2019 starting off first as a way to fight agianst pdf's and people accused of grape.</p>
-        <p>Using our members. We would find undeniable proof so we could do what we have to do to people who dont deserve to be around.</p>
-        <p>Stone mask is a collective made back in 2021 to fight the system and to help mankind in the right direction.</p>
-        <p>You dm us proof and we would still look into it. Dm allcontempt on site first. </p>
+      <div class="about-container">
+        <div class="about-section">
+          <div class="about-text">
+            <p>Rune Tribe is a collective built on accountability and creative expression. What started as a mission to protect communities has grown into a full creative force.</p>
+          </div>
+        </div>
+
+        <div class="about-section">
+          <div class="about-section-title">&#9670; OUR HISTORY</div>
+          <div class="about-timeline">
+            <div class="about-timeline-item">
+              <div class="about-timeline-year">2019</div>
+              <div class="about-timeline-text">Rune Tribe founded. Started as a collective dedicated to community accountability and protection.</div>
+            </div>
+            <div class="about-timeline-item">
+              <div class="about-timeline-year">2021</div>
+              <div class="about-timeline-text">Stone Mask collective formed to fight the system and help push mankind in the right direction.</div>
+            </div>
+            <div class="about-timeline-item">
+              <div class="about-timeline-year">2025</div>
+              <div class="about-timeline-text">Expanded into music production and creative arts. New members join the crew.</div>
+            </div>
+            <div class="about-timeline-item">
+              <div class="about-timeline-year">2026</div>
+              <div class="about-timeline-text">Launched runetribe.com. First EP in production. The tribe grows.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-section">
+          <div class="about-section-title">&#9670; WHAT WE DO</div>
+          <div class="about-text">
+            <p>We make music. We build community. We hold people accountable. If you have proof of something that needs attention, DM allcontempt on site first.</p>
+          </div>
+        </div>
+
+        <div class="about-section">
+          <div class="about-section-title">&#9670; CONNECT</div>
+          <div class="about-text">
+            <p>Join the chat to connect with the tribe. Register an account and start talking.</p>
+          </div>
+        </div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>

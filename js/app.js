@@ -192,13 +192,15 @@
     item.addEventListener('click', () => {
       const target = item.dataset.target;
       if (!target) return;
-      if (target === 'screen-chat' && !SupabaseClient.getUser()) {
-        AudioSystem.sfxError(); showToast('LOGIN REQUIRED TO ACCESS CHAT'); return;
-      }
       if (target === 'screen-chat') {
-        switchHub(currentChannel);
-        SupabaseClient.markMentionsRead();
-        updateChatBadge(0);
+        if (SupabaseClient.getUser()) {
+          switchHub(currentChannel);
+          SupabaseClient.markMentionsRead();
+          updateChatBadge(0);
+        } else {
+          // Guest chat - read-only
+          enterGuestChat();
+        }
       }
       switchScreen(currentScreen, target);
     });
@@ -337,9 +339,9 @@
       authItem.onclick = null;
     }
 
-    // Show/hide chat option (logged-in users only)
+    // Chat is always visible (guest = read-only, logged-in = full access)
     if (chatLi) {
-      chatLi.style.display = user ? '' : 'none';
+      chatLi.style.display = '';
     }
 
     // Show/hide admin panel option
@@ -667,6 +669,7 @@
           } else {
             el = renderMessage(msg);
             AudioSystem.sfxChat();
+            incrementTabUnread();
           }
           if (el) {
             chatMessages.appendChild(el);
@@ -1841,33 +1844,342 @@
   }
 
   /* ===== MEMBERS ===== */
-  const members = [
-    { name: 'Percpuke', role: 'Manager', rank: 'Stone Mask', time: 'Since 2019', redacted: false },
-    { name: 'Allcontempt', role: 'Vocals & Graphic Designer', rank: 'Stone Mask', time: 'Since 2020', redacted: false },
-    { name: 'Deadbelief', role: 'Vocals & Producer', rank: 'Stone Mask', time: 'Since 2025', redacted: false },
-    { name: 'Alkoholinmeinemblut', role: 'Website Manager', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
-    { name: 'Allsomecat', role: 'Producer & Mixxer', rank: 'Rune Tribe', time: 'Since 2026', redacted: false },
-  ];
+  // Core crew - hardcoded founding/key members with roles
+  const CORE_CREW = {
+    'PERCPUKE':            { role: 'Manager', since: '2019' },
+    'ALLCONTEMPT':         { role: 'Vocals & Graphic Designer', since: '2020' },
+    'DEADBELIEF':          { role: 'Vocals & Producer', since: '2025' },
+    'ALKOHOLINMEINEMBLUT': { role: 'Website Manager', since: '2026' },
+    'ALLSOMECAT':          { role: 'Producer & Mixxer', since: '2026' },
+  };
 
-  const membersList = document.getElementById('members-list');
-  members.forEach(member => {
+  let membersLoaded = false;
+
+  async function loadMembers() {
+    if (membersLoaded) return;
+    membersLoaded = true;
+
+    const coreList = document.getElementById('members-core-list');
+    const communityList = document.getElementById('members-community-list');
+    if (!coreList || !communityList) return;
+
+    coreList.innerHTML = '<div class="chat-system">LOADING...</div>';
+    communityList.innerHTML = '';
+
+    try {
+      const profiles = await SupabaseClient.fetchAllProfiles(200);
+      coreList.innerHTML = '';
+
+      const coreMembers = [];
+      const communityMembers = [];
+
+      profiles.forEach(p => {
+        const upperName = (p.username || '').toUpperCase();
+        if (CORE_CREW[upperName]) {
+          coreMembers.push({ ...p, crewInfo: CORE_CREW[upperName] });
+        } else {
+          communityMembers.push(p);
+        }
+      });
+
+      // Also add any core crew not yet registered (show as placeholder)
+      Object.entries(CORE_CREW).forEach(([name, info]) => {
+        if (!coreMembers.find(m => (m.username || '').toUpperCase() === name)) {
+          coreMembers.push({ username: name, crewInfo: info, placeholder: true });
+        }
+      });
+
+      // Sort core crew by 'since' year
+      coreMembers.sort((a, b) => parseInt(a.crewInfo.since) - parseInt(b.crewInfo.since));
+
+      // Render core crew
+      coreMembers.forEach(m => {
+        coreList.appendChild(renderMemberCard(m, true));
+      });
+
+      // Render community
+      if (communityMembers.length > 0) {
+        communityMembers.forEach(m => {
+          communityList.appendChild(renderMemberCard(m, false));
+        });
+      } else {
+        communityList.innerHTML = '<div class="chat-system" style="font-size:8px;">NO COMMUNITY MEMBERS YET</div>';
+      }
+    } catch (err) {
+      coreList.innerHTML = '<div class="chat-system">FAILED TO LOAD MEMBERS</div>';
+    }
+  }
+
+  function renderMemberCard(member, isCore) {
     const li = document.createElement('li');
-    const span = document.createElement('span');
-    span.className = 'member-name';
-    span.textContent = member.name;
-    span.addEventListener('mouseenter', () => AudioSystem.sfxHover());
-    span.addEventListener('click', () => {
-      document.getElementById('profile-card').innerHTML = `
-        <div class="profile-name">${escapeHtml(member.name)}</div>
-        <div class="pixel-divider"></div>
-        <p class="profile-detail"><span class="label">ROLE:</span> ${escapeHtml(member.role)}</p>
-        <p class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(member.rank)}</p>
-        <p class="profile-detail"><span class="label">TIME WITH TRIBE:</span> ${escapeHtml(member.time)}</p>
-      `;
-      switchScreen('screen-members', 'screen-profile');
+    const card = document.createElement('div');
+    card.className = 'member-card';
+
+    const effect = member.placeholder ? '' : getEffectClass(member.name_effect);
+    const color = member.name_color || '#aaa';
+    const idNum = member.user_id_num ? ('#' + String(member.user_id_num).padStart(4, '0')) : '';
+    const rank = member.rank || (isCore ? 'CORE' : 'MEMBER');
+
+    let metaText = '';
+    if (isCore && member.crewInfo) {
+      metaText = `${escapeHtml(member.crewInfo.role)} \u2022 Since ${member.crewInfo.since}`;
+    } else {
+      metaText = `${escapeHtml(rank)} \u2022 LV.${member.level || 1}`;
+    }
+
+    card.innerHTML = `
+      <div class="member-card-avatar">
+        ${member.avatar_url
+          ? renderAvatar(member.avatar_url)
+          : '<span class="member-card-avatar-placeholder">\u25C9</span>'}
+      </div>
+      <div class="member-card-info">
+        <div class="member-card-name">
+          <span class="${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</span>
+          ${member.is_admin ? '<span class="member-card-badge">[ADMIN]</span>' : ''}
+          ${isCore ? '<span class="member-card-badge">CORE</span>' : ''}
+          <span class="member-card-id">${idNum}</span>
+        </div>
+        <div class="member-card-meta">${metaText}</div>
+      </div>
+    `;
+
+    card.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+    card.addEventListener('click', () => {
+      showMemberProfile(member, isCore);
     });
-    li.appendChild(span);
-    membersList.appendChild(li);
+
+    li.appendChild(card);
+    return li;
+  }
+
+  async function showMemberProfile(member, isCore) {
+    const profileCard = document.getElementById('profile-card');
+    const effect = member.placeholder ? '' : getEffectClass(member.name_effect);
+    const color = member.name_color || '#e02020';
+    const rank = member.rank || (isCore ? 'CORE CREW' : 'MEMBER');
+    const joined = member.created_at
+      ? new Date(member.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()
+      : (isCore && member.crewInfo ? member.crewInfo.since : '???');
+
+    let msgCount = 0;
+    if (member.id) {
+      try { msgCount = await SupabaseClient.fetchUserMessageCount(member.id); } catch (_) {}
+    }
+
+    profileCard.innerHTML = `
+      <div class="profile-card-avatar">
+        ${member.avatar_url
+          ? renderAvatar(member.avatar_url)
+          : '<span class="profile-card-avatar-placeholder">\u25C9</span>'}
+      </div>
+      <div class="profile-name ${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.username)}</div>
+      ${member.is_admin ? '<div style="font-size:.4rem;color:#e02020;letter-spacing:.1em;margin-bottom:.3rem;">[ADMINISTRATOR]</div>' : ''}
+      <div class="pixel-divider"></div>
+      ${isCore && member.crewInfo ? `<p class="profile-detail"><span class="label">ROLE:</span> ${escapeHtml(member.crewInfo.role)}</p>` : ''}
+      <p class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(rank)}</p>
+      <div class="profile-stats-row">
+        <div class="profile-stat"><div class="profile-stat-value">${member.level || 1}</div><div class="profile-stat-label">LEVEL</div></div>
+        <div class="profile-stat"><div class="profile-stat-value">${parseOwnedEffects(member.owned_effects).length}</div><div class="profile-stat-label">EFFECTS</div></div>
+        <div class="profile-stat"><div class="profile-stat-value">${msgCount}</div><div class="profile-stat-label">MESSAGES</div></div>
+      </div>
+      <p class="profile-detail"><span class="label">EFFECT:</span> <span class="${effect}" style="color:${escapeHtml(color)}">${escapeHtml(member.name_effect || 'NONE').toUpperCase()}</span></p>
+      <p class="profile-detail"><span class="label">JOINED:</span> ${joined}</p>
+    `;
+    switchScreen('screen-members', 'screen-profile');
+  }
+
+  // Load members when navigating to the members screen
+  document.querySelector('[data-target="screen-members"]')?.addEventListener('click', () => {
+    membersLoaded = false; // Reload each time to catch new registrations
+    loadMembers();
+  });
+
+  /* ===== GUEST CHAT (READ-ONLY) ===== */
+  let guestChatLoaded = false;
+
+  async function enterGuestChat() {
+    if (guestChatLoaded) return;
+    guestChatLoaded = true;
+
+    // Hide input area, show guest banner
+    const inputArea = document.querySelector('.chat-input-area');
+    if (inputArea) inputArea.style.display = 'none';
+
+    // Add guest banner
+    const chatMain = document.querySelector('.chat-main');
+    if (chatMain) {
+      const banner = document.createElement('div');
+      banner.className = 'chat-guest-banner';
+      banner.innerHTML = `
+        \u25C9 VIEWING AS GUEST (READ-ONLY)
+        <button class="guest-login-btn" id="guest-login-btn">LOGIN TO CHAT</button>
+      `;
+      chatMain.appendChild(banner);
+      document.getElementById('guest-login-btn')?.addEventListener('click', () => {
+        switchScreen('screen-chat', 'screen-auth');
+      });
+    }
+
+    // Hide admin buttons
+    const spawnBtn = document.getElementById('chat-spawn-drop-btn');
+    const purgeBtn2 = document.getElementById('chat-purge-btn');
+    if (spawnBtn) spawnBtn.style.display = 'none';
+    if (purgeBtn2) purgeBtn2.style.display = 'none';
+
+    // Load messages for current channel (read-only)
+    try {
+      const messages = await SupabaseClient.fetchMessages(50, currentChannel);
+      chatMessages.innerHTML = '';
+      if (messages.length === 0) {
+        addSystemMessage('NO MESSAGES YET.');
+      } else {
+        messages.forEach(msg => {
+          const content = msg.content || '';
+          let el;
+          if (isDropMessage(content)) {
+            el = renderDropMessage(msg);
+          } else if (isClaimMessage(content)) {
+            el = renderClaimMessage(msg);
+          } else {
+            el = renderMessage(msg);
+          }
+          if (el) chatMessages.appendChild(el);
+        });
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (err) {
+      chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
+    }
+
+    // Subscribe to real-time updates (read-only)
+    SupabaseClient.subscribeChat((msg) => {
+      const msgChannel = msg.channel || 'general';
+      if (msgChannel === currentChannel) {
+        const content = msg.content || '';
+        let el;
+        if (isDropMessage(content)) {
+          el = renderDropMessage(msg);
+        } else if (isClaimMessage(content)) {
+          el = renderClaimMessage(msg);
+        } else {
+          el = renderMessage(msg);
+        }
+        if (el) {
+          chatMessages.appendChild(el);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }
+    });
+
+    // Guest hub switching
+    document.querySelectorAll('.chat-hub-item').forEach(item => {
+      item.addEventListener('click', async () => {
+        const channel = item.dataset.channel;
+        if (channel === currentChannel) return;
+        currentChannel = channel;
+        const hub = HUBS[channel];
+        document.querySelectorAll('.chat-hub-item').forEach(i => {
+          i.classList.toggle('active', i.dataset.channel === channel);
+        });
+        document.getElementById('chat-header-name').textContent = hub.name;
+        document.getElementById('chat-header-desc').textContent = hub.desc;
+
+        // Reload messages for this channel
+        try {
+          const messages = await SupabaseClient.fetchMessages(50, channel);
+          chatMessages.innerHTML = '';
+          if (messages.length === 0) {
+            addSystemMessage('NO MESSAGES YET.');
+          } else {
+            messages.forEach(msg => {
+              const content = msg.content || '';
+              let el;
+              if (isDropMessage(content)) el = renderDropMessage(msg);
+              else if (isClaimMessage(content)) el = renderClaimMessage(msg);
+              else el = renderMessage(msg);
+              if (el) chatMessages.appendChild(el);
+            });
+          }
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        } catch (_) {
+          chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD</div>';
+        }
+        AudioSystem.sfxNavigate();
+      });
+    });
+  }
+
+  /* ===== BROWSER TAB NOTIFICATIONS ===== */
+  const ORIGINAL_TITLE = document.title;
+  let tabUnreadCount = 0;
+  let tabFlashInterval = null;
+
+  function updateTabTitle() {
+    if (tabUnreadCount > 0) {
+      document.title = `(${tabUnreadCount}) ${ORIGINAL_TITLE}`;
+      // Flash the tab title for attention
+      if (!tabFlashInterval) {
+        let flash = false;
+        tabFlashInterval = setInterval(() => {
+          flash = !flash;
+          document.title = flash ? `\u2605 NEW MESSAGE - ${ORIGINAL_TITLE}` : `(${tabUnreadCount}) ${ORIGINAL_TITLE}`;
+        }, 1500);
+      }
+    } else {
+      document.title = ORIGINAL_TITLE;
+      if (tabFlashInterval) {
+        clearInterval(tabFlashInterval);
+        tabFlashInterval = null;
+      }
+    }
+  }
+
+  // Track when user is on the page
+  let isPageVisible = true;
+  document.addEventListener('visibilitychange', () => {
+    isPageVisible = !document.hidden;
+    if (isPageVisible) {
+      tabUnreadCount = 0;
+      updateTabTitle();
+    }
+  });
+
+  // Hook into the existing chat subscription to track tab unreads
+  const originalOnNewMessage = null;
+  function incrementTabUnread() {
+    if (!isPageVisible) {
+      tabUnreadCount++;
+      updateTabTitle();
+    }
+  }
+
+  /* ===== KEYBOARD SHORTCUTS ===== */
+  document.addEventListener('keydown', (e) => {
+    // Don't interfere with input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+    // ESC to go back
+    if (e.key === 'Escape') {
+      // Close popups first
+      if (userPopup.classList.contains('show')) { closeUserPopup(); return; }
+      if (dmPanel.classList.contains('show')) { closeDMPanel(); return; }
+      if (dmSearchModal.classList.contains('show')) { dmSearchModal.classList.remove('show'); dmOverlay.classList.remove('show'); return; }
+
+      // Navigate back
+      if (currentScreen === 'screen-title') return;
+      if (currentScreen === 'screen-nav') { switchScreen(currentScreen, 'screen-title'); return; }
+      if (currentScreen === 'screen-profile') { switchScreen(currentScreen, 'screen-members'); return; }
+      if (currentScreen === 'screen-classified') { switchScreen(currentScreen, 'screen-members'); return; }
+      switchScreen(currentScreen, 'screen-nav');
+      return;
+    }
+
+    // Enter on title screen = press start
+    if (e.key === 'Enter' && currentScreen === 'screen-title') {
+      document.getElementById('press-start').click();
+      return;
+    }
   });
 
   /* ===== UTILITY ===== */
