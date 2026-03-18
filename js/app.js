@@ -8,7 +8,7 @@
   'use strict';
 
   /* ===== EFFECTS REGISTRY ===== */
-  // rarity: 'free' = always available, 'drop' = rare drop only, 'shop' = buy in shop, 'admin' = admin only
+  // rarity: 'free' = always available, 'drop' = rare drop only, 'shop' = buy in shop, 'admin' = admin only, 'omega' = admin-gifted legendary
   const EFFECTS = [
     // FREE - always available to everyone
     { id: 'none',       name: 'NONE',                      rarity: 'free' },
@@ -110,6 +110,17 @@
     { id: 'ancient',    name: 'ANCIENT RUNE',              rarity: 'admin' },
     { id: 'overlord',   name: 'OVERLORD\'S WRATH',         rarity: 'admin' },
     { id: 'omega',      name: 'OMEGA PROTOCOL',            rarity: 'admin' },
+    // OMEGA TIER — admin-gifted only, extreme visual effects
+    { id: 'omg-godhand',    name: '\u2726 GOD HAND \u2726',              rarity: 'omega' },
+    { id: 'omg-voidborn',   name: '\u2620 VOID BORN \u2620',             rarity: 'omega' },
+    { id: 'omg-starcollapse', name: '\u2604 STAR COLLAPSE \u2604',       rarity: 'omega' },
+    { id: 'omg-bloodgod',   name: '\u2623 BLOOD GOD \u2623',             rarity: 'omega' },
+    { id: 'omg-realitybreak', name: '\u29E6 REALITY BREAK \u29E6',       rarity: 'omega' },
+    { id: 'omg-eternaldark', name: '\u2588\u2591 ETERNAL DARK \u2591\u2588', rarity: 'omega' },
+    { id: 'omg-ascended',   name: '\u2742 ASCENDED ONE \u2742',          rarity: 'omega' },
+    { id: 'omg-worldeater', name: '\u2621 WORLD EATER \u2621',           rarity: 'omega' },
+    { id: 'omg-glitchgod',  name: '\u2592\u2593 GLITCH GOD \u2593\u2592', rarity: 'omega' },
+    { id: 'omg-cosmichorror', name: '\u2740\u2734 COSMIC HORROR \u2734\u2740', rarity: 'omega' },
   ];
 
   const DROPPABLE_EFFECTS = EFFECTS.filter(e => e.rarity === 'drop');
@@ -256,6 +267,7 @@
     const owned = parseOwnedEffects(ownedEffectsStr);
     return EFFECTS.filter(e => {
       if (e.rarity === 'admin') return isAdmin;
+      if (e.rarity === 'omega') return owned.includes(e.id) || isAdmin;
       if (e.rarity === 'free') return true;
       // 'drop' or 'shop' effects: must own it, or be admin
       return isAdmin || owned.includes(e.id);
@@ -685,7 +697,7 @@
     const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
     available.forEach(e => {
       const isEquipped = invSelections.effect === e.id;
-      const rarity = e.rarity === 'admin' ? 'admin' : e.rarity === 'free' ? 'free' : e.rarity === 'drop' ? 'drop' : e.price >= 1000 ? 'legendary' : e.price >= 700 ? 'epic' : e.price >= 400 ? 'rare' : 'common';
+      const rarity = e.rarity === 'omega' ? 'omega' : e.rarity === 'admin' ? 'admin' : e.rarity === 'free' ? 'free' : e.rarity === 'drop' ? 'drop' : e.price >= 1000 ? 'legendary' : e.price >= 700 ? 'epic' : e.price >= 400 ? 'rare' : 'common';
       const previewHtml = `<span class="${getEffectClass(e.id)}" style="color:#e02020;">${escapeHtml(e.name.split(' ')[0])}</span>`;
       const item = createInvItem(e.name, previewHtml, e.id, isEquipped, true, rarity);
       item.addEventListener('click', () => { invSelections.effect = e.id; updateInvPreview(); updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
@@ -742,9 +754,10 @@
 
   function createInvItem(name, previewHtml, id, isEquipped, isOwned, rarity) {
     const item = document.createElement('div');
-    item.className = 'inv-item' + (isEquipped ? ' equipped' : '') + (!isOwned ? ' locked' : '');
+    item.className = 'inv-item' + (isEquipped ? ' equipped' : '') + (!isOwned ? ' locked' : '') + (rarity === 'omega' ? ' omega-item' : '');
+    const rarityLabel = rarity === 'omega' ? '\u2726 OMEGA \u2726' : rarity.toUpperCase();
     item.innerHTML = `
-      <div class="inv-item-rarity ${rarity}">${rarity.toUpperCase()}</div>
+      <div class="inv-item-rarity ${rarity}">${rarityLabel}</div>
       <div class="inv-item-preview">${previewHtml}</div>
       <div class="inv-item-name">${escapeHtml(name)}</div>
     `;
@@ -1913,14 +1926,22 @@
       <div class="admin-set-row">
         <span class="edit-label">SET ACTIVE EFFECT</span>
         <select id="admin-effect-select" class="edit-select">
-          ${EFFECTS.map(e => `<option value="${e.id}" ${e.id === user.name_effect ? 'selected' : ''}>${e.name}${e.rarity === 'admin' ? ' [ADMIN]' : e.rarity === 'drop' ? ' \u2605' : ''}</option>`).join('')}
+          ${EFFECTS.map(e => `<option value="${e.id}" ${e.id === user.name_effect ? 'selected' : ''}>${e.name}${e.rarity === 'omega' ? ' [\u2726 OMEGA]' : e.rarity === 'admin' ? ' [ADMIN]' : e.rarity === 'drop' ? ' \u2605' : ''}</option>`).join('')}
         </select>
         <button class="admin-btn" data-action="set-effect">SET</button>
       </div>
       <div class="admin-set-row">
-        <span class="edit-label">GRANT DROP EFFECT</span>
+        <span class="edit-label">GRANT EFFECT</span>
         <select id="admin-grant-effect-select" class="edit-select">
-          ${DROPPABLE_EFFECTS.map(e => `<option value="${e.id}">${e.name} \u2605</option>`).join('')}
+          <optgroup label="\u2726 OMEGA TIER">
+            ${EFFECTS.filter(e => e.rarity === 'omega').map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+          </optgroup>
+          <optgroup label="\u2605 DROP EFFECTS">
+            ${DROPPABLE_EFFECTS.map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+          </optgroup>
+          <optgroup label="SHOP EFFECTS">
+            ${SHOP_EFFECTS.map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+          </optgroup>
         </select>
         <button class="admin-btn" data-action="grant-effect">GRANT</button>
       </div>

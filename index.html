@@ -281,6 +281,141 @@
     }
     @keyframes fx-omega { 0%,100%{background-position:0% 50%}50%{background-position:300% 50%} }
 
+    /* ========== OMEGA TIER — ADMIN-GIFTED LEGENDARIES ========== */
+
+    /* GOD HAND — radiant gold aura that pulses outward with layered halos */
+    .fx-omg-godhand {
+      background: linear-gradient(90deg, #ffd700, #fff8dc, #ffa500, #fff, #ffd700); background-size: 500% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-omg-godhand-bg 2s linear infinite, fx-omg-godhand-glow 1.5s ease-in-out infinite !important;
+    }
+    @keyframes fx-omg-godhand-bg { 0%{background-position:0% 50%}100%{background-position:500% 50%} }
+    @keyframes fx-omg-godhand-glow {
+      0%,100%{filter:drop-shadow(0 0 8px rgba(255,215,0,.8)) drop-shadow(0 0 20px rgba(255,165,0,.5)) drop-shadow(0 0 40px rgba(255,215,0,.3));transform:scale(1)}
+      50%{filter:drop-shadow(0 0 16px rgba(255,215,0,1)) drop-shadow(0 0 32px rgba(255,165,0,.8)) drop-shadow(0 0 60px rgba(255,255,255,.4)) drop-shadow(0 0 80px rgba(255,215,0,.2));transform:scale(1.08)}
+    }
+
+    /* VOID BORN — imploding darkness with inverted flashes */
+    .fx-omg-voidborn {
+      text-shadow: 0 0 4px #000, 0 0 8px #110022, 0 0 16px #220044, 0 0 32px #000 !important;
+      animation: fx-omg-voidborn .8s steps(4) infinite !important;
+    }
+    @keyframes fx-omg-voidborn {
+      0%{text-shadow:0 0 4px #000,0 0 8px #110022,0 0 16px #220044;transform:scale(1);filter:brightness(.3) contrast(3) invert(0)}
+      25%{text-shadow:0 0 20px #fff,0 0 40px #8800ff;transform:scale(1.12);filter:brightness(3) contrast(1) invert(1)}
+      50%{text-shadow:0 0 2px #000;transform:scale(.88);filter:brightness(.1) contrast(5) invert(0)}
+      75%{text-shadow:0 0 12px #6600cc,0 0 24px #330066,0 0 48px #110022;transform:scale(1.04);filter:brightness(.6) contrast(2) invert(0)}
+      100%{text-shadow:0 0 4px #000,0 0 8px #110022,0 0 16px #220044;transform:scale(1);filter:brightness(.3) contrast(3) invert(0)}
+    }
+
+    /* STAR COLLAPSE — supernova implosion/explosion cycle with color cycling */
+    .fx-omg-starcollapse {
+      animation: fx-omg-starcollapse 3s ease-in-out infinite !important;
+    }
+    @keyframes fx-omg-starcollapse {
+      0%{text-shadow:0 0 6px #44aaff,0 0 12px #2266cc;transform:scale(1);filter:brightness(1) hue-rotate(0deg)}
+      20%{text-shadow:0 0 2px #224488;transform:scale(.7);filter:brightness(.2) hue-rotate(60deg)}
+      25%{text-shadow:0 0 40px #fff,0 0 60px #ffcc00,0 0 80px #ff4400,0 0 100px #ff0000;transform:scale(1.25);filter:brightness(3) hue-rotate(0deg)}
+      40%{text-shadow:0 0 20px #ff8800,0 0 40px #ff4400,0 0 60px #cc0000;transform:scale(1.1);filter:brightness(1.5) hue-rotate(-30deg)}
+      70%{text-shadow:0 0 8px #8844ff,0 0 16px #4422aa;transform:scale(.95);filter:brightness(.7) hue-rotate(120deg)}
+      100%{text-shadow:0 0 6px #44aaff,0 0 12px #2266cc;transform:scale(1);filter:brightness(1) hue-rotate(0deg)}
+    }
+
+    /* BLOOD GOD — dripping blood red with violent shake and splatter glow */
+    .fx-omg-bloodgod {
+      text-shadow: 0 0 4px #ff0000, 0 0 8px #cc0000, 0 0 16px #880000, 0 2px 8px #ff0000, 0 4px 16px #880000 !important;
+      animation: fx-omg-bloodgod .4s steps(3) infinite !important;
+    }
+    @keyframes fx-omg-bloodgod {
+      0%{text-shadow:0 0 4px #f00,0 0 8px #c00,0 0 16px #800,0 2px 8px #f00;transform:translate(0) skewX(0);filter:brightness(1) saturate(2)}
+      33%{text-shadow:0 0 16px #ff0000,0 0 32px #ff0000,0 0 48px #cc0000,0 6px 20px #ff0000,0 8px 32px #880000;transform:translate(2px,-1px) skewX(-2deg);filter:brightness(1.8) saturate(3)}
+      66%{text-shadow:0 0 8px #cc0000,0 0 24px #880000,0 4px 12px #ff0000;transform:translate(-2px,1px) skewX(1deg);filter:brightness(.6) saturate(2)}
+      100%{text-shadow:0 0 4px #f00,0 0 8px #c00,0 0 16px #800,0 2px 8px #f00;transform:translate(0) skewX(0);filter:brightness(1) saturate(2)}
+    }
+
+    /* REALITY BREAK — tears through dimensions with clip-path fractures and color inversion */
+    .fx-omg-realitybreak {
+      animation: fx-omg-realitybreak .5s steps(8) infinite !important;
+    }
+    @keyframes fx-omg-realitybreak {
+      0%{text-shadow:-3px 0 #f0f,3px 0 #0ff;transform:translate(0);clip-path:inset(0 0 0 0);filter:hue-rotate(0) brightness(1)}
+      12%{text-shadow:3px -2px #f00,-3px 2px #0f0;transform:translate(4px,-3px);clip-path:inset(0 0 50% 0);filter:hue-rotate(90deg) brightness(2)}
+      25%{text-shadow:-2px 3px #ff0,2px -3px #00f;transform:translate(-3px,2px);clip-path:inset(40% 0 0 0);filter:hue-rotate(180deg) brightness(.3)}
+      37%{text-shadow:0 0 20px #fff;transform:translate(0) scale(1.15);clip-path:inset(0);filter:invert(1) brightness(2)}
+      50%{text-shadow:2px 2px #f0f,-2px -2px #0ff;transform:translate(-5px,0);clip-path:inset(0 50% 0 0);filter:hue-rotate(270deg) brightness(1.5)}
+      62%{text-shadow:-1px -1px #f00,1px 1px #0f0;transform:translate(3px,3px);clip-path:inset(0 0 0 40%);filter:hue-rotate(45deg) brightness(.5)}
+      75%{text-shadow:0 0 8px #f0f,0 0 16px #0ff;transform:translate(0) scaleX(-1);clip-path:inset(20% 0 20% 0);filter:hue-rotate(135deg) brightness(1)}
+      100%{text-shadow:-3px 0 #f0f,3px 0 #0ff;transform:translate(0) scaleX(1);clip-path:inset(0);filter:hue-rotate(0) brightness(1)}
+    }
+
+    /* ETERNAL DARK — absolute void with occasional terrifying light leak */
+    .fx-omg-eternaldark {
+      text-shadow: none !important; color: #080808 !important;
+      animation: fx-omg-eternaldark 5s ease-in-out infinite !important;
+    }
+    @keyframes fx-omg-eternaldark {
+      0%,60%{text-shadow:0 0 2px #080808;color:#111;filter:brightness(.15) contrast(4)}
+      65%{text-shadow:0 0 40px #fff,0 0 60px #ff0000,0 0 80px #fff;color:#fff;filter:brightness(4) contrast(1)}
+      68%{text-shadow:0 0 2px #111;color:#0a0a0a;filter:brightness(.05) contrast(5)}
+      70%{text-shadow:0 0 30px #ff0000,0 0 50px #880000;color:#ff0000;filter:brightness(2) contrast(2)}
+      73%{text-shadow:0 0 2px #080808;color:#111;filter:brightness(.15) contrast(4)}
+      100%{text-shadow:0 0 2px #080808;color:#111;filter:brightness(.15) contrast(4)}
+    }
+
+    /* ASCENDED ONE — ethereal white-gold aurora with floating lift */
+    .fx-omg-ascended {
+      background: linear-gradient(90deg, #fff, #ffd700, #fff, #e0c0ff, #fff, #ffd700, #fff); background-size: 800% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-omg-ascended-bg 3s linear infinite, fx-omg-ascended-float 2s ease-in-out infinite !important;
+    }
+    @keyframes fx-omg-ascended-bg { 0%{background-position:0% 50%}100%{background-position:800% 50%} }
+    @keyframes fx-omg-ascended-float {
+      0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 12px rgba(255,255,255,.7)) drop-shadow(0 0 24px rgba(255,215,0,.5)) drop-shadow(0 -8px 16px rgba(224,192,255,.3))}
+      50%{transform:translateY(-4px) scale(1.05);filter:drop-shadow(0 0 20px rgba(255,255,255,1)) drop-shadow(0 0 40px rgba(255,215,0,.8)) drop-shadow(0 -16px 32px rgba(224,192,255,.5))}
+    }
+
+    /* WORLD EATER — massive destructive energy with screen-shake feel */
+    .fx-omg-worldeater {
+      text-shadow: 0 0 8px #ff4400, 0 0 16px #cc0000, 0 0 32px #880000, 0 0 48px #440000, 0 0 64px #220000 !important;
+      animation: fx-omg-worldeater .25s steps(5) infinite !important;
+    }
+    @keyframes fx-omg-worldeater {
+      0%{text-shadow:0 0 8px #ff4400,0 0 16px #cc0000,0 0 32px #880000,0 0 48px #440000;transform:translate(0) scale(1);filter:brightness(1) saturate(2)}
+      20%{text-shadow:0 0 24px #ff6600,0 0 48px #ff0000,0 0 64px #cc0000;transform:translate(3px,-2px) scale(1.08);filter:brightness(2) saturate(3)}
+      40%{text-shadow:0 0 4px #440000;transform:translate(-4px,2px) scale(.94);filter:brightness(.4) saturate(1)}
+      60%{text-shadow:0 0 32px #ff2200,0 0 48px #ff0000,0 0 80px #cc0000,0 0 100px #880000;transform:translate(2px,3px) scale(1.12);filter:brightness(2.5) saturate(4)}
+      80%{text-shadow:0 0 12px #cc4400,0 0 24px #880000;transform:translate(-2px,-3px) scale(.98);filter:brightness(.7) saturate(2)}
+      100%{text-shadow:0 0 8px #ff4400,0 0 16px #cc0000,0 0 32px #880000,0 0 48px #440000;transform:translate(0) scale(1);filter:brightness(1) saturate(2)}
+    }
+
+    /* GLITCH GOD — ultimate digital corruption with matrix-style artifacts */
+    .fx-omg-glitchgod {
+      animation: fx-omg-glitchgod .12s steps(6) infinite !important;
+    }
+    @keyframes fx-omg-glitchgod {
+      0%{text-shadow:-4px 0 #f00,4px 0 #0ff,0 0 8px #0f0;transform:translate(0) skewX(0);clip-path:inset(0);filter:hue-rotate(0) brightness(1) invert(0)}
+      16%{text-shadow:4px -3px #0f0,-4px 3px #f0f,0 0 16px #ff0;transform:translate(5px,-3px) skewX(15deg);clip-path:inset(0 0 40% 0);filter:hue-rotate(90deg) brightness(3) invert(0)}
+      33%{text-shadow:0 0 32px #fff;transform:translate(-3px,4px) skewX(-10deg) scaleX(-1);clip-path:inset(30% 0 0 0);filter:hue-rotate(0) brightness(.2) invert(1)}
+      50%{text-shadow:-3px 2px #f00,3px -2px #00f,0 0 12px #f0f;transform:translate(4px,0) skewX(8deg) scaleY(1.1);clip-path:inset(20% 40% 20% 0);filter:hue-rotate(180deg) brightness(2) invert(0)}
+      66%{text-shadow:2px 3px #0ff,-2px -3px #f00,0 0 20px #0f0;transform:translate(-5px,-2px) skewX(-15deg);clip-path:inset(0 0 0 30%);filter:hue-rotate(270deg) brightness(1.5) invert(1)}
+      83%{text-shadow:0 -2px #f0f,0 2px #0ff,0 0 8px #fff;transform:translate(2px,3px) skewX(5deg) scaleX(1);clip-path:inset(10% 0 10% 0);filter:hue-rotate(45deg) brightness(.8) invert(0)}
+      100%{text-shadow:-4px 0 #f00,4px 0 #0ff,0 0 8px #0f0;transform:translate(0) skewX(0) scaleX(1);clip-path:inset(0);filter:hue-rotate(0) brightness(1) invert(0)}
+    }
+
+    /* COSMIC HORROR — eldritch tentacle-like color tendrils with pulsing dread */
+    .fx-omg-cosmichorror {
+      background: linear-gradient(90deg, #2b0033, #00ff88, #ff00ff, #000, #00ffcc, #660066, #2b0033); background-size: 700% 100%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fx-omg-cosmichorror-bg 4s linear infinite, fx-omg-cosmichorror-pulse 2s ease-in-out infinite !important;
+    }
+    @keyframes fx-omg-cosmichorror-bg { 0%{background-position:0% 50%}100%{background-position:700% 50%} }
+    @keyframes fx-omg-cosmichorror-pulse {
+      0%,100%{transform:scale(1) rotate(0);filter:drop-shadow(0 0 8px rgba(0,255,136,.5)) drop-shadow(0 0 16px rgba(255,0,255,.4)) drop-shadow(0 0 32px rgba(0,0,0,.8));opacity:1}
+      25%{transform:scale(1.04) rotate(.5deg);filter:drop-shadow(0 0 16px rgba(0,255,204,.7)) drop-shadow(0 0 32px rgba(102,0,102,.6));opacity:.85}
+      50%{transform:scale(.96) rotate(-.5deg);filter:drop-shadow(0 0 4px rgba(43,0,51,.9)) drop-shadow(0 0 24px rgba(0,255,136,.3));opacity:.7}
+      75%{transform:scale(1.06) rotate(.3deg);filter:drop-shadow(0 0 20px rgba(255,0,255,.8)) drop-shadow(0 0 40px rgba(0,255,204,.5)) drop-shadow(0 0 60px rgba(0,0,0,.6));opacity:.9}
+    }
+
     /* SHOP-EXCLUSIVE EFFECTS */
     .fx-bloodmoon { text-shadow: 0 0 6px #cc0000, 0 0 12px #880000, 0 0 24px #440000, 0 0 36px #220000 !important; animation: fx-bloodmoon 4s ease-in-out infinite !important; }
     @keyframes fx-bloodmoon { 0%,100%{text-shadow:0 0 6px #cc0000,0 0 12px #880000;filter:brightness(.8)}50%{text-shadow:0 0 12px #ff0000,0 0 24px #cc0000,0 0 48px #880000;filter:brightness(1.3) hue-rotate(-10deg)} }
@@ -504,6 +639,7 @@
     .shop-item-rarity.rare { color: #4488ff; }
     .shop-item-rarity.epic { color: #aa44ff; }
     .shop-item-rarity.legendary { color: #ff8800; }
+    .shop-item-rarity.omega { background: linear-gradient(90deg, #ffd700, #ff4400, #ff00ff, #ffd700); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: omega-rarity-shimmer 2s linear infinite; }
 
     /* ===== MEMBERS ===== */
     .members-list { list-style: none; text-align: center; width: 100%; max-height: 60vh; overflow-y: auto; padding: 0 .5rem; }
@@ -641,8 +777,13 @@
     .inv-item-rarity.epic { color: #aa44ff; }
     .inv-item-rarity.legendary { color: #ff8800; }
     .inv-item-rarity.admin { color: #e02020; }
+    .inv-item-rarity.omega { background: linear-gradient(90deg, #ffd700, #ff4400, #ff00ff, #ffd700); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: omega-rarity-shimmer 2s linear infinite; font-weight: bold; }
     .inv-item-rarity.free { color: #0a0; }
     .inv-item-rarity.drop { color: #ffcc00; }
+    @keyframes omega-rarity-shimmer { 0%{background-position:0% 50%}100%{background-position:300% 50%} }
+    .inv-item.omega-item { border-color: #442200; }
+    .inv-item.omega-item:hover { border-color: #ff8800; box-shadow: 0 0 12px rgba(255,136,0,.2); }
+    .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: 0 0 16px rgba(255,215,0,.3), 0 0 32px rgba(255,136,0,.15); }
     @media (max-width: 700px) {
       .inv-layout { flex-direction: column; min-height: auto; }
       .inv-sidebar { width: 100%; min-width: unset; flex-direction: row; flex-wrap: wrap; gap: .4rem; }
