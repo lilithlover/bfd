@@ -1,5 +1,5 @@
 -- =============================================
--- RUNE TRIBE - Supabase Database Schema v2
+-- RUNE TRIBE - Supabase Database Schema v3
 -- Safe to re-run. Run in: SQL Editor > New Query
 -- =============================================
 
@@ -45,28 +45,43 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN owned_effects text DEFAULT '';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
 -- RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Profile policies
+-- Profile policies (drop ALL old ones first to avoid conflicts)
 DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.profiles;
-CREATE POLICY "Public profiles are viewable by everyone"
+DROP POLICY IF EXISTS "Anyone can view profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Users can insert their own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can update any profile" ON public.profiles;
+DROP POLICY IF EXISTS "Service role can do anything" ON public.profiles;
+
+-- Everyone can view all profiles (no auth needed for reading)
+CREATE POLICY "Anyone can view profiles"
   ON public.profiles FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Users can insert their own profile" ON public.profiles;
+-- Users can create their own profile on signup
 CREATE POLICY "Users can insert their own profile"
   ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
-DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
+-- Users can update their own profile (avatar, color, effect, etc.)
 CREATE POLICY "Users can update their own profile"
-  ON public.profiles FOR UPDATE
-  USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+  ON public.profiles FOR UPDATE TO authenticated
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
 
--- Admin policy: admins can update ANY profile (for ban/mute/grant)
-DROP POLICY IF EXISTS "Admins can update any profile" ON public.profiles;
+-- Admins can update ANY profile (ban, mute, grant effects, etc.)
 CREATE POLICY "Admins can update any profile"
-  ON public.profiles FOR UPDATE
+  ON public.profiles FOR UPDATE TO authenticated
   USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
+  )
+  WITH CHECK (
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND is_admin = true)
   );
 
@@ -78,19 +93,29 @@ CREATE TABLE IF NOT EXISTS public.messages (
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- Add channel column for hub support
+DO $$ BEGIN
+  ALTER TABLE public.messages ADD COLUMN channel text DEFAULT 'general';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Authenticated users can view messages" ON public.messages;
-CREATE POLICY "Authenticated users can view messages"
+DROP POLICY IF EXISTS "Anyone can view messages" ON public.messages;
+DROP POLICY IF EXISTS "Authenticated users can send messages" ON public.messages;
+DROP POLICY IF EXISTS "Admins can delete messages" ON public.messages;
+
+-- All authenticated users can read all messages
+CREATE POLICY "Anyone can view messages"
   ON public.messages FOR SELECT TO authenticated USING (true);
 
-DROP POLICY IF EXISTS "Authenticated users can send messages" ON public.messages;
+-- Authenticated users can insert their own messages
 CREATE POLICY "Authenticated users can send messages"
   ON public.messages FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
--- Admin policy: admins can delete any message
-DROP POLICY IF EXISTS "Admins can delete messages" ON public.messages;
+-- Admins can delete any message (purge)
 CREATE POLICY "Admins can delete messages"
   ON public.messages FOR DELETE TO authenticated
   USING (
@@ -110,16 +135,17 @@ CREATE TABLE IF NOT EXISTS public.mentions (
 ALTER TABLE public.mentions ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users can view their own mentions" ON public.mentions;
+DROP POLICY IF EXISTS "Authenticated users can create mentions" ON public.mentions;
+DROP POLICY IF EXISTS "Users can mark their own mentions as read" ON public.mentions;
+
 CREATE POLICY "Users can view their own mentions"
   ON public.mentions FOR SELECT TO authenticated
   USING (auth.uid() = to_user_id);
 
-DROP POLICY IF EXISTS "Authenticated users can create mentions" ON public.mentions;
 CREATE POLICY "Authenticated users can create mentions"
   ON public.mentions FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = from_user_id);
 
-DROP POLICY IF EXISTS "Users can mark their own mentions as read" ON public.mentions;
 CREATE POLICY "Users can mark their own mentions as read"
   ON public.mentions FOR UPDATE TO authenticated
   USING (auth.uid() = to_user_id) WITH CHECK (auth.uid() = to_user_id);
@@ -160,21 +186,14 @@ END $$;
 -- 6. INDEXES
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON public.messages(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON public.messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_messages_channel ON public.messages(channel);
 CREATE INDEX IF NOT EXISTS idx_mentions_to_user ON public.mentions(to_user_id, is_read);
 CREATE INDEX IF NOT EXISTS idx_mentions_message ON public.mentions(message_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id_num ON public.profiles(user_id_num);
 CREATE INDEX IF NOT EXISTS idx_profiles_is_admin ON public.profiles(is_admin);
 
--- 7. ADD CHANNEL COLUMN TO MESSAGES (for hub support)
-DO $$ BEGIN
-  ALTER TABLE public.messages ADD COLUMN channel text DEFAULT 'general';
-EXCEPTION WHEN duplicate_column THEN NULL;
-END $$;
-
-CREATE INDEX IF NOT EXISTS idx_messages_channel ON public.messages(channel);
-
--- 8. DIRECT MESSAGES TABLE
+-- 7. DIRECT MESSAGES TABLE
 CREATE TABLE IF NOT EXISTS public.direct_messages (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   from_user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
@@ -186,20 +205,18 @@ CREATE TABLE IF NOT EXISTS public.direct_messages (
 
 ALTER TABLE public.direct_messages ENABLE ROW LEVEL SECURITY;
 
--- Users can view DMs they sent or received
 DROP POLICY IF EXISTS "Users can view their own DMs" ON public.direct_messages;
+DROP POLICY IF EXISTS "Users can send DMs" ON public.direct_messages;
+DROP POLICY IF EXISTS "Users can update their own received DMs" ON public.direct_messages;
+
 CREATE POLICY "Users can view their own DMs"
   ON public.direct_messages FOR SELECT TO authenticated
   USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
 
--- Users can send DMs
-DROP POLICY IF EXISTS "Users can send DMs" ON public.direct_messages;
 CREATE POLICY "Users can send DMs"
   ON public.direct_messages FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = from_user_id);
 
--- Users can mark DMs as read
-DROP POLICY IF EXISTS "Users can update their own received DMs" ON public.direct_messages;
 CREATE POLICY "Users can update their own received DMs"
   ON public.direct_messages FOR UPDATE TO authenticated
   USING (auth.uid() = to_user_id) WITH CHECK (auth.uid() = to_user_id);
@@ -208,17 +225,50 @@ CREATE INDEX IF NOT EXISTS idx_dm_from_user ON public.direct_messages(from_user_
 CREATE INDEX IF NOT EXISTS idx_dm_to_user ON public.direct_messages(to_user_id);
 CREATE INDEX IF NOT EXISTS idx_dm_created_at ON public.direct_messages(created_at DESC);
 
--- Add DMs to realtime
 DO $$ BEGIN
   ALTER PUBLICATION supabase_realtime ADD TABLE public.direct_messages;
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- 10. OWNED EFFECTS COLUMN (comma-separated effect IDs from rare drops)
-DO $$ BEGIN
-  ALTER TABLE public.profiles ADD COLUMN owned_effects text DEFAULT '';
-EXCEPTION WHEN duplicate_column THEN NULL;
-END $$;
+-- 8. STORAGE: Avatar bucket policies
+-- Create the avatars bucket if it doesn't exist (run this separately if needed)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true)
+-- ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Storage policies for avatars (drop old ones first)
+DROP POLICY IF EXISTS "Anyone can view avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own avatars" ON storage.objects;
+
+-- Anyone can view avatar files
+CREATE POLICY "Anyone can view avatars"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'avatars');
+
+-- Authenticated users can upload to their own folder
+CREATE POLICY "Authenticated users can upload avatars"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (
+    bucket_id = 'avatars'
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Users can update (overwrite) their own avatars
+CREATE POLICY "Users can update their own avatars"
+  ON storage.objects FOR UPDATE TO authenticated
+  USING (
+    bucket_id = 'avatars'
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Users can delete their own avatars
+CREATE POLICY "Users can delete their own avatars"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (
+    bucket_id = 'avatars'
+    AND (storage.foldername(name))[1] = auth.uid()::text
+  );
 
 -- 9. SET allcontempt AS ADMIN
 -- (Will update once this username registers. Re-run after registration.)
