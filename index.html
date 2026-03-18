@@ -6,7 +6,7 @@
   <title>RUNE TRIBE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Silkscreen&family=DotGothic16&family=Monoton&family=Bungee+Shade&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Silkscreen&family=DotGothic16&family=Monoton&family=Bungee+Shade&family=Pixelify+Sans&family=Rubik+Glitch&family=Creepster&family=Nosifer&family=Rubik+Burned&family=Rubik+Doodle+Shadow&family=Sixtyfour&family=Rubik+Wet+Paint&family=Bungee+Spice&family=Notable&family=Orbitron&family=Audiowide&family=Bungee+Outline&family=Black+Ops+One&family=Russo+One&family=Share+Tech+Mono&family=Space+Mono&family=Special+Elite&family=Megrim&family=Iceland&family=Nova+Cut&family=Nova+Flat&family=Gravitas+One&family=Rampart+One&family=Rye&family=Eater&family=Butcherman&family=Rubik+Puddles&family=Bungee+Inline&family=Rubik+Vinyl&family=Rubik+Iso&family=Rubik+80s+Fade&family=Rubik+Storm&family=Rubik+Distressed&family=Emblema+One&family=Rubik+Marker+Hatch&family=Rubik+Scribble&family=Nabla&family=Rubik+Lines&family=Rubik+Pixels&family=Rubik+Broken+Fax&display=swap" rel="stylesheet">
   <style>
     /* ===== FONTS ===== */
     @font-face { font-family: 'Blood Crow'; src: url('bloodcrowe.ttf') format('truetype'); font-display: swap; }
@@ -112,6 +112,20 @@
       letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; text-align: center;
     }
     .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.35rem, 1.1vw, .5rem); color: #550000; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
+    .menu-layout { display: flex; gap: 1.5rem; width: 100%; max-width: 700px; align-items: stretch; }
+    .menu-sidebar { display: none; flex-direction: column; gap: .5rem; min-width: 140px; border-right: 1px solid #1a0000; padding-right: 1rem; justify-content: center; }
+    .menu-sidebar.show { display: flex; }
+    .menu-sidebar-label { font-size: clamp(.25rem, .8vw, .35rem); color: #440000; letter-spacing: .2em; text-align: center; margin-bottom: .2rem; }
+    .menu-sidebar-btn {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.3vw, .6rem);
+      color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase;
+      transition: color .15s, text-shadow .15s, border-color .15s; user-select: none;
+      display: flex; align-items: center; gap: .4rem; padding: .5rem .6rem;
+      border: 1px solid #1a0000; background: rgba(10,0,0,.4); text-align: left;
+    }
+    .menu-sidebar-btn:hover { color: #e02020; text-shadow: 0 0 8px rgba(224,32,32,.5); border-color: #330000; background: rgba(224,32,32,.04); }
+    .menu-sidebar-btn .sidebar-icon { font-size: clamp(.5rem, 1.5vw, .7rem); }
+    .menu-main { flex: 1; }
     .menu-list { list-style: none; text-align: center; width: 100%; }
     .menu-list li { margin: .7rem 0; }
     .menu-item {
@@ -289,6 +303,127 @@
     .fx-deathwish { text-shadow: 0 0 4px #f00, 0 0 8px #800, 0 0 16px #400 !important; animation: fx-deathwish 1s steps(2) infinite !important; }
     @keyframes fx-deathwish { 0%{text-shadow:0 0 4px #f00,0 0 8px #800;transform:scale(1);filter:brightness(1)}25%{text-shadow:0 0 16px #ff0000,0 0 32px #cc0000;transform:scale(1.15);filter:brightness(2)}50%{text-shadow:0 0 2px #400;transform:scale(.95);filter:brightness(.3)}75%{text-shadow:0 0 8px #f00,0 0 16px #800,0 0 24px #400;transform:scale(1.05);filter:brightness(1.5)}100%{text-shadow:0 0 4px #f00,0 0 8px #800;transform:scale(1);filter:brightness(1)} }
 
+    /* --- 40 NEW SHOP EFFECTS --- */
+    .fx-gravemind { text-shadow: 0 0 6px #446644, 0 0 12px #224422, 0 0 24px #113311 !important; animation: fx-gravemind 3s ease-in-out infinite !important; }
+    @keyframes fx-gravemind { 0%,100%{text-shadow:0 0 6px #446644,0 0 12px #224422;filter:brightness(.7) saturate(.6)}50%{text-shadow:0 0 16px #66aa66,0 0 24px #448844,0 0 36px #226622;filter:brightness(1.2) saturate(1.5)} }
+
+    .fx-miasma { text-shadow: 0 0 8px #665599, 0 0 16px #443366 !important; animation: fx-miasma 4s ease-in-out infinite !important; filter: blur(0.3px); }
+    @keyframes fx-miasma { 0%,100%{text-shadow:0 0 8px #665599,0 0 16px #443366;filter:blur(.3px) brightness(.8)}50%{text-shadow:0 0 16px #8877bb,0 0 32px #665599;filter:blur(.8px) brightness(1.1)} }
+
+    .fx-bonefire { text-shadow: 0 -2px 6px #ffcc44, 0 -4px 12px #ff8800, 0 -6px 20px #cc4400 !important; animation: fx-bonefire .4s ease-in-out infinite alternate !important; }
+    @keyframes fx-bonefire { 0%{text-shadow:0 -2px 6px #ffcc44,0 -4px 12px #ff8800,0 -6px 20px #cc4400}100%{text-shadow:0 -4px 10px #ffdd66,0 -8px 18px #ffaa22,0 -10px 28px #ee5500} }
+
+    .fx-hexweave { text-shadow: 0 0 4px #cc66ff, 0 0 8px #9933cc !important; animation: fx-hexweave 2s steps(8) infinite !important; }
+    @keyframes fx-hexweave { 0%{text-shadow:0 0 4px #cc66ff,0 0 8px #9933cc;transform:skewX(0)}25%{text-shadow:0 0 6px #dd88ff,0 0 12px #aa44dd;transform:skewX(2deg)}50%{text-shadow:0 0 4px #bb55ee,0 0 8px #8822bb;transform:skewX(-2deg)}75%{text-shadow:0 0 8px #ee99ff,0 0 14px #cc66ff;transform:skewX(1deg)}100%{text-shadow:0 0 4px #cc66ff,0 0 8px #9933cc;transform:skewX(0)} }
+
+    .fx-rotgut { text-shadow: 0 0 6px #aacc00, 0 0 12px #88aa00 !important; animation: fx-rotgut 1.5s ease-in-out infinite !important; }
+    @keyframes fx-rotgut { 0%,100%{text-shadow:0 0 6px #aacc00,0 0 12px #88aa00;transform:translateY(0) rotate(0)}50%{text-shadow:0 0 12px #ccee22,0 0 20px #aacc00;transform:translateY(1px) rotate(.5deg)} }
+
+    .fx-skullflame { text-shadow: 0 0 8px #ff4400, 0 0 16px #cc2200, 0 0 24px #881100, 0 -4px 12px #ffcc00 !important; animation: fx-skullflame .6s ease-in-out infinite alternate !important; }
+    @keyframes fx-skullflame { 0%{text-shadow:0 0 8px #ff4400,0 0 16px #cc2200,0 -4px 12px #ffcc00}100%{text-shadow:0 0 12px #ff6622,0 0 24px #ee3300,0 -8px 20px #ffdd44;transform:translateY(-1px)} }
+
+    .fx-spidervein { text-shadow: 0 0 4px #cc0044, 0 0 8px #880022 !important; animation: fx-spidervein 2.5s steps(5) infinite !important; }
+    @keyframes fx-spidervein { 0%{text-shadow:0 0 4px #cc0044,0 0 8px #880022}20%{text-shadow:1px 1px 4px #dd1155,0 0 8px #990033}40%{text-shadow:-1px 0 4px #cc0044,1px 1px 8px #aa0044}60%{text-shadow:0 -1px 6px #ee2266,0 0 12px #cc0044}80%{text-shadow:1px 0 4px #bb0033,-1px 1px 8px #880022}100%{text-shadow:0 0 4px #cc0044,0 0 8px #880022} }
+
+    .fx-warpzone { background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff); background-size: 600% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-warpzone 1.5s linear infinite !important; filter: drop-shadow(0 0 6px rgba(255,0,255,.5)); }
+    @keyframes fx-warpzone { 0%{background-position:0% 50%}100%{background-position:600% 50%} }
+
+    .fx-chaoscode { animation: fx-chaoscode .2s steps(3) infinite !important; }
+    @keyframes fx-chaoscode { 0%{text-shadow:-2px 0 #0f0,2px 0 #f0f;transform:translate(0);filter:hue-rotate(0)}33%{text-shadow:2px -1px #f00,-2px 1px #0ff;transform:translate(2px,-1px);filter:hue-rotate(120deg)}66%{text-shadow:-1px 2px #ff0,1px -2px #00f;transform:translate(-2px,1px);filter:hue-rotate(240deg)}100%{text-shadow:-2px 0 #0f0,2px 0 #f0f;transform:translate(0);filter:hue-rotate(360deg)} }
+
+    .fx-cursedink { text-shadow: 0 0 4px #222, 0 0 8px #111 !important; animation: fx-cursedink 3s ease-in-out infinite !important; }
+    @keyframes fx-cursedink { 0%,100%{text-shadow:0 0 4px #222,0 0 8px #111;filter:brightness(.5) contrast(2)}50%{text-shadow:0 0 12px #444,0 0 20px #222,0 2px 6px #000;filter:brightness(.8) contrast(1.5)} }
+
+    .fx-necroplasm { text-shadow: 0 0 8px #00ff44, 0 0 16px #00cc33, 0 0 32px #008822 !important; animation: fx-necroplasm 2s ease-in-out infinite !important; }
+    @keyframes fx-necroplasm { 0%,100%{text-shadow:0 0 8px #00ff44,0 0 16px #00cc33;filter:brightness(.9) saturate(1.5)}50%{text-shadow:0 0 16px #22ff66,0 0 32px #00ff44,0 0 48px #00cc33;filter:brightness(1.3) saturate(2)} }
+
+    .fx-vipercoil { text-shadow: 0 0 6px #44cc00, 0 0 12px #228800 !important; animation: fx-vipercoil 1.8s ease-in-out infinite !important; }
+    @keyframes fx-vipercoil { 0%,100%{text-shadow:0 0 6px #44cc00,0 0 12px #228800;transform:scaleX(1)}25%{transform:scaleX(1.03)}50%{text-shadow:0 0 10px #66ee22,0 0 20px #44cc00;transform:scaleX(.97)}75%{transform:scaleX(1.02)} }
+
+    .fx-ashfall { text-shadow: 0 2px 4px #666, 0 4px 8px #444, 0 6px 12px #222 !important; animation: fx-ashfall 4s ease-in-out infinite !important; }
+    @keyframes fx-ashfall { 0%,100%{text-shadow:0 2px 4px #666,0 4px 8px #444;filter:brightness(.6) saturate(0)}50%{text-shadow:0 4px 8px #888,0 6px 14px #666,0 8px 20px #444;filter:brightness(.8) saturate(.2)} }
+
+    .fx-singularity { text-shadow: 0 0 12px #0000ff, 0 0 24px #000088, 0 0 48px #000044 !important; animation: fx-singularity 2s ease-in-out infinite !important; }
+    @keyframes fx-singularity { 0%,100%{text-shadow:0 0 12px #0000ff,0 0 24px #000088;transform:scale(1);filter:brightness(1)}50%{text-shadow:0 0 4px #000022;transform:scale(.92);filter:brightness(.3) contrast(3)} }
+
+    .fx-staticnova { animation: fx-staticnova .1s steps(2) infinite !important; }
+    @keyframes fx-staticnova { 0%{text-shadow:0 0 8px #fff,0 0 16px #aaa;filter:brightness(2) contrast(2)}50%{text-shadow:-1px 0 #f00,1px 0 #0ff,0 0 4px #fff;filter:brightness(.8)}100%{text-shadow:0 0 8px #fff,0 0 16px #aaa;filter:brightness(2) contrast(2)} }
+
+    .fx-phantombleed { text-shadow: 0 0 6px #990022, 0 0 12px #660011 !important; animation: fx-phantombleed 3s ease-in-out infinite !important; }
+    @keyframes fx-phantombleed { 0%,100%{text-shadow:0 0 6px #990022,0 0 12px #660011;opacity:1}30%{opacity:.4}35%{opacity:1}60%{text-shadow:0 0 12px #cc0033,0 0 24px #990022;opacity:.9}65%{opacity:.3}70%{opacity:1} }
+
+    .fx-cryoburn { text-shadow: 0 0 6px #00ccff, 0 0 12px #0088cc, 0 0 24px #004466 !important; animation: fx-cryoburn 2.5s ease-in-out infinite !important; }
+    @keyframes fx-cryoburn { 0%,100%{text-shadow:0 0 6px #00ccff,0 0 12px #0088cc;filter:hue-rotate(0) brightness(1)}50%{text-shadow:0 0 12px #22ddff,0 0 24px #00ccff,0 0 36px #0088cc;filter:hue-rotate(20deg) brightness(1.3)} }
+
+    .fx-darkpulsar { text-shadow: 0 0 8px #6600cc, 0 0 16px #330066, 0 0 32px #110022 !important; animation: fx-darkpulsar 1.5s ease-in-out infinite !important; }
+    @keyframes fx-darkpulsar { 0%,100%{text-shadow:0 0 8px #6600cc,0 0 16px #330066;transform:scale(1)}50%{text-shadow:0 0 16px #8822ee,0 0 32px #6600cc,0 0 48px #330066;transform:scale(1.06)} }
+
+    .fx-runecarve { text-shadow: 0 0 4px #cc8800, 0 0 8px #996600, 0 0 16px #664400 !important; animation: fx-runecarve 3s steps(4) infinite !important; }
+    @keyframes fx-runecarve { 0%{text-shadow:0 0 4px #cc8800,0 0 8px #996600;filter:brightness(.7)}25%{text-shadow:0 0 8px #ddaa22,0 0 16px #cc8800;filter:brightness(1.2)}50%{text-shadow:0 0 4px #bb7700,0 0 8px #885500;filter:brightness(.8)}75%{text-shadow:0 0 12px #eebb44,0 0 20px #ddaa22;filter:brightness(1.4)}100%{text-shadow:0 0 4px #cc8800,0 0 8px #996600;filter:brightness(.7)} }
+
+    .fx-venomstrike { text-shadow: 0 0 6px #88ff00, 0 0 12px #66cc00 !important; animation: fx-venomstrike .8s ease-in-out infinite !important; }
+    @keyframes fx-venomstrike { 0%,100%{text-shadow:0 0 6px #88ff00,0 0 12px #66cc00;transform:translateX(0)}25%{transform:translateX(2px)}50%{text-shadow:0 0 12px #aaff44,0 0 20px #88ff00;transform:translateX(-2px)}75%{transform:translateX(1px)} }
+
+    .fx-shadowmelt { text-shadow: 0 4px 8px #000, 0 6px 12px #111 !important; animation: fx-shadowmelt 3s ease-in-out infinite !important; }
+    @keyframes fx-shadowmelt { 0%,100%{text-shadow:0 4px 8px #000,0 6px 12px #111;transform:scaleY(1);filter:brightness(.6)}50%{text-shadow:0 8px 16px #000,0 12px 24px #111;transform:scaleY(.95);filter:brightness(.4)} }
+
+    .fx-ironblood { text-shadow: 0 0 4px #884422, 0 0 8px #662211, 0 0 12px #cc0000 !important; animation: fx-ironblood 2s ease-in-out infinite !important; }
+    @keyframes fx-ironblood { 0%,100%{text-shadow:0 0 4px #884422,0 0 8px #662211,0 0 12px #cc0000;filter:saturate(.8) brightness(.8)}50%{text-shadow:0 0 8px #aa6644,0 0 16px #884422,0 0 20px #ff2222;filter:saturate(1.5) brightness(1.2)} }
+
+    .fx-nullvoid { text-shadow: 0 0 8px #111, 0 0 16px #000 !important; animation: fx-nullvoid 2s ease-in-out infinite !important; }
+    @keyframes fx-nullvoid { 0%,100%{text-shadow:0 0 8px #111,0 0 16px #000;filter:brightness(.3) contrast(3);transform:scale(1)}50%{text-shadow:0 0 2px #222;filter:brightness(.1) contrast(5);transform:scale(.96)} }
+
+    .fx-doomscroll { text-shadow: 0 0 6px #ff2200, 0 0 12px #cc0000 !important; animation: fx-doomscroll 1s linear infinite !important; }
+    @keyframes fx-doomscroll { 0%{text-shadow:0 0 6px #ff2200,0 0 12px #cc0000;transform:translateY(0)}50%{text-shadow:0 0 10px #ff4422,0 0 20px #ff2200;transform:translateY(2px)}100%{text-shadow:0 0 6px #ff2200,0 0 12px #cc0000;transform:translateY(0)} }
+
+    .fx-grimspark { text-shadow: 0 0 4px #ffcc00, 0 0 8px #cc9900 !important; animation: fx-grimspark .5s steps(3) infinite !important; }
+    @keyframes fx-grimspark { 0%{text-shadow:0 0 4px #ffcc00,0 0 8px #cc9900;filter:brightness(1)}33%{text-shadow:0 0 12px #ffdd44,0 0 20px #ffcc00;filter:brightness(1.8)}66%{text-shadow:0 0 2px #aa8800;filter:brightness(.5)}100%{text-shadow:0 0 4px #ffcc00,0 0 8px #cc9900;filter:brightness(1)} }
+
+    .fx-plaguedrift { text-shadow: 0 0 8px #668800, 0 0 16px #446600, 0 2px 8px #88aa00 !important; animation: fx-plaguedrift 4s ease-in-out infinite !important; }
+    @keyframes fx-plaguedrift { 0%,100%{text-shadow:0 0 8px #668800,0 0 16px #446600;transform:translate(0)}25%{transform:translate(1px,1px)}50%{text-shadow:0 0 14px #88aa22,0 0 24px #668800,0 2px 12px #aacc00;transform:translate(-1px,0)}75%{transform:translate(0,-1px)} }
+
+    .fx-wormhole { background: conic-gradient(from 0deg, #0ff, #f0f, #ff0, #0f0, #00f, #f00, #0ff); background-size: 100% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-wormhole 3s linear infinite !important; filter: drop-shadow(0 0 8px rgba(0,255,255,.4)); }
+    @keyframes fx-wormhole { 0%{filter:hue-rotate(0deg) drop-shadow(0 0 8px rgba(0,255,255,.4))}100%{filter:hue-rotate(360deg) drop-shadow(0 0 8px rgba(0,255,255,.4))} }
+
+    .fx-razorwind { text-shadow: 2px 0 4px #aaa, -2px 0 4px #888 !important; animation: fx-razorwind .3s ease-in-out infinite alternate !important; }
+    @keyframes fx-razorwind { 0%{text-shadow:2px 0 4px #aaa,-2px 0 4px #888;transform:skewX(-3deg)}100%{text-shadow:-2px 0 4px #ccc,2px 0 4px #aaa;transform:skewX(3deg)} }
+
+    .fx-helixdna { text-shadow: 0 0 6px #00aaff, 0 0 12px #ff4488 !important; animation: fx-helixdna 2s ease-in-out infinite !important; }
+    @keyframes fx-helixdna { 0%,100%{text-shadow:0 0 6px #00aaff,0 0 12px #ff4488;transform:rotateX(0)}25%{text-shadow:0 0 10px #44ccff,0 0 4px #cc2266}50%{text-shadow:0 0 12px #ff4488,0 0 6px #00aaff}75%{text-shadow:0 0 4px #00aaff,0 0 10px #ff6699} }
+
+    .fx-ghostchain { text-shadow: 0 0 6px #8888cc, 0 0 12px #5555aa !important; animation: fx-ghostchain 2.5s ease-in-out infinite !important; }
+    @keyframes fx-ghostchain { 0%,100%{text-shadow:0 0 6px #8888cc,0 0 12px #5555aa;opacity:1}30%{opacity:.5}35%{opacity:.9}60%{text-shadow:0 0 12px #aaaaee,0 0 20px #8888cc;opacity:.7}65%{opacity:1} }
+
+    .fx-entropywave { background: linear-gradient(90deg, #f00, #0f0, #00f, #f0f, #ff0); background-size: 500% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-entropywave 2s linear infinite !important; filter: drop-shadow(0 0 6px rgba(255,255,255,.3)); }
+    @keyframes fx-entropywave { 0%{background-position:0% 50%;filter:drop-shadow(0 0 6px rgba(255,0,0,.5))}50%{background-position:250% 50%;filter:drop-shadow(0 0 6px rgba(0,255,0,.5))}100%{background-position:500% 50%;filter:drop-shadow(0 0 6px rgba(255,0,0,.5))} }
+
+    .fx-blightmark { text-shadow: 0 0 4px #558800, 0 0 8px #336600, 0 0 16px #224400 !important; animation: fx-blightmark 3s ease-in-out infinite !important; }
+    @keyframes fx-blightmark { 0%,100%{text-shadow:0 0 4px #558800,0 0 8px #336600;filter:brightness(.7) hue-rotate(0)}50%{text-shadow:0 0 10px #77aa22,0 0 16px #558800;filter:brightness(1.1) hue-rotate(20deg)} }
+
+    .fx-neurotoxin { text-shadow: 0 0 6px #cc00ff, 0 0 12px #8800aa, 0 0 20px #440055 !important; animation: fx-neurotoxin 1.5s ease-in-out infinite !important; }
+    @keyframes fx-neurotoxin { 0%,100%{text-shadow:0 0 6px #cc00ff,0 0 12px #8800aa;transform:translateY(0)}25%{transform:translateY(-1px)}50%{text-shadow:0 0 12px #dd44ff,0 0 24px #cc00ff;transform:translateY(1px)}75%{transform:translateY(-1px)} }
+
+    .fx-abyssfire { text-shadow: 0 -2px 8px #1100ff, 0 -4px 16px #0000aa, 0 0 24px #000066 !important; animation: fx-abyssfire .7s ease-in-out infinite alternate !important; }
+    @keyframes fx-abyssfire { 0%{text-shadow:0 -2px 8px #1100ff,0 -4px 16px #0000aa,0 0 24px #000066}100%{text-shadow:0 -4px 12px #3322ff,0 -8px 24px #1100ff,0 0 32px #0000aa;transform:translateY(-1px)} }
+
+    .fx-voidpulse { text-shadow: 0 0 8px #220044, 0 0 16px #110022 !important; animation: fx-voidpulse 2s ease-in-out infinite !important; }
+    @keyframes fx-voidpulse { 0%,100%{text-shadow:0 0 8px #220044,0 0 16px #110022;transform:scale(1);filter:brightness(.4)}50%{text-shadow:0 0 16px #440088,0 0 32px #220044;transform:scale(1.04);filter:brightness(.8)} }
+
+    .fx-crimsonmaw { text-shadow: 0 0 6px #cc0000, 0 0 12px #880000, 0 2px 8px #ff0000 !important; animation: fx-crimsonmaw 1s ease-in-out infinite !important; }
+    @keyframes fx-crimsonmaw { 0%,100%{text-shadow:0 0 6px #cc0000,0 0 12px #880000;transform:scaleX(1)}50%{text-shadow:0 0 12px #ff2222,0 0 24px #cc0000,0 2px 12px #ff4444;transform:scaleX(1.05)} }
+
+    .fx-glitchking { animation: fx-glitchking .15s steps(5) infinite !important; }
+    @keyframes fx-glitchking { 0%{text-shadow:-3px 0 #f00,3px 0 #0ff;transform:translate(0);filter:hue-rotate(0)}20%{text-shadow:3px -2px #0f0,-3px 2px #f0f;transform:translate(3px,-2px);filter:hue-rotate(90deg)}40%{text-shadow:-2px 2px #ff0,2px -2px #00f;transform:translate(-3px,1px);filter:hue-rotate(180deg)}60%{text-shadow:2px 1px #f00,-2px -1px #0ff;transform:translate(2px,2px);filter:hue-rotate(270deg)}80%{text-shadow:-1px -2px #0f0,1px 2px #f0f;transform:translate(-1px,-2px);filter:hue-rotate(360deg)}100%{text-shadow:-3px 0 #f00,3px 0 #0ff;transform:translate(0);filter:hue-rotate(0)} }
+
+    .fx-titanfall { text-shadow: 0 0 8px #ff8800, 0 0 16px #cc4400, 0 0 32px #882200, 0 0 48px #441100 !important; animation: fx-titanfall 2s ease-in-out infinite !important; }
+    @keyframes fx-titanfall { 0%,100%{text-shadow:0 0 8px #ff8800,0 0 16px #cc4400,0 0 32px #882200;transform:scale(1) translateY(0);filter:brightness(1)}50%{text-shadow:0 0 16px #ffaa22,0 0 32px #ff8800,0 0 48px #cc4400,0 0 64px #882200;transform:scale(1.1) translateY(-2px);filter:brightness(1.5)} }
+
+    .fx-soulreaver { background: linear-gradient(90deg, #ff0044, #8800ff, #00ffcc, #ff0044); background-size: 400% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-soulreaver 3s linear infinite !important; filter: drop-shadow(0 0 8px rgba(136,0,255,.6)) drop-shadow(0 0 16px rgba(255,0,68,.4)); }
+    @keyframes fx-soulreaver { 0%{background-position:0% 50%}100%{background-position:400% 50%} }
+
+    .fx-infinityveil { background: linear-gradient(90deg, #fff, #aaa, #fff, #666, #fff); background-size: 600% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fx-infinityveil 4s ease-in-out infinite !important; filter: drop-shadow(0 0 12px rgba(255,255,255,.5)) drop-shadow(0 0 24px rgba(200,200,255,.3)); }
+    @keyframes fx-infinityveil { 0%,100%{background-position:0% 50%;filter:drop-shadow(0 0 12px rgba(255,255,255,.5)) brightness(1)}50%{background-position:600% 50%;filter:drop-shadow(0 0 20px rgba(255,255,255,.8)) brightness(1.3)} }
+
     /* ===== SHOP FONTS (Google Fonts loaded dynamically) ===== */
     .chat-font-bloodcrow { font-family: 'Blood Crow', Impact, sans-serif !important; }
     .chat-font-retro { font-family: 'Retro Arcade', 'Press Start 2P', monospace !important; }
@@ -297,6 +432,48 @@
     .chat-font-dotgothic { font-family: 'DotGothic16', monospace !important; }
     .chat-font-monoton { font-family: 'Monoton', cursive !important; }
     .chat-font-bungee { font-family: 'Bungee Shade', cursive !important; font-size: 1.1em !important; }
+    .chat-font-pixelify { font-family: 'Pixelify Sans', monospace !important; }
+    .chat-font-rubikglitch { font-family: 'Rubik Glitch', cursive !important; }
+    .chat-font-creepster { font-family: 'Creepster', cursive !important; font-size: 1.2em !important; }
+    .chat-font-nosifer { font-family: 'Nosifer', cursive !important; }
+    .chat-font-rubikburned { font-family: 'Rubik Burned', cursive !important; }
+    .chat-font-rubikdoodle { font-family: 'Rubik Doodle Shadow', cursive !important; }
+    .chat-font-sixtyfour { font-family: 'Sixtyfour', monospace !important; font-size: .8em !important; }
+    .chat-font-rubikwetpaint { font-family: 'Rubik Wet Paint', cursive !important; }
+    .chat-font-bungeespice { font-family: 'Bungee Spice', cursive !important; }
+    .chat-font-notable { font-family: 'Notable', sans-serif !important; }
+    .chat-font-orbitron { font-family: 'Orbitron', sans-serif !important; font-size: .9em !important; }
+    .chat-font-audiowide { font-family: 'Audiowide', cursive !important; }
+    .chat-font-bungeeoutline { font-family: 'Bungee Outline', cursive !important; }
+    .chat-font-blackops { font-family: 'Black Ops One', cursive !important; }
+    .chat-font-russoone { font-family: 'Russo One', sans-serif !important; }
+    .chat-font-pressstart { font-family: 'Press Start 2P', monospace !important; }
+    .chat-font-share { font-family: 'Share Tech Mono', monospace !important; font-size: 1.3em !important; }
+    .chat-font-spacemono { font-family: 'Space Mono', monospace !important; }
+    .chat-font-specialelite { font-family: 'Special Elite', cursive !important; font-size: 1.2em !important; }
+    .chat-font-megrim { font-family: 'Megrim', cursive !important; font-size: 1.2em !important; }
+    .chat-font-iceland { font-family: 'Iceland', cursive !important; font-size: 1.2em !important; }
+    .chat-font-novacut { font-family: 'Nova Cut', cursive !important; font-size: 1.1em !important; }
+    .chat-font-novaflat { font-family: 'Nova Flat', cursive !important; }
+    .chat-font-gravitas { font-family: 'Gravitas One', cursive !important; }
+    .chat-font-rampart { font-family: 'Rampart One', cursive !important; }
+    .chat-font-rye { font-family: 'Rye', cursive !important; }
+    .chat-font-eater { font-family: 'Eater', cursive !important; }
+    .chat-font-butcherman { font-family: 'Butcherman', cursive !important; }
+    .chat-font-rubikpuddles { font-family: 'Rubik Puddles', cursive !important; }
+    .chat-font-bungeeinline { font-family: 'Bungee Inline', cursive !important; }
+    .chat-font-rubikvinyl { font-family: 'Rubik Vinyl', cursive !important; }
+    .chat-font-rubikiso { font-family: 'Rubik Iso', cursive !important; }
+    .chat-font-rubik80s { font-family: 'Rubik 80s Fade', cursive !important; }
+    .chat-font-rubikstorm { font-family: 'Rubik Storm', cursive !important; }
+    .chat-font-rubikdistress { font-family: 'Rubik Distressed', cursive !important; }
+    .chat-font-emblema { font-family: 'Emblema One', cursive !important; }
+    .chat-font-rubikmarker { font-family: 'Rubik Marker Hatch', cursive !important; }
+    .chat-font-rubikscribble { font-family: 'Rubik Scribble', cursive !important; }
+    .chat-font-nabla { font-family: 'Nabla', cursive !important; }
+    .chat-font-rubiklines { font-family: 'Rubik Lines', cursive !important; }
+    .chat-font-rubikpixels { font-family: 'Rubik Pixels', cursive !important; }
+    .chat-font-rubikbroken { font-family: 'Rubik Broken Fax', cursive !important; }
 
     /* ===== SHOP ===== */
     .shop-container { width: 100%; max-width: 800px; }
@@ -594,6 +771,9 @@
 
     /* Mobile responsive */
     @media (max-width: 600px) {
+      .menu-layout { flex-direction: column; gap: .8rem; }
+      .menu-sidebar { border-right: none; border-bottom: 1px solid #1a0000; padding-right: 0; padding-bottom: .6rem; flex-direction: row; justify-content: center; flex-wrap: wrap; min-width: unset; }
+      .menu-sidebar-btn { font-size: clamp(.35rem, 1.1vw, .5rem); padding: .4rem .5rem; }
       .chat-sidebar { width: 48px; min-width: 48px; }
       .chat-sidebar-header { font-size: 7px; padding: .3rem .2rem; text-align: center; overflow: hidden; }
       .chat-hub-item { padding: .4rem .2rem; justify-content: center; font-size: 7px; }
@@ -823,16 +1003,27 @@
       <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
       <div class="menu-subtitle">- SELECT OPTION -</div>
       <div class="pixel-divider"></div>
-      <ul class="menu-list">
-        <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
-        <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
-        <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
-        <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
-        <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
-        <li id="shop-menu-li" style="display:none;"><span class="menu-item" data-target="screen-shop">SHOP</span></li>
-        <li id="admin-menu-li" style="display:none;"><span class="menu-item" data-target="screen-admin">ADMIN PANEL</span></li>
-        <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
-      </ul>
+      <div class="menu-layout">
+        <div class="menu-sidebar" id="menu-sidebar">
+          <div class="menu-sidebar-label">&#9670; EXTRAS &#9670;</div>
+          <div class="menu-sidebar-btn" id="shop-menu-btn" data-target="screen-shop" style="display:none;">
+            <span class="sidebar-icon">&#9733;</span> SHOP
+          </div>
+          <div class="menu-sidebar-btn" id="admin-menu-btn" data-target="screen-admin" style="display:none;">
+            <span class="sidebar-icon">&#9881;</span> ADMIN
+          </div>
+        </div>
+        <div class="menu-main">
+          <ul class="menu-list">
+            <li><span class="menu-item" data-target="screen-auth">LOGIN / REGISTER</span></li>
+            <li><span class="menu-item" data-target="screen-members">MEMBERS</span></li>
+            <li><span class="menu-item" data-target="screen-releases">RELEASES</span></li>
+            <li><span class="menu-item" data-target="screen-about">ABOUT US</span></li>
+            <li id="chat-menu-li"><span class="menu-item" data-target="screen-chat">CHAT</span><span class="chat-badge" id="chat-badge"></span></li>
+            <li><span class="menu-item" data-target="screen-title" data-is-back="true">BACK</span></li>
+          </ul>
+        </div>
+      </div>
       <div class="pixel-divider"></div>
       <div class="screen-footer"><p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE</p></div>
     </div>

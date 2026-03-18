@@ -53,17 +53,57 @@
     { id: 'eternal',    name: 'ETERNAL FLAME',             rarity: 'drop' },
     { id: 'supernova',  name: 'SUPERNOVA BURST',           rarity: 'drop' },
     { id: 'god',        name: 'GOD MODE',                  rarity: 'drop' },
-    // SHOP-EXCLUSIVE EFFECTS - buy with coins
-    { id: 'bloodmoon',  name: 'BLOOD MOON RISING',         rarity: 'shop', price: 500 },
-    { id: 'witchfire',  name: 'WITCHFIRE HEX',             rarity: 'shop', price: 600 },
-    { id: 'deadpixel',  name: 'DEAD PIXEL CURSE',          rarity: 'shop', price: 400 },
-    { id: 'nightterror',name: 'NIGHT TERROR',              rarity: 'shop', price: 750 },
-    { id: 'acidrain',   name: 'ACID RAIN',                 rarity: 'shop', price: 550 },
-    { id: 'hologram',   name: 'HOLOGRAM GHOST',            rarity: 'shop', price: 800 },
-    { id: 'soulchain',  name: 'SOULCHAIN BIND',            rarity: 'shop', price: 900 },
-    { id: 'pixelrift',  name: 'PIXEL RIFT',                rarity: 'shop', price: 450 },
-    { id: 'cosmicrot',  name: 'COSMIC ROT',                rarity: 'shop', price: 1000 },
-    { id: 'deathwish',  name: 'DEATH WISH',                rarity: 'shop', price: 1200 },
+    // SHOP-EXCLUSIVE EFFECTS - buy with coins (50 total)
+    { id: 'bloodmoon',    name: 'BLOOD MOON RISING',       rarity: 'shop', price: 500 },
+    { id: 'witchfire',    name: 'WITCHFIRE HEX',           rarity: 'shop', price: 600 },
+    { id: 'deadpixel',    name: 'DEAD PIXEL CURSE',        rarity: 'shop', price: 400 },
+    { id: 'nightterror',  name: 'NIGHT TERROR',            rarity: 'shop', price: 750 },
+    { id: 'acidrain',     name: 'ACID RAIN',               rarity: 'shop', price: 550 },
+    { id: 'hologram',     name: 'HOLOGRAM GHOST',          rarity: 'shop', price: 800 },
+    { id: 'soulchain',    name: 'SOULCHAIN BIND',          rarity: 'shop', price: 900 },
+    { id: 'pixelrift',    name: 'PIXEL RIFT',              rarity: 'shop', price: 450 },
+    { id: 'cosmicrot',    name: 'COSMIC ROT',              rarity: 'shop', price: 1000 },
+    { id: 'deathwish',    name: 'DEATH WISH',              rarity: 'shop', price: 1200 },
+    { id: 'gravemind',    name: 'GRAVEMIND PULSE',         rarity: 'shop', price: 350 },
+    { id: 'miasma',       name: 'MIASMA CLOUD',            rarity: 'shop', price: 400 },
+    { id: 'bonefire',     name: 'BONEFIRE RITUAL',         rarity: 'shop', price: 500 },
+    { id: 'hexweave',     name: 'HEXWEAVE THREAD',         rarity: 'shop', price: 550 },
+    { id: 'rotgut',       name: 'ROTGUT DRENCH',           rarity: 'shop', price: 300 },
+    { id: 'skullflame',   name: 'SKULL FLAME',             rarity: 'shop', price: 650 },
+    { id: 'spidervein',   name: 'SPIDER VEIN CRACK',       rarity: 'shop', price: 450 },
+    { id: 'warpzone',     name: 'WARP ZONE TEAR',          rarity: 'shop', price: 700 },
+    { id: 'chaoscode',    name: 'CHAOS CODE',              rarity: 'shop', price: 800 },
+    { id: 'cursedink',    name: 'CURSED INK',              rarity: 'shop', price: 500 },
+    { id: 'necroplasm',   name: 'NECROPLASM OOZE',         rarity: 'shop', price: 850 },
+    { id: 'vipercoil',    name: 'VIPER COIL',              rarity: 'shop', price: 600 },
+    { id: 'ashfall',      name: 'ASHFALL DESCENT',         rarity: 'shop', price: 550 },
+    { id: 'singularity',  name: 'SINGULARITY CRUSH',       rarity: 'shop', price: 1100 },
+    { id: 'staticnova',   name: 'STATIC NOVA',             rarity: 'shop', price: 750 },
+    { id: 'phantombleed', name: 'PHANTOM BLEED',           rarity: 'shop', price: 900 },
+    { id: 'cryoburn',     name: 'CRYO BURN',               rarity: 'shop', price: 650 },
+    { id: 'darkpulsar',   name: 'DARK PULSAR',             rarity: 'shop', price: 1000 },
+    { id: 'runecarve',    name: 'RUNE CARVE',              rarity: 'shop', price: 700 },
+    { id: 'venomstrike',  name: 'VENOM STRIKE',            rarity: 'shop', price: 500 },
+    { id: 'shadowmelt',   name: 'SHADOW MELT',             rarity: 'shop', price: 400 },
+    { id: 'ironblood',    name: 'IRON BLOOD',              rarity: 'shop', price: 600 },
+    { id: 'nullvoid',     name: 'NULL VOID',               rarity: 'shop', price: 950 },
+    { id: 'doomscroll',   name: 'DOOM SCROLL',             rarity: 'shop', price: 800 },
+    { id: 'grimspark',    name: 'GRIM SPARK',              rarity: 'shop', price: 450 },
+    { id: 'plaguedrift',  name: 'PLAGUE DRIFT',            rarity: 'shop', price: 550 },
+    { id: 'wormhole',     name: 'WORMHOLE TRANSIT',        rarity: 'shop', price: 1200 },
+    { id: 'razorwind',    name: 'RAZOR WIND',              rarity: 'shop', price: 700 },
+    { id: 'helixdna',     name: 'HELIX DNA STRAND',        rarity: 'shop', price: 850 },
+    { id: 'ghostchain',   name: 'GHOST CHAIN RATTLE',      rarity: 'shop', price: 600 },
+    { id: 'entropywave',  name: 'ENTROPY WAVE',            rarity: 'shop', price: 1500 },
+    { id: 'blightmark',   name: 'BLIGHT MARK',             rarity: 'shop', price: 500 },
+    { id: 'neurotoxin',   name: 'NEUROTOXIN DRIP',         rarity: 'shop', price: 750 },
+    { id: 'abyssfire',    name: 'ABYSS FIRE',              rarity: 'shop', price: 1000 },
+    { id: 'voidpulse',    name: 'VOID PULSE',              rarity: 'shop', price: 900 },
+    { id: 'crimsonmaw',   name: 'CRIMSON MAW',             rarity: 'shop', price: 650 },
+    { id: 'glitchking',   name: 'GLITCH KING',             rarity: 'shop', price: 1800 },
+    { id: 'titanfall',    name: 'TITAN FALL',              rarity: 'shop', price: 2000 },
+    { id: 'soulreaver',   name: 'SOUL REAVER',             rarity: 'shop', price: 2500 },
+    { id: 'infinityveil', name: 'INFINITY VEIL',           rarity: 'shop', price: 3000 },
     // ADMIN-ONLY
     { id: 'divine',     name: 'DIVINE ASCENSION',          rarity: 'admin' },
     { id: 'corrupted',  name: 'CORRUPTED DATA',            rarity: 'admin' },
@@ -78,29 +118,109 @@
   /* ===== SHOP ITEMS REGISTRY ===== */
   // Categories: effects, fonts, titles, flair
   const SHOP_FONTS = [
-    { id: 'font-default',   name: 'DEFAULT (PRESS START)',     price: 0,    css: "'Press Start 2P', monospace", preview: 'ABCDEF' },
-    { id: 'font-bloodcrow', name: 'BLOOD CROW',                price: 300,  css: "'Blood Crow', Impact, sans-serif", preview: 'ABCDEF' },
-    { id: 'font-retro',     name: 'RETRO ARCADE',              price: 250,  css: "'Retro Arcade', 'Press Start 2P', monospace", preview: 'ABCDEF' },
-    { id: 'font-vt323',     name: 'VT323 TERMINAL',            price: 400,  css: "'VT323', monospace", preview: 'ABCDEF' },
-    { id: 'font-silkscreen',name: 'SILKSCREEN',                price: 350,  css: "'Silkscreen', monospace", preview: 'ABCDEF' },
-    { id: 'font-dotgothic', name: 'DOT GOTHIC',                price: 500,  css: "'DotGothic16', monospace", preview: 'ABCDEF' },
-    { id: 'font-monoton',   name: 'MONOTON NEON',              price: 600,  css: "'Monoton', cursive", preview: 'ABCDEF' },
-    { id: 'font-bungee',    name: 'BUNGEE SHADE',              price: 550,  css: "'Bungee Shade', cursive", preview: 'ABCDEF' },
+    { id: 'font-default',      name: 'DEFAULT (PRESS START)',   price: 0,    css: "'Press Start 2P', monospace" },
+    { id: 'font-bloodcrow',    name: 'BLOOD CROW',              price: 300,  css: "'Blood Crow', Impact, sans-serif" },
+    { id: 'font-retro',        name: 'RETRO ARCADE',            price: 250,  css: "'Retro Arcade', 'Press Start 2P', monospace" },
+    { id: 'font-vt323',        name: 'VT323 TERMINAL',          price: 400,  css: "'VT323', monospace" },
+    { id: 'font-silkscreen',   name: 'SILKSCREEN',              price: 350,  css: "'Silkscreen', monospace" },
+    { id: 'font-dotgothic',    name: 'DOT GOTHIC',              price: 500,  css: "'DotGothic16', monospace" },
+    { id: 'font-monoton',      name: 'MONOTON NEON',            price: 600,  css: "'Monoton', cursive" },
+    { id: 'font-bungee',       name: 'BUNGEE SHADE',            price: 550,  css: "'Bungee Shade', cursive" },
+    { id: 'font-pixelify',     name: 'PIXELIFY SANS',           price: 300,  css: "'Pixelify Sans', monospace" },
+    { id: 'font-rubikglitch',  name: 'RUBIK GLITCH',            price: 500,  css: "'Rubik Glitch', cursive" },
+    { id: 'font-creepster',    name: 'CREEPSTER',                price: 400,  css: "'Creepster', cursive" },
+    { id: 'font-nosifer',      name: 'NOSIFER',                  price: 700,  css: "'Nosifer', cursive" },
+    { id: 'font-rubikburned',  name: 'RUBIK BURNED',            price: 550,  css: "'Rubik Burned', cursive" },
+    { id: 'font-rubikdoodle',  name: 'RUBIK DOODLE',            price: 450,  css: "'Rubik Doodle Shadow', cursive" },
+    { id: 'font-sixtyfour',    name: 'SIXTYFOUR',               price: 800,  css: "'Sixtyfour', monospace" },
+    { id: 'font-rubikwetpaint',name: 'RUBIK WET PAINT',         price: 600,  css: "'Rubik Wet Paint', cursive" },
+    { id: 'font-bungeespice',  name: 'BUNGEE SPICE',            price: 750,  css: "'Bungee Spice', cursive" },
+    { id: 'font-notable',      name: 'NOTABLE',                  price: 350,  css: "'Notable', sans-serif" },
+    { id: 'font-orbitron',     name: 'ORBITRON',                  price: 400,  css: "'Orbitron', sans-serif" },
+    { id: 'font-audiowide',    name: 'AUDIOWIDE',                price: 350,  css: "'Audiowide', cursive" },
+    { id: 'font-bungeeoutline',name: 'BUNGEE OUTLINE',          price: 500,  css: "'Bungee Outline', cursive" },
+    { id: 'font-blackops',     name: 'BLACK OPS ONE',            price: 450,  css: "'Black Ops One', cursive" },
+    { id: 'font-russoone',     name: 'RUSSO ONE',                price: 300,  css: "'Russo One', sans-serif" },
+    { id: 'font-pressstart',   name: 'PRESS START 2P',           price: 0,    css: "'Press Start 2P', monospace" },
+    { id: 'font-share',        name: 'SHARE TECH MONO',         price: 250,  css: "'Share Tech Mono', monospace" },
+    { id: 'font-spacemono',    name: 'SPACE MONO',               price: 300,  css: "'Space Mono', monospace" },
+    { id: 'font-specialelite', name: 'SPECIAL ELITE',            price: 400,  css: "'Special Elite', cursive" },
+    { id: 'font-megrim',       name: 'MEGRIM',                    price: 350,  css: "'Megrim', cursive" },
+    { id: 'font-iceland',      name: 'ICELAND',                   price: 300,  css: "'Iceland', cursive" },
+    { id: 'font-novacut',      name: 'NOVA CUT',                 price: 450,  css: "'Nova Cut', cursive" },
+    { id: 'font-novaflat',     name: 'NOVA FLAT',                price: 350,  css: "'Nova Flat', cursive" },
+    { id: 'font-gravitas',     name: 'GRAVITAS ONE',             price: 400,  css: "'Gravitas One', cursive" },
+    { id: 'font-rampart',      name: 'RAMPART ONE',              price: 500,  css: "'Rampart One', cursive" },
+    { id: 'font-rye',          name: 'RYE',                       price: 450,  css: "'Rye', cursive" },
+    { id: 'font-eater',        name: 'EATER',                     price: 600,  css: "'Eater', cursive" },
+    { id: 'font-butcherman',   name: 'BUTCHERMAN',               price: 650,  css: "'Butcherman', cursive" },
+    { id: 'font-rubikpuddles', name: 'RUBIK PUDDLES',            price: 500,  css: "'Rubik Puddles', cursive" },
+    { id: 'font-bungeeinline', name: 'BUNGEE INLINE',            price: 450,  css: "'Bungee Inline', cursive" },
+    { id: 'font-rubikvinyl',   name: 'RUBIK VINYL',              price: 400,  css: "'Rubik Vinyl', cursive" },
+    { id: 'font-rubikiso',     name: 'RUBIK ISO',                price: 550,  css: "'Rubik Iso', cursive" },
+    { id: 'font-rubik80s',     name: 'RUBIK 80S FADE',           price: 700,  css: "'Rubik 80s Fade', cursive" },
+    { id: 'font-rubikstorm',   name: 'RUBIK STORM',              price: 600,  css: "'Rubik Storm', cursive" },
+    { id: 'font-rubikdistress',name: 'RUBIK DISTRESSED',         price: 500,  css: "'Rubik Distressed', cursive" },
+    { id: 'font-emblema',      name: 'EMBLEMA ONE',              price: 450,  css: "'Emblema One', cursive" },
+    { id: 'font-rubikmarker',  name: 'RUBIK MARKER HATCH',      price: 550,  css: "'Rubik Marker Hatch', cursive" },
+    { id: 'font-rubikscribble',name: 'RUBIK SCRIBBLE',           price: 500,  css: "'Rubik Scribble', cursive" },
+    { id: 'font-nabla',        name: 'NABLA',                     price: 900,  css: "'Nabla', cursive" },
+    { id: 'font-rubiklines',   name: 'RUBIK LINES',              price: 450,  css: "'Rubik Lines', cursive" },
+    { id: 'font-rubikpixels',  name: 'RUBIK PIXELS',             price: 600,  css: "'Rubik Pixels', cursive" },
+    { id: 'font-rubikbroken',  name: 'RUBIK BROKEN FAXE',       price: 800,  css: "'Rubik Broken Fax', cursive" },
   ];
 
   const SHOP_TITLES = [
-    { id: 'title-newcomer',  name: 'NEWCOMER',       price: 0,    color: '#666' },
-    { id: 'title-shadow',    name: 'SHADOW WALKER',  price: 200,  color: '#555' },
-    { id: 'title-blade',     name: 'BLADE RUNNER',   price: 300,  color: '#88aacc' },
-    { id: 'title-phantom',   name: 'PHANTOM LORD',   price: 400,  color: '#9966ff' },
-    { id: 'title-warlord',   name: 'WARLORD',        price: 500,  color: '#cc4400' },
-    { id: 'title-mystic',    name: 'MYSTIC SAGE',    price: 600,  color: '#44cc88' },
-    { id: 'title-reaper',    name: 'GRIM REAPER',    price: 800,  color: '#880000' },
-    { id: 'title-overlord',  name: 'DARK OVERLORD',  price: 1000, color: '#aa00aa' },
-    { id: 'title-legend',    name: 'LIVING LEGEND',  price: 1500, color: '#ffaa00' },
-    { id: 'title-god',       name: 'GODSLAYER',      price: 2500, color: '#ff0000' },
-    { id: 'title-void',      name: 'VOID EMPEROR',   price: 3000, color: '#220044' },
-    { id: 'title-eternal',   name: 'ETERNAL ONE',    price: 5000, color: '#ffd700' },
+    { id: 'title-newcomer',    name: 'NEWCOMER',            price: 0,     color: '#666' },
+    { id: 'title-drifter',     name: 'DRIFTER',             price: 100,   color: '#777' },
+    { id: 'title-lurker',      name: 'LURKER',              price: 150,   color: '#556' },
+    { id: 'title-shadow',      name: 'SHADOW WALKER',       price: 200,   color: '#555' },
+    { id: 'title-rogue',       name: 'ROGUE AGENT',         price: 250,   color: '#6688aa' },
+    { id: 'title-blade',       name: 'BLADE RUNNER',        price: 300,   color: '#88aacc' },
+    { id: 'title-outlaw',      name: 'OUTLAW',              price: 300,   color: '#aa6633' },
+    { id: 'title-phantom',     name: 'PHANTOM LORD',        price: 400,   color: '#9966ff' },
+    { id: 'title-nomad',       name: 'NOMAD KING',          price: 400,   color: '#aa8844' },
+    { id: 'title-warlord',     name: 'WARLORD',             price: 500,   color: '#cc4400' },
+    { id: 'title-sentinel',    name: 'SENTINEL',            price: 500,   color: '#4488cc' },
+    { id: 'title-mystic',      name: 'MYSTIC SAGE',         price: 600,   color: '#44cc88' },
+    { id: 'title-berserker',   name: 'BERSERKER',           price: 600,   color: '#dd3300' },
+    { id: 'title-nightstalker',name: 'NIGHT STALKER',       price: 650,   color: '#443366' },
+    { id: 'title-vanguard',    name: 'VANGUARD',            price: 700,   color: '#5599bb' },
+    { id: 'title-marauder',    name: 'MARAUDER',            price: 700,   color: '#995522' },
+    { id: 'title-reaper',      name: 'GRIM REAPER',         price: 800,   color: '#880000' },
+    { id: 'title-warlock',     name: 'WARLOCK',             price: 800,   color: '#7733aa' },
+    { id: 'title-executioner', name: 'EXECUTIONER',         price: 900,   color: '#990000' },
+    { id: 'title-gladiator',   name: 'GLADIATOR',           price: 900,   color: '#bb8833' },
+    { id: 'title-overlord',    name: 'DARK OVERLORD',       price: 1000,  color: '#aa00aa' },
+    { id: 'title-specter',     name: 'SPECTER',             price: 1000,  color: '#334466' },
+    { id: 'title-archon',      name: 'ARCHON',              price: 1100,  color: '#6644cc' },
+    { id: 'title-ravager',     name: 'RAVAGER',             price: 1100,  color: '#cc2200' },
+    { id: 'title-sovereign',   name: 'SOVEREIGN',           price: 1200,  color: '#cc9900' },
+    { id: 'title-necromancer', name: 'NECROMANCER',          price: 1200,  color: '#226622' },
+    { id: 'title-champion',    name: 'CHAMPION',            price: 1300,  color: '#ddaa00' },
+    { id: 'title-revenant',    name: 'REVENANT',            price: 1300,  color: '#445566' },
+    { id: 'title-legend',      name: 'LIVING LEGEND',       price: 1500,  color: '#ffaa00' },
+    { id: 'title-conqueror',   name: 'CONQUEROR',           price: 1500,  color: '#cc6600' },
+    { id: 'title-juggernaut',  name: 'JUGGERNAUT',          price: 1700,  color: '#884400' },
+    { id: 'title-demonlord',   name: 'DEMON LORD',          price: 1800,  color: '#bb0000' },
+    { id: 'title-sorcerer',    name: 'GRAND SORCERER',      price: 1800,  color: '#8844cc' },
+    { id: 'title-warden',      name: 'DEATH WARDEN',        price: 2000,  color: '#335544' },
+    { id: 'title-tyrant',      name: 'TYRANT',              price: 2000,  color: '#660022' },
+    { id: 'title-god',         name: 'GODSLAYER',           price: 2500,  color: '#ff0000' },
+    { id: 'title-oracle',      name: 'ORACLE',              price: 2500,  color: '#44aacc' },
+    { id: 'title-oblivion',    name: 'OBLIVION WALKER',     price: 2800,  color: '#220033' },
+    { id: 'title-void',        name: 'VOID EMPEROR',        price: 3000,  color: '#220044' },
+    { id: 'title-abyssal',     name: 'ABYSSAL KING',        price: 3000,  color: '#110033' },
+    { id: 'title-apocalypse',  name: 'APOCALYPSE HERALD',   price: 3500,  color: '#aa2200' },
+    { id: 'title-primordial',  name: 'PRIMORDIAL BEING',    price: 3500,  color: '#336644' },
+    { id: 'title-ascendant',   name: 'ASCENDANT',           price: 4000,  color: '#ccaa44' },
+    { id: 'title-worldender',  name: 'WORLD ENDER',         price: 4000,  color: '#880022' },
+    { id: 'title-celestial',   name: 'CELESTIAL TITAN',     price: 4500,  color: '#8888ff' },
+    { id: 'title-eternal',     name: 'ETERNAL ONE',         price: 5000,  color: '#ffd700' },
+    { id: 'title-omniscient',  name: 'OMNISCIENT',          price: 6000,  color: '#ffffff' },
+    { id: 'title-mythic',      name: 'MYTHIC ANCESTOR',     price: 7000,  color: '#ddbb44' },
+    { id: 'title-infinitum',   name: 'AD INFINITUM',        price: 8000,  color: '#aaccff' },
+    { id: 'title-genesis',     name: 'GENESIS ARCHITECT',   price: 10000, color: '#ff8800' },
   ];
 
   const SHOP_FLAIR = [
@@ -270,6 +390,21 @@
     item.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
 
+  // Sidebar buttons (shop, admin)
+  document.querySelectorAll('.menu-sidebar-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      if (!target) return;
+      if (target === 'screen-shop' && !SupabaseClient.getUser()) {
+        AudioSystem.sfxError(); showToast('LOGIN REQUIRED'); return;
+      }
+      if (target === 'screen-shop') loadShop();
+      AudioSystem.sfxSelect();
+      switchScreen(currentScreen, target);
+    });
+    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+  });
+
   // Back buttons
   document.querySelectorAll('.back-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -380,7 +515,7 @@
 
   function updateNavMenu(user, profile) {
     const authItem = document.querySelector('[data-target="screen-auth"]');
-    const adminLi = document.getElementById('admin-menu-li');
+    const adminLi = document.getElementById('admin-menu-btn');
     const chatLi = document.getElementById('chat-menu-li');
     if (!authItem) return;
 
@@ -411,6 +546,15 @@
     // Show/hide admin panel option
     if (adminLi) {
       adminLi.style.display = (profile && profile.is_admin) ? '' : 'none';
+    }
+
+    // Show/hide sidebar (visible when shop or admin is available)
+    const sidebar = document.getElementById('menu-sidebar');
+    const shopBtn = document.getElementById('shop-menu-btn');
+    if (sidebar) {
+      const shopVisible = shopBtn && shopBtn.style.display !== 'none';
+      const adminVisible = adminLi && adminLi.style.display !== 'none';
+      sidebar.classList.toggle('show', shopVisible || adminVisible);
     }
   }
 
@@ -2156,8 +2300,16 @@
 
   // Show/hide shop in nav
   function updateShopMenu(user) {
-    const shopLi = document.getElementById('shop-menu-li');
-    if (shopLi) shopLi.style.display = user ? '' : 'none';
+    const shopBtn = document.getElementById('shop-menu-btn');
+    if (shopBtn) shopBtn.style.display = user ? '' : 'none';
+    // Update sidebar visibility
+    const sidebar = document.getElementById('menu-sidebar');
+    const adminBtn = document.getElementById('admin-menu-btn');
+    if (sidebar) {
+      const shopVisible = shopBtn && shopBtn.style.display !== 'none';
+      const adminVisible = adminBtn && adminBtn.style.display !== 'none';
+      sidebar.classList.toggle('show', shopVisible || adminVisible);
+    }
   }
 
   // Open shop
