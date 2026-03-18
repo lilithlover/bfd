@@ -405,8 +405,8 @@
     btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
 
-  // Back buttons
-  document.querySelectorAll('.back-btn, .inv-footer-back').forEach(btn => {
+  // Back buttons (all types)
+  document.querySelectorAll('.back-btn, .inv-footer-back, .page-back').forEach(btn => {
     btn.addEventListener('click', () => {
       AudioSystem.sfxBack();
       const target = btn.dataset.target;
@@ -586,7 +586,7 @@
     AudioSystem.sfxSelect();
 
     const user = SupabaseClient.getUser();
-    const prefs = user ? getUserPrefs(user.id) : { font: 'font-default', flair: 'none', titleId: 'title-newcomer' };
+    const prefs = user ? getUserPrefs(user.id) : { ...DEFAULT_PREFS };
 
     // Init selections from current profile
     invSelections = {
@@ -594,6 +594,8 @@
       font: prefs.font || 'font-default',
       title: prefs.titleId || 'title-newcomer',
       flair: prefs.flair || 'none',
+      fontTarget: prefs.fontTarget || 'username',
+      textColor: prefs.textColor || '#aaaaaa',
     };
 
     // Avatar
@@ -602,9 +604,15 @@
       ? renderAvatar(profile.avatar_url)
       : '<span class="hud-avatar-placeholder">?</span>';
 
-    // Username preview
+    // Username preview + text color
     document.getElementById('edit-color').value = profile.name_color || '#e02020';
+    document.getElementById('edit-text-color').value = invSelections.textColor;
     updateInvPreview();
+
+    // Font target toggles
+    document.querySelectorAll('[data-font-target]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.fontTarget === invSelections.fontTarget);
+    });
 
     // Stats
     const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
@@ -757,6 +765,19 @@
 
   // Color picker live preview
   document.getElementById('edit-color').addEventListener('input', () => updateInvPreview());
+  document.getElementById('edit-text-color').addEventListener('input', (e) => {
+    invSelections.textColor = e.target.value;
+  });
+
+  // Font target toggles
+  document.querySelectorAll('[data-font-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioSystem.sfxSelect();
+      invSelections.fontTarget = btn.dataset.fontTarget;
+      document.querySelectorAll('[data-font-target]').forEach(b => b.classList.toggle('active', b === btn));
+    });
+    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+  });
 
   // Avatar upload
   document.getElementById('edit-avatar-input').addEventListener('change', async (e) => {
@@ -806,6 +827,8 @@
         prefs.font = invSelections.font;
         prefs.flair = invSelections.flair;
         prefs.titleId = invSelections.title;
+        prefs.fontTarget = invSelections.fontTarget || 'username';
+        prefs.textColor = invSelections.textColor || '#aaaaaa';
         saveUserPrefs(user.id, prefs);
       }
 
@@ -815,11 +838,12 @@
   });
 
   // User preferences (stored in localStorage for font/flair)
+  const DEFAULT_PREFS = { font: 'font-default', flair: 'none', titleId: 'title-newcomer', fontTarget: 'username', textColor: '#aaaaaa' };
   function getUserPrefs(userId) {
     try {
       const data = localStorage.getItem('rune-prefs-' + userId);
-      return data ? JSON.parse(data) : { font: 'font-default', flair: 'none', titleId: 'title-newcomer' };
-    } catch (_) { return { font: 'font-default', flair: 'none', titleId: 'title-newcomer' }; }
+      return data ? { ...DEFAULT_PREFS, ...JSON.parse(data) } : { ...DEFAULT_PREFS };
+    } catch (_) { return { ...DEFAULT_PREFS }; }
   }
   function saveUserPrefs(userId, prefs) {
     try { localStorage.setItem('rune-prefs-' + userId, JSON.stringify(prefs)); } catch (_) {}
@@ -831,12 +855,26 @@
     const flair = SHOP_FLAIR.find(f => f.id === prefs.flair);
     return flair ? flair.prefix : '';
   }
+  function getActiveFontClass(userId) {
+    const prefs = getUserPrefs(userId);
+    const font = SHOP_FONTS.find(f => f.id === prefs.font);
+    return font && prefs.font !== 'font-default' ? 'chat-font-' + prefs.font.replace('font-', '') : '';
+  }
   function getActiveFont() {
     const user = SupabaseClient.getUser();
     if (!user) return '';
+    return getActiveFontClass(user.id);
+  }
+  function getActiveFontTarget() {
+    const user = SupabaseClient.getUser();
+    if (!user) return 'username';
+    return getUserPrefs(user.id).fontTarget || 'username';
+  }
+  function getActiveTextColor() {
+    const user = SupabaseClient.getUser();
+    if (!user) return '';
     const prefs = getUserPrefs(user.id);
-    const font = SHOP_FONTS.find(f => f.id === prefs.font);
-    return font && prefs.font !== 'font-default' ? 'chat-font-' + prefs.font.replace('font-', '') : '';
+    return prefs.textColor && prefs.textColor !== '#aaaaaa' ? prefs.textColor : '';
   }
 
   /* ===== CHAT ===== */
@@ -914,11 +952,18 @@
     const adminTag = p && p.is_admin ? '<span class="chat-admin-tag">[ADMIN]</span>' : '';
     const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-    // Check for flair/font (current user's own messages)
+    // Check for flair/font/textColor (current user's own messages)
     const currentUser = SupabaseClient.getUser();
     const isOwnMsg = currentUser && msg.user_id === currentUser.id;
     const flairPrefix = isOwnMsg ? getActiveFlair() : '';
     const fontClass = isOwnMsg ? getActiveFont() : '';
+    const fontTarget = isOwnMsg ? getActiveFontTarget() : 'username';
+    const textColor = isOwnMsg ? getActiveTextColor() : '';
+
+    // Apply font to username, text, or both based on fontTarget
+    const userFontClass = (fontTarget === 'username' || fontTarget === 'both') ? fontClass : '';
+    const msgFontClass = (fontTarget === 'text' || fontTarget === 'both') ? fontClass : '';
+    const textColorStyle = textColor ? `color:${escapeHtml(textColor)}` : '';
 
     // Check if it's an action message (/me)
     const isAction = msg.content.startsWith('/me ');
@@ -933,12 +978,12 @@
       </div>
       <div class="chat-msg-body">
         <div class="chat-msg-header">
-          <span class="chat-user ${effect}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairPrefix}${escapeHtml(username)}</span>
+          <span class="chat-user ${effect} ${userFontClass}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairPrefix}${escapeHtml(username)}</span>
           <span class="chat-id">${idNum}</span>
           ${adminTag}
           <span class="chat-time">${time}</span>
         </div>
-        <span class="${textClass} ${fontClass}">${isAction ? `* ${escapeHtml(username)} ${parseEmojis(content)}` : parseEmojis(content)}</span>
+        <span class="${textClass} ${msgFontClass}" ${textColorStyle ? `style="${textColorStyle}"` : ''}>${isAction ? `* ${escapeHtml(username)} ${parseEmojis(content)}` : parseEmojis(content)}</span>
       </div>
     `;
 

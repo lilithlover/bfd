@@ -104,7 +104,19 @@
     .insert-coin { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .45rem); color: #333; letter-spacing: .2em; margin-top: .5rem; animation: blink 2s step-end infinite; }
     .no-video { color: #333; font-size: .5rem; text-align: center; padding: 2rem; }
 
-    /* ===== MENU ===== */
+    /* ===== PAGE CONTAINER (shared modern layout) ===== */
+    .page-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: .6rem; }
+    .page-header { display: flex; align-items: center; gap: .7rem; padding: .3rem 0; border-bottom: 1px solid #151515; margin-bottom: .2rem; }
+    .page-header-icon { font-size: clamp(.8rem, 2.5vw, 1.2rem); color: #e02020; min-width: 1.5rem; text-align: center; }
+    .page-header-text { display: flex; flex-direction: column; gap: .1rem; }
+    .page-title { font-size: clamp(.5rem, 1.6vw, .75rem); color: #ddd; letter-spacing: .12em; text-transform: uppercase; }
+    .page-desc { font-size: clamp(.26rem, .8vw, .34rem); color: #555; letter-spacing: .04em; }
+    .page-footer { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; margin-top: .4rem; border-top: 1px solid #0a0a0a; }
+    .page-back { font-size: clamp(.3rem, .95vw, .42rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
+    .page-back:hover { color: #e02020; }
+    .page-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
+
+    /* ===== MENU (legacy compat) ===== */
     .menu-title {
       font-family: 'Blood Crow', Impact, sans-serif !important;
       font-size: clamp(2rem, 7vw, 4rem); color: #e02020;
@@ -629,9 +641,9 @@
     .shop-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.32rem, 1vw, .45rem); background: transparent; border: 1px solid #222; color: #666; padding: .4rem .7rem; cursor: pointer; transition: all .15s; }
     .shop-tab:hover { color: #e02020; border-color: #e02020; }
     .shop-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.08); }
-    .shop-balance { text-align: center; margin-bottom: .8rem; }
-    .shop-balance-amount { font-size: clamp(.55rem, 1.8vw, .9rem); color: #e02020; letter-spacing: .1em; }
-    .shop-balance-label { font-size: clamp(.28rem, .9vw, .38rem); color: #666; letter-spacing: .1em; margin-top: .2rem; }
+    .shop-balance { text-align: right; }
+    .shop-balance-amount { font-size: clamp(.45rem, 1.5vw, .7rem); color: #e02020; letter-spacing: .1em; }
+    .shop-balance-label { font-size: clamp(.22rem, .7vw, .28rem); color: #555; letter-spacing: .1em; margin-top: .1rem; }
     .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .6rem; max-height: 55vh; overflow-y: auto; padding: .3rem; }
     .shop-item { background: #080808; border: 1px solid #1a0000; padding: .6rem; display: flex; flex-direction: column; gap: .35rem; transition: border-color .2s; }
     .shop-item:hover { border-color: #440000; }
@@ -731,7 +743,7 @@
     .about-link:hover { color: #e02020; border-color: #e02020; }
 
     /* ===== AUTH ===== */
-    .auth-container { text-align: center; width: 100%; max-width: 420px; }
+    .auth-container { text-align: center; width: 100%; }
     .auth-tabs { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.2rem; }
     .auth-tab { font-size: clamp(.4rem, 1.3vw, .6rem); color: #444; cursor: pointer; letter-spacing: .1em; text-transform: uppercase; user-select: none; padding-bottom: .3rem; transition: color .15s; }
     .auth-tab:hover, .auth-tab.active { color: #e02020; border-bottom: 2px solid #e02020; }
@@ -756,7 +768,11 @@
     .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .8vw, .32rem); background: transparent; border: 1px solid #252525; color: #777; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
     .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
     .inv-label { font-size: clamp(.24rem, .8vw, .32rem); color: #888; letter-spacing: .08em; }
-    .edit-color-input { width: 34px; height: 22px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
+    .edit-color-input { width: 34px; height: 22px; border: 1px solid #333; background: #000; cursor: pointer; padding: 0; }
+    .edit-color-input:hover { border-color: #e02020; }
+    .inv-toggle-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); background: transparent; border: 1px solid #222; color: #555; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
+    .inv-toggle-btn:hover { color: #ccc; border-color: #444; }
+    .inv-toggle-btn.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.06); }
     .inv-stats-bar { background: #080808; border: 1px solid #151515; padding: .5rem .8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; min-width: 220px; }
     .inv-stat { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
     .inv-stat-val { font-size: clamp(.38rem, 1.2vw, .55rem); color: #e02020; letter-spacing: .06em; }
@@ -1206,9 +1222,6 @@
 
     <!-- NAV -->
     <div id="screen-nav" class="screen">
-      <h2 class="menu-title rgb-split">RUNE TRIBE</h2>
-      <div class="menu-subtitle">- SELECT OPTION -</div>
-      <div class="pixel-divider"></div>
       <div class="nav-container">
         <div class="nav-grid">
           <div class="nav-card" data-target="screen-auth" id="nav-auth-card">
@@ -1249,146 +1262,177 @@
 
     <!-- AUTH -->
     <div id="screen-auth" class="screen">
-      <h2 class="menu-title rgb-split">ACCESS TERMINAL</h2>
-      <div class="menu-subtitle">- AUTHENTICATION REQUIRED -</div>
-      <div class="pixel-divider"></div>
-      <div class="auth-container">
-        <div class="auth-tabs">
-          <span class="auth-tab active" data-form="login-form">LOGIN</span>
-          <span class="auth-tab" data-form="register-form">REGISTER</span>
+      <div class="page-container" style="max-width:500px;">
+        <div class="page-header">
+          <span class="page-header-icon">&#9670;</span>
+          <div class="page-header-text"><span class="page-title">ACCESS TERMINAL</span><span class="page-desc">Login or create an account</span></div>
         </div>
-        <form id="login-form" class="auth-form active" onsubmit="return false;">
-          <input type="email" class="auth-input" placeholder="EMAIL" autocomplete="email">
-          <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="current-password">
-          <button type="submit" class="auth-btn">ENTER</button>
-        </form>
-        <form id="register-form" class="auth-form" onsubmit="return false;">
-          <input type="text" class="auth-input" placeholder="USERNAME" autocomplete="username">
-          <input type="email" class="auth-input" placeholder="EMAIL" autocomplete="email">
-          <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="new-password">
-          <input type="password" class="auth-input" placeholder="CONFIRM PASSWORD" autocomplete="new-password">
-          <button type="submit" class="auth-btn">REGISTER</button>
-        </form>
+        <div class="auth-container">
+          <div class="auth-tabs">
+            <span class="auth-tab active" data-form="login-form">LOGIN</span>
+            <span class="auth-tab" data-form="register-form">REGISTER</span>
+          </div>
+          <form id="login-form" class="auth-form active" onsubmit="return false;">
+            <input type="email" class="auth-input" placeholder="EMAIL" autocomplete="email">
+            <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="current-password">
+            <button type="submit" class="auth-btn">ENTER</button>
+          </form>
+          <form id="register-form" class="auth-form" onsubmit="return false;">
+            <input type="text" class="auth-input" placeholder="USERNAME" autocomplete="username">
+            <input type="email" class="auth-input" placeholder="EMAIL" autocomplete="email">
+            <input type="password" class="auth-input" placeholder="PASSWORD" autocomplete="new-password">
+            <input type="password" class="auth-input" placeholder="CONFIRM PASSWORD" autocomplete="new-password">
+            <button type="submit" class="auth-btn">REGISTER</button>
+          </form>
+        </div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
+        </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <!-- MEMBERS -->
     <div id="screen-members" class="screen">
-      <h2 class="menu-title rgb-split">MEMBERS</h2>
-      <div class="menu-subtitle">- THE TRIBE -</div>
-      <div class="pixel-divider"></div>
-      <div class="members-section-title">&#9670; CORE CREW</div>
-      <ul class="members-list" id="members-core-list"></ul>
-      <div class="members-section-title">&#9670; COMMUNITY</div>
-      <ul class="members-list" id="members-community-list"></ul>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
+      <div class="page-container">
+        <div class="page-header">
+          <span class="page-header-icon">&#9733;</span>
+          <div class="page-header-text"><span class="page-title">MEMBERS</span><span class="page-desc">The tribe roster</span></div>
+        </div>
+        <div class="members-section-title">&#9670; CORE CREW</div>
+        <ul class="members-list" id="members-core-list"></ul>
+        <div class="members-section-title">&#9670; COMMUNITY</div>
+        <ul class="members-list" id="members-community-list"></ul>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
+        </div>
+      </div>
     </div>
 
     <!-- MEMBER PROFILE -->
     <div id="screen-profile" class="screen">
-      <div class="profile-card" id="profile-card"></div>
-      <span class="back-btn" data-target="screen-members">BACK</span>
+      <div class="page-container" style="max-width:600px;">
+        <div class="profile-card" id="profile-card"></div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-members">BACK</span>
+        </div>
+      </div>
     </div>
 
     <!-- CLASSIFIED -->
     <div id="screen-classified" class="screen">
-      <div class="classified-screen">
-        <div class="classified-stamp">CLASSIFIED</div>
-        <div class="classified-watermark">TOP SECRET // RUNE TRIBE</div>
-        <div class="redacted-lines">
-          <span class="redacted-line">SUBJECT: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
-          <span class="redacted-line">STATUS: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; ACTIVE &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
-          <span class="redacted-line">LOCATION: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
-          <span class="redacted-line">CLEARANCE: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; LEVEL &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
-          <span class="redacted-line">MISSION: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
-          <span class="redacted-line">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+      <div class="page-container">
+        <div class="classified-screen">
+          <div class="classified-stamp">CLASSIFIED</div>
+          <div class="classified-watermark">TOP SECRET // RUNE TRIBE</div>
+          <div class="redacted-lines">
+            <span class="redacted-line">SUBJECT: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            <span class="redacted-line">STATUS: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; ACTIVE &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            <span class="redacted-line">LOCATION: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            <span class="redacted-line">CLEARANCE: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608; LEVEL &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            <span class="redacted-line">MISSION: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+            <span class="redacted-line">&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</span>
+          </div>
+          <div class="classified-watermark">UNAUTHORIZED ACCESS LOGGED</div>
+          <div class="classified-stamp" style="transform: rotate(8deg);">REDACTED</div>
         </div>
-        <div class="classified-watermark">UNAUTHORIZED ACCESS LOGGED</div>
-        <div class="classified-stamp" style="transform: rotate(8deg);">REDACTED</div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-members">BACK</span>
+        </div>
       </div>
-      <span class="back-btn" data-target="screen-members">BACK</span>
     </div>
 
     <!-- RELEASES -->
     <div id="screen-releases" class="screen">
-      <h2 class="menu-title rgb-split">RELEASES</h2>
-      <div class="menu-subtitle">- DISCOGRAPHY -</div>
-      <div class="pixel-divider"></div>
-      <div class="releases-grid">
-        <div class="release-card featured">
-          <div class="release-status">&#9733; NEW RELEASE &#9733;</div>
-          <div class="release-art pixel-border">
-            <img src="https://cdn.lewd.host/L43Zlz4B.jpg" alt="EP Cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-            <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
+      <div class="page-container">
+        <div class="page-header">
+          <span class="page-header-icon">&#9835;</span>
+          <div class="page-header-text"><span class="page-title">RELEASES</span><span class="page-desc">Discography &amp; upcoming projects</span></div>
+        </div>
+        <div class="releases-grid">
+          <div class="release-card featured">
+            <div class="release-status">&#9733; NEW RELEASE &#9733;</div>
+            <div class="release-art pixel-border">
+              <img src="https://cdn.lewd.host/L43Zlz4B.jpg" alt="EP Cover" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+              <span class="placeholder" style="display:none;">[COVER ART<br>LOADING...]</span>
+            </div>
+            <div class="release-title-text">COMING SOON</div>
+            <div class="release-info">
+              TYPE: EP &bull; RELEASE: END OF MARCH 2026<br>
+              ARTISTS: ALLCONTEMPT &bull; DEADBELIEF
+            </div>
+            <div class="release-tracklist">
+              <div class="release-track"><span class="release-track-num">01</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+              <div class="release-track"><span class="release-track-num">02</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+              <div class="release-track"><span class="release-track-num">03</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+              <div class="release-track"><span class="release-track-num">04</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+              <div class="release-track"><span class="release-track-num">05</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
+            </div>
+            <div class="release-status">STAY TUNED...</div>
           </div>
-          <div class="release-title-text">COMING SOON</div>
-          <div class="release-info">
-            TYPE: EP &bull; RELEASE: END OF MARCH 2026<br>
-            ARTISTS: ALLCONTEMPT &bull; DEADBELIEF
-          </div>
-          <div class="release-tracklist">
-            <div class="release-track"><span class="release-track-num">01</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
-            <div class="release-track"><span class="release-track-num">02</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
-            <div class="release-track"><span class="release-track-num">03</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
-            <div class="release-track"><span class="release-track-num">04</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
-            <div class="release-track"><span class="release-track-num">05</span><span class="release-track-name">???</span><span class="release-track-dur">--:--</span></div>
-          </div>
-          <div class="release-status">STAY TUNED...</div>
+        </div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
         </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <!-- ABOUT -->
     <div id="screen-about" class="screen">
-      <h2 class="menu-title rgb-split">ABOUT US</h2>
-      <div class="menu-subtitle">- WHO WE ARE -</div>
-      <div class="pixel-divider"></div>
-      <div class="about-container">
-        <div class="about-section">
-          <div class="about-text">
-            <p>Rune Tribe is a collective built on accountability and creative expression. What started as a mission to protect communities has grown into a full creative force.</p>
+      <div class="page-container">
+        <div class="page-header">
+          <span class="page-header-icon">&#9881;</span>
+          <div class="page-header-text"><span class="page-title">ABOUT US</span><span class="page-desc">Who we are &amp; what we do</span></div>
+        </div>
+        <div class="about-container">
+          <div class="about-section">
+            <div class="about-text">
+              <p>Rune Tribe is a collective built on accountability and creative expression. What started as a mission to protect communities has grown into a full creative force.</p>
+            </div>
+          </div>
+          <div class="about-section">
+            <div class="about-section-title">&#9670; OUR HISTORY</div>
+            <div class="about-timeline">
+              <div class="about-timeline-item">
+                <div class="about-timeline-year">2019</div>
+                <div class="about-timeline-text">Rune Tribe founded. Started as a collective dedicated to community accountability and protection.</div>
+              </div>
+              <div class="about-timeline-item">
+                <div class="about-timeline-year">2021</div>
+                <div class="about-timeline-text">Stone Mask collective formed to fight the system and help push mankind in the right direction.</div>
+              </div>
+              <div class="about-timeline-item">
+                <div class="about-timeline-year">2025</div>
+                <div class="about-timeline-text">Expanded into music production and creative arts. New members join the crew.</div>
+              </div>
+              <div class="about-timeline-item">
+                <div class="about-timeline-year">2026</div>
+                <div class="about-timeline-text">Launched runetribe.com. First EP in production. The tribe grows.</div>
+              </div>
+            </div>
+          </div>
+          <div class="about-section">
+            <div class="about-section-title">&#9670; WHAT WE DO</div>
+            <div class="about-text">
+              <p>We make music. We build community. We hold people accountable. If you have proof of something that needs attention, DM allcontempt on site first.</p>
+            </div>
+          </div>
+          <div class="about-section">
+            <div class="about-section-title">&#9670; CONNECT</div>
+            <div class="about-text">
+              <p>Join the chat to connect with the tribe. Register an account and start talking.</p>
+            </div>
           </div>
         </div>
-
-        <div class="about-section">
-          <div class="about-section-title">&#9670; OUR HISTORY</div>
-          <div class="about-timeline">
-            <div class="about-timeline-item">
-              <div class="about-timeline-year">2019</div>
-              <div class="about-timeline-text">Rune Tribe founded. Started as a collective dedicated to community accountability and protection.</div>
-            </div>
-            <div class="about-timeline-item">
-              <div class="about-timeline-year">2021</div>
-              <div class="about-timeline-text">Stone Mask collective formed to fight the system and help push mankind in the right direction.</div>
-            </div>
-            <div class="about-timeline-item">
-              <div class="about-timeline-year">2025</div>
-              <div class="about-timeline-text">Expanded into music production and creative arts. New members join the crew.</div>
-            </div>
-            <div class="about-timeline-item">
-              <div class="about-timeline-year">2026</div>
-              <div class="about-timeline-text">Launched runetribe.com. First EP in production. The tribe grows.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="about-section">
-          <div class="about-section-title">&#9670; WHAT WE DO</div>
-          <div class="about-text">
-            <p>We make music. We build community. We hold people accountable. If you have proof of something that needs attention, DM allcontempt on site first.</p>
-          </div>
-        </div>
-
-        <div class="about-section">
-          <div class="about-section-title">&#9670; CONNECT</div>
-          <div class="about-text">
-            <p>Join the chat to connect with the tribe. Register an account and start talking.</p>
-          </div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
         </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <!-- CHAT -->
@@ -1486,23 +1530,29 @@
 
     <!-- SHOP -->
     <div id="screen-shop" class="screen">
-      <h2 class="menu-title rgb-split">SHOP</h2>
-      <div class="menu-subtitle">- SPEND YOUR COINS -</div>
-      <div class="pixel-divider"></div>
-      <div class="shop-container">
-        <div class="shop-balance">
-          <div class="shop-balance-amount" id="shop-balance">$0</div>
-          <div class="shop-balance-label">YOUR BALANCE</div>
+      <div class="page-container" style="max-width:900px;">
+        <div class="page-header">
+          <span class="page-header-icon">&#9733;</span>
+          <div class="page-header-text"><span class="page-title">SHOP</span><span class="page-desc">Spend your coins on effects, fonts &amp; more</span></div>
+          <div class="shop-balance" style="margin-left:auto;">
+            <div class="shop-balance-amount" id="shop-balance">$0</div>
+            <div class="shop-balance-label">BALANCE</div>
+          </div>
         </div>
-        <div class="shop-tabs" id="shop-tabs">
-          <button class="shop-tab active" data-shop-tab="effects">&#9733; EFFECTS</button>
-          <button class="shop-tab" data-shop-tab="fonts">&#9998; FONTS</button>
-          <button class="shop-tab" data-shop-tab="titles">&#9813; TITLES</button>
-          <button class="shop-tab" data-shop-tab="flair">&#9670; FLAIR</button>
+        <div class="shop-container">
+          <div class="shop-tabs" id="shop-tabs">
+            <button class="shop-tab active" data-shop-tab="effects">&#9733; EFFECTS</button>
+            <button class="shop-tab" data-shop-tab="fonts">&#9998; FONTS</button>
+            <button class="shop-tab" data-shop-tab="titles">&#9813; TITLES</button>
+            <button class="shop-tab" data-shop-tab="flair">&#9670; FLAIR</button>
+          </div>
+          <div class="shop-grid" id="shop-grid"></div>
         </div>
-        <div class="shop-grid" id="shop-grid"></div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
+        </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <!-- PROFILE EDITOR (INVENTORY) -->
@@ -1517,9 +1567,17 @@
                 <span class="edit-preview-name" id="edit-preview-name">USERNAME</span>
               </div>
               <div class="inv-player-actions">
-                <label class="inv-avatar-upload-btn">CHANGE<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
-                <span class="inv-label">COLOR</span>
-                <input type="color" id="edit-color" value="#e02020" class="edit-color-input">
+                <label class="inv-avatar-upload-btn">CHANGE AVATAR<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
+                <span class="inv-label">NAME</span>
+                <input type="color" id="edit-color" value="#e02020" class="edit-color-input" title="Username color">
+                <span class="inv-label">TEXT</span>
+                <input type="color" id="edit-text-color" value="#aaaaaa" class="edit-color-input" title="Chat text color">
+              </div>
+              <div class="inv-player-actions">
+                <span class="inv-label">FONT APPLIES TO:</span>
+                <button class="inv-toggle-btn active" id="font-target-username" data-font-target="username">USERNAME</button>
+                <button class="inv-toggle-btn" id="font-target-text" data-font-target="text">CHAT TEXT</button>
+                <button class="inv-toggle-btn" id="font-target-both" data-font-target="both">BOTH</button>
               </div>
             </div>
           </div>
@@ -1549,45 +1607,45 @@
 
     <!-- ADMIN PANEL -->
     <div id="screen-admin" class="screen">
-      <h2 class="menu-title rgb-split">ADMIN PANEL</h2>
-      <div class="menu-subtitle">- MANAGEMENT CONSOLE -</div>
-      <div class="pixel-divider"></div>
-      <div class="admin-container">
-        <div class="admin-tabs">
-          <button class="admin-tab-btn active" data-admin-tab="users">&#9632; USERS</button>
-          <button class="admin-tab-btn" data-admin-tab="messages">&#9993; MESSAGES</button>
-          <button class="admin-tab-btn" data-admin-tab="stats">&#9733; STATS</button>
+      <div class="page-container" style="max-width:900px;">
+        <div class="page-header">
+          <span class="page-header-icon">&#9888;</span>
+          <div class="page-header-text"><span class="page-title">ADMIN PANEL</span><span class="page-desc">Management console</span></div>
         </div>
-
-        <!-- Users Tab -->
-        <div class="admin-tab-content active" id="admin-tab-users">
-          <div class="admin-search-row">
-            <input type="text" id="admin-search" class="auth-input" placeholder="SEARCH USER / ID" style="max-width:100%;">
+        <div class="admin-container">
+          <div class="admin-tabs">
+            <button class="admin-tab-btn active" data-admin-tab="users">&#9632; USERS</button>
+            <button class="admin-tab-btn" data-admin-tab="messages">&#9993; MESSAGES</button>
+            <button class="admin-tab-btn" data-admin-tab="stats">&#9733; STATS</button>
           </div>
-          <div class="admin-columns">
-            <div class="admin-user-col" id="admin-user-list"></div>
-            <div class="admin-detail-col" id="admin-detail">
-              <div class="chat-system">SELECT A USER</div>
+          <div class="admin-tab-content active" id="admin-tab-users">
+            <div class="admin-search-row">
+              <input type="text" id="admin-search" class="auth-input" placeholder="SEARCH USER / ID" style="max-width:100%;">
+            </div>
+            <div class="admin-columns">
+              <div class="admin-user-col" id="admin-user-list"></div>
+              <div class="admin-detail-col" id="admin-detail">
+                <div class="chat-system">SELECT A USER</div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <!-- Messages Tab -->
-        <div class="admin-tab-content" id="admin-tab-messages">
-          <div class="admin-search-row" style="margin-bottom:.5rem;">
-            <input type="text" id="admin-msg-search" class="auth-input" placeholder="SEARCH MESSAGES..." style="max-width:100%;">
+          <div class="admin-tab-content" id="admin-tab-messages">
+            <div class="admin-search-row" style="margin-bottom:.5rem;">
+              <input type="text" id="admin-msg-search" class="auth-input" placeholder="SEARCH MESSAGES..." style="max-width:100%;">
+            </div>
+            <div class="admin-msg-log" id="admin-msg-log">
+              <div class="chat-system">LOADING MESSAGES...</div>
+            </div>
           </div>
-          <div class="admin-msg-log" id="admin-msg-log">
-            <div class="chat-system">LOADING MESSAGES...</div>
+          <div class="admin-tab-content" id="admin-tab-stats">
+            <div class="admin-stats-grid" id="admin-stats-grid"></div>
           </div>
         </div>
-
-        <!-- Stats Tab -->
-        <div class="admin-tab-content" id="admin-tab-stats">
-          <div class="admin-stats-grid" id="admin-stats-grid"></div>
+        <div class="page-footer">
+          <span></span>
+          <span class="page-back" data-target="screen-nav">BACK</span>
         </div>
       </div>
-      <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
     <div id="no-video" class="no-video" style="display:none"><p>Put mask.mp4 in assets/</p></div>
