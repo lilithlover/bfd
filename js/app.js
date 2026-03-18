@@ -2746,13 +2746,45 @@
 
   // Track when user is on the page
   let isPageVisible = true;
+  let lastVisibleTime = Date.now();
+  const RECONNECT_THRESHOLD = 30000; // 30 seconds away triggers reconnect
+
   document.addEventListener('visibilitychange', () => {
     isPageVisible = !document.hidden;
     if (isPageVisible) {
       tabUnreadCount = 0;
       updateTabTitle();
+
+      // If user was away for >30s, reconnect subscriptions and reload messages
+      const awayDuration = Date.now() - lastVisibleTime;
+      if (awayDuration > RECONNECT_THRESHOLD && chatSubscribed) {
+        reconnectChat();
+      }
+    } else {
+      lastVisibleTime = Date.now();
     }
   });
+
+  // Also handle going offline/online
+  window.addEventListener('online', () => {
+    if (chatSubscribed) {
+      showToast('RECONNECTING...');
+      setTimeout(() => reconnectChat(), 1000);
+    }
+  });
+
+  async function reconnectChat() {
+    try {
+      // Re-subscribe to realtime channels
+      chatSubscribed = false;
+      chatLoaded = false;
+      loadChat();
+      showToast('RECONNECTED');
+    } catch (err) {
+      console.error('Reconnect failed:', err);
+      showToast('RECONNECT FAILED - REFRESH PAGE');
+    }
+  }
 
   // Hook into the existing chat subscription to track tab unreads
   const originalOnNewMessage = null;
