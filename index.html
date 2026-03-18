@@ -594,21 +594,63 @@
     .auth-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.32rem, 1.1vw, .48rem); background: transparent; border: 1px solid #e02020; color: #e02020; padding: .5rem 1.5rem; cursor: pointer; letter-spacing: .1em; text-transform: uppercase; transition: background .15s, color .15s; margin-top: .3rem; }
     .auth-btn:hover { background: #e02020; color: #000; }
 
-    /* ===== PROFILE EDITOR ===== */
-    .editor-container { text-align: center; width: 100%; max-width: 500px; }
-    .edit-preview-box { margin: 1rem auto; padding: .8rem; border: 1px solid #220000; background: #080808; max-width: 320px; }
-    .edit-preview-name { font-size: clamp(.55rem, 1.8vw, .85rem); letter-spacing: .1em; }
-    .edit-field { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: .7rem 0; }
-    .edit-label { font-size: clamp(.28rem, .9vw, .4rem); color: #e02020; letter-spacing: .1em; }
-    .edit-color-input { width: 48px; height: 28px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
-    .edit-select { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .4rem); background: #080808; border: 1px solid #333; color: #888; padding: .35rem .5rem; outline: none; cursor: pointer; max-width: 280px; }
-    .edit-select:focus { border-color: #e02020; }
-    .edit-avatar-area { display: flex; flex-direction: column; align-items: center; gap: .4rem; margin: .7rem 0; }
-    .edit-avatar-preview { width: 56px; height: 56px; border: 1px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .edit-avatar-preview img, .edit-avatar-preview video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .edit-avatar-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #333; color: #555; padding: .3rem .6rem; cursor: pointer; transition: color .15s, border-color .15s; }
-    .edit-avatar-btn:hover { color: #e02020; border-color: #e02020; }
-    .edit-info { display: flex; flex-direction: column; gap: .3rem; margin: .8rem 0; text-align: center; }
+    /* ===== INVENTORY / PROFILE EDITOR ===== */
+    .inv-layout { display: flex; gap: 1rem; width: 100%; max-width: 900px; min-height: 60vh; }
+    .inv-sidebar { width: 240px; min-width: 200px; display: flex; flex-direction: column; gap: .6rem; }
+    .inv-player-card { background: #060606; border: 1px solid #1a0000; padding: .8rem; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+    .inv-avatar { width: 72px; height: 72px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(224,32,32,.2); }
+    .inv-avatar img, .inv-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.2rem, .65vw, .28rem); background: transparent; border: 1px solid #333; color: #555; padding: .2rem .5rem; cursor: pointer; transition: all .15s; }
+    .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
+    .inv-preview-box { padding: .5rem; border: 1px solid #111; background: #0a0a0a; width: 100%; text-align: center; min-height: 2rem; display: flex; align-items: center; justify-content: center; }
+    .edit-preview-name { font-size: clamp(.45rem, 1.4vw, .7rem); letter-spacing: .08em; }
+    .inv-color-row { display: flex; align-items: center; gap: .4rem; }
+    .inv-label { font-size: clamp(.22rem, .7vw, .3rem); color: #e02020; letter-spacing: .1em; }
+    .edit-color-input { width: 36px; height: 22px; border: 1px solid #e02020; background: #000; cursor: pointer; padding: 0; }
+    .inv-stats { background: #060606; border: 1px solid #1a0000; padding: .5rem; display: flex; flex-direction: column; gap: .2rem; }
+    .inv-stats .profile-detail { font-size: clamp(.2rem, .65vw, .28rem); }
+    .inv-equipped-list { background: #060606; border: 1px solid #1a0000; padding: .5rem; display: flex; flex-direction: column; gap: .3rem; flex: 1; }
+    .inv-equipped-label { font-size: clamp(.2rem, .65vw, .28rem); color: #440000; letter-spacing: .15em; text-align: center; margin-bottom: .2rem; }
+    .inv-equipped-slot { display: flex; align-items: center; gap: .4rem; padding: .3rem .4rem; border: 1px solid #111; background: #0a0a0a; font-size: clamp(.2rem, .65vw, .28rem); }
+    .inv-equipped-slot .slot-label { color: #555; min-width: 50px; letter-spacing: .06em; }
+    .inv-equipped-slot .slot-value { color: #e02020; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-equipped-slot .slot-value.empty { color: #333; }
+    .inv-save-btn {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .45rem);
+      background: transparent; border: 2px solid #e02020; color: #e02020;
+      padding: .5rem .8rem; cursor: pointer; transition: all .2s; letter-spacing: .1em; text-align: center;
+    }
+    .inv-save-btn:hover { background: #e02020; color: #000; box-shadow: 0 0 16px rgba(224,32,32,.4); }
+    .inv-main { flex: 1; display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+    .inv-tabs { display: flex; gap: .25rem; flex-wrap: wrap; }
+    .inv-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.25rem, .8vw, .35rem); background: transparent; border: 1px solid #1a0000; color: #444; padding: .35rem .6rem; cursor: pointer; transition: all .15s; }
+    .inv-tab:hover { color: #e02020; border-color: #330000; }
+    .inv-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.06); }
+    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: .4rem; overflow-y: auto; flex: 1; padding: .2rem; max-height: 58vh; }
+    .inv-item { background: #060606; border: 1px solid #1a0000; padding: .4rem; display: flex; flex-direction: column; gap: .2rem; cursor: pointer; transition: all .2s; position: relative; }
+    .inv-item:hover { border-color: #440000; background: #0a0505; }
+    .inv-item.equipped { border-color: #e02020; background: rgba(224,32,32,.04); box-shadow: 0 0 8px rgba(224,32,32,.15); }
+    .inv-item.equipped::after { content: 'EQUIPPED'; position: absolute; top: .2rem; right: .2rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.15rem, .5vw, .2rem); color: #e02020; letter-spacing: .05em; }
+    .inv-item.locked { opacity: .35; cursor: default; }
+    .inv-item.locked::after { content: 'LOCKED'; position: absolute; top: .2rem; right: .2rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.15rem, .5vw, .2rem); color: #333; letter-spacing: .05em; }
+    .inv-item-name { font-size: clamp(.2rem, .65vw, .28rem); color: #888; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-item-preview { font-size: clamp(.35rem, 1.1vw, .5rem); padding: .3rem; border: 1px solid #111; background: #0a0a0a; text-align: center; min-height: 1.8rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .inv-item-rarity { font-size: clamp(.15rem, .5vw, .22rem); letter-spacing: .06em; }
+    .inv-item-rarity.common { color: #555; }
+    .inv-item-rarity.rare { color: #4488ff; }
+    .inv-item-rarity.epic { color: #aa44ff; }
+    .inv-item-rarity.legendary { color: #ff8800; }
+    .inv-item-rarity.admin { color: #e02020; }
+    .inv-item-rarity.free { color: #0a0; }
+    .inv-item-rarity.drop { color: #ffcc00; }
+    @media (max-width: 700px) {
+      .inv-layout { flex-direction: column; min-height: auto; }
+      .inv-sidebar { width: 100%; min-width: unset; flex-direction: row; flex-wrap: wrap; gap: .4rem; }
+      .inv-player-card { flex: 1; min-width: 180px; }
+      .inv-stats { flex: 1; min-width: 140px; }
+      .inv-equipped-list { width: 100%; flex: unset; }
+      .inv-grid { max-height: 45vh; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    }
 
     /* ===== CHAT - FULL LAYOUT ===== */
     .chat-layout { width: 100%; max-width: 1100px; display: flex; height: 80vh; border: 1px solid #1a0000; background: #050505; overflow: hidden; }
@@ -1286,25 +1328,39 @@
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>
 
-    <!-- PROFILE EDITOR -->
+    <!-- PROFILE EDITOR (INVENTORY) -->
     <div id="screen-editor" class="screen">
-      <h2 class="menu-title rgb-split">EDIT PROFILE</h2>
-      <div class="menu-subtitle">- CUSTOMIZE -</div>
+      <h2 class="menu-title rgb-split">LOADOUT</h2>
+      <div class="menu-subtitle">- INVENTORY &amp; CUSTOMIZATION -</div>
       <div class="pixel-divider"></div>
-      <div class="editor-container">
-        <div class="edit-preview-box pixel-border"><span class="edit-preview-name" id="edit-preview-name">USERNAME</span></div>
-        <div class="edit-avatar-area">
-          <div class="edit-label">AVATAR</div>
-          <div class="edit-avatar-preview" id="edit-avatar-preview"><span class="hud-avatar-placeholder">?</span></div>
-          <label class="edit-avatar-btn">UPLOAD<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
+      <div class="inv-layout">
+        <!-- LEFT: Player card + equipped loadout -->
+        <div class="inv-sidebar">
+          <div class="inv-player-card pixel-border">
+            <div class="inv-avatar" id="edit-avatar-preview"><span class="hud-avatar-placeholder">?</span></div>
+            <label class="inv-avatar-upload-btn">CHANGE<input type="file" id="edit-avatar-input" accept="image/*,video/mp4,video/webm" style="display:none;"></label>
+            <div class="inv-preview-box">
+              <span class="edit-preview-name" id="edit-preview-name">USERNAME</span>
+            </div>
+            <div class="inv-color-row">
+              <span class="inv-label">COLOR</span>
+              <input type="color" id="edit-color" value="#e02020" class="edit-color-input">
+            </div>
+          </div>
+          <div class="inv-stats" id="edit-info"></div>
+          <div class="inv-equipped-list" id="inv-equipped"></div>
+          <button class="inv-save-btn" id="edit-save">&#9733; SAVE LOADOUT</button>
         </div>
-        <div class="edit-field"><span class="edit-label">NAME COLOR</span><input type="color" id="edit-color" value="#e02020" class="edit-color-input"></div>
-        <div class="edit-field"><span class="edit-label">NAME EFFECT</span><select id="edit-effect" class="edit-select"></select></div>
-        <div class="edit-field"><span class="edit-label">CHAT FONT</span><select id="edit-font" class="edit-select"></select></div>
-        <div class="edit-field"><span class="edit-label">TITLE</span><select id="edit-title" class="edit-select"></select></div>
-        <div class="edit-field"><span class="edit-label">CHAT FLAIR</span><select id="edit-flair" class="edit-select"></select></div>
-        <div class="edit-info" id="edit-info"></div>
-        <button class="auth-btn" id="edit-save">SAVE</button>
+        <!-- RIGHT: Inventory grid -->
+        <div class="inv-main">
+          <div class="inv-tabs" id="inv-tabs">
+            <button class="inv-tab active" data-inv-tab="effects">&#9733; EFFECTS</button>
+            <button class="inv-tab" data-inv-tab="fonts">&#9998; FONTS</button>
+            <button class="inv-tab" data-inv-tab="titles">&#9813; TITLES</button>
+            <button class="inv-tab" data-inv-tab="flair">&#9670; FLAIR</button>
+          </div>
+          <div class="inv-grid" id="inv-grid"></div>
+        </div>
       </div>
       <span class="back-btn" data-target="screen-nav">BACK</span>
     </div>

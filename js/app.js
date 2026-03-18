@@ -583,109 +583,194 @@
   }
 
   /* ===== PROFILE EDITOR ===== */
+  // ===== INVENTORY / PROFILE EDITOR =====
+  let invCurrentTab = 'effects';
+  // Pending selections (applied on save)
+  let invSelections = { effect: 'none', font: 'font-default', title: 'title-newcomer', flair: 'none' };
+
   function openProfileEditor() {
     const profile = SupabaseClient.getProfile();
     if (!profile) return;
     AudioSystem.sfxSelect();
 
-    const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
-    const effectSelect = document.getElementById('edit-effect');
-    effectSelect.innerHTML = '';
-    available.forEach(e => {
-      const opt = document.createElement('option');
-      opt.value = e.id;
-      let label = e.name;
-      if (e.rarity === 'admin') label += ' [ADMIN]';
-      else if (e.rarity === 'drop') label += ' \u2605';
-      else if (e.rarity === 'shop') label += ' \u2605 SHOP';
-      opt.textContent = label;
-      if (e.id === profile.name_effect) opt.selected = true;
-      effectSelect.appendChild(opt);
-    });
-
-    // Get user preferences from localStorage
-    const ownedItems = parseOwnedItems(profile.owned_effects || '');
     const user = SupabaseClient.getUser();
     const prefs = user ? getUserPrefs(user.id) : { font: 'font-default', flair: 'none', titleId: 'title-newcomer' };
 
-    // Populate font selector
-    const fontSelect = document.getElementById('edit-font');
-    fontSelect.innerHTML = '';
-    SHOP_FONTS.forEach(f => {
-      if (f.price === 0 || ownedItems.includes(f.id) || profile.is_admin) {
-        const opt = document.createElement('option');
-        opt.value = f.id;
-        opt.textContent = f.name;
-        if (f.id === prefs.font) opt.selected = true;
-        fontSelect.appendChild(opt);
-      }
-    });
+    // Init selections from current profile
+    invSelections = {
+      effect: profile.name_effect || 'none',
+      font: prefs.font || 'font-default',
+      title: prefs.titleId || 'title-newcomer',
+      flair: prefs.flair || 'none',
+    };
 
-    // Populate title selector - match by rank name
-    const titleSelect = document.getElementById('edit-title');
-    titleSelect.innerHTML = '';
-    SHOP_TITLES.forEach(t => {
-      if (t.price === 0 || ownedItems.includes(t.id) || profile.is_admin) {
-        const opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = t.name;
-        if (t.name === profile.rank || t.id === prefs.titleId) opt.selected = true;
-        titleSelect.appendChild(opt);
-      }
-    });
-
-    // Populate flair selector
-    const flairSelect = document.getElementById('edit-flair');
-    flairSelect.innerHTML = '<option value="none">NONE</option>';
-    SHOP_FLAIR.forEach(f => {
-      if (ownedItems.includes(f.id) || profile.is_admin) {
-        const opt = document.createElement('option');
-        opt.value = f.id;
-        opt.textContent = f.name;
-        if (f.id === prefs.flair) opt.selected = true;
-        flairSelect.appendChild(opt);
-      }
-    });
-
-    document.getElementById('edit-color').value = profile.name_color || '#e02020';
-    const preview = document.getElementById('edit-preview-name');
-    preview.textContent = profile.username;
-    preview.style.color = profile.name_color;
-    preview.className = 'edit-preview-name ' + getEffectClass(profile.name_effect);
-
+    // Avatar
     const avatarPreview = document.getElementById('edit-avatar-preview');
     avatarPreview.innerHTML = profile.avatar_url
       ? renderAvatar(profile.avatar_url)
       : '<span class="hud-avatar-placeholder">?</span>';
 
+    // Username preview
+    document.getElementById('edit-color').value = profile.name_color || '#e02020';
+    updateInvPreview();
+
+    // Stats
     const idNum = profile.user_id_num ? ('#' + String(profile.user_id_num).padStart(4, '0')) : '#????';
     const created = new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
     document.getElementById('edit-info').innerHTML = `
       <span class="profile-detail"><span class="label">USER ID:</span> ${idNum}</span>
-      <span class="profile-detail"><span class="label">RANK:</span> ${escapeHtml(profile.rank)}</span>
       <span class="profile-detail"><span class="label">LEVEL:</span> ${profile.level} / 100</span>
       <span class="profile-detail"><span class="label">BALANCE:</span> $${profile.balance}</span>
-      <span class="profile-detail"><span class="label">ITEMS OWNED:</span> ${parseOwnedEffects(profile.owned_effects).length}</span>
+      <span class="profile-detail"><span class="label">ITEMS:</span> ${parseOwnedItems(profile.owned_effects || '').length}</span>
       <span class="profile-detail"><span class="label">JOINED:</span> ${created}</span>
-      ${profile.is_admin ? '<span class="profile-detail"><span class="label">STATUS:</span> ADMINISTRATOR</span>' : ''}
+      ${profile.is_admin ? '<span class="profile-detail"><span class="label">STATUS:</span> ADMIN</span>' : ''}
     `;
+
+    // Render equipped slots + inventory
+    updateInvEquipped();
+    invCurrentTab = 'effects';
+    document.querySelectorAll('[data-inv-tab]').forEach(b => b.classList.toggle('active', b.dataset.invTab === 'effects'));
+    renderInvGrid();
 
     switchScreen(currentScreen, 'screen-editor');
   }
 
-  document.getElementById('edit-color').addEventListener('input', (e) => {
-    document.getElementById('edit-preview-name').style.color = e.target.value;
-  });
-  document.getElementById('edit-effect').addEventListener('change', (e) => {
+  function updateInvPreview() {
     const preview = document.getElementById('edit-preview-name');
-    preview.className = 'edit-preview-name ' + getEffectClass(e.target.value);
+    const profile = SupabaseClient.getProfile();
+    if (!preview || !profile) return;
+    preview.textContent = profile.username;
+    preview.style.color = document.getElementById('edit-color').value;
+    preview.className = 'edit-preview-name ' + getEffectClass(invSelections.effect);
+  }
+
+  function updateInvEquipped() {
+    const el = document.getElementById('inv-equipped');
+    if (!el) return;
+    const effectObj = EFFECTS.find(e => e.id === invSelections.effect);
+    const fontObj = SHOP_FONTS.find(f => f.id === invSelections.font);
+    const titleObj = SHOP_TITLES.find(t => t.id === invSelections.title);
+    const flairObj = SHOP_FLAIR.find(f => f.id === invSelections.flair);
+    el.innerHTML = `
+      <div class="inv-equipped-label">\u2605 EQUIPPED LOADOUT \u2605</div>
+      <div class="inv-equipped-slot"><span class="slot-label">EFFECT</span><span class="slot-value ${effectObj ? '' : 'empty'}">${effectObj ? escapeHtml(effectObj.name) : 'NONE'}</span></div>
+      <div class="inv-equipped-slot"><span class="slot-label">FONT</span><span class="slot-value ${fontObj ? '' : 'empty'}">${fontObj ? escapeHtml(fontObj.name) : 'DEFAULT'}</span></div>
+      <div class="inv-equipped-slot"><span class="slot-label">TITLE</span><span class="slot-value ${titleObj ? '' : 'empty'}">${titleObj ? escapeHtml(titleObj.name) : 'NEWCOMER'}</span></div>
+      <div class="inv-equipped-slot"><span class="slot-label">FLAIR</span><span class="slot-value ${flairObj ? '' : 'empty'}">${flairObj ? escapeHtml(flairObj.name) : 'NONE'}</span></div>
+    `;
+  }
+
+  function renderInvGrid() {
+    const grid = document.getElementById('inv-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const profile = SupabaseClient.getProfile();
+    if (!profile) return;
+    const owned = parseOwnedItems(profile.owned_effects || '');
+
+    switch (invCurrentTab) {
+      case 'effects': renderInvEffects(grid, owned, profile); break;
+      case 'fonts': renderInvFonts(grid, owned, profile); break;
+      case 'titles': renderInvTitles(grid, owned, profile); break;
+      case 'flair': renderInvFlair(grid, owned, profile); break;
+    }
+  }
+
+  function renderInvEffects(grid, owned, profile) {
+    // "None" option
+    const noneItem = createInvItem('NONE', '', 'none', invSelections.effect === 'none', true, 'free');
+    noneItem.addEventListener('click', () => { invSelections.effect = 'none'; updateInvPreview(); updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+    grid.appendChild(noneItem);
+
+    const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
+    available.forEach(e => {
+      const isEquipped = invSelections.effect === e.id;
+      const rarity = e.rarity === 'admin' ? 'admin' : e.rarity === 'free' ? 'free' : e.rarity === 'drop' ? 'drop' : e.price >= 1000 ? 'legendary' : e.price >= 700 ? 'epic' : e.price >= 400 ? 'rare' : 'common';
+      const previewHtml = `<span class="${getEffectClass(e.id)}" style="color:#e02020;">${escapeHtml(e.name.split(' ')[0])}</span>`;
+      const item = createInvItem(e.name, previewHtml, e.id, isEquipped, true, rarity);
+      item.addEventListener('click', () => { invSelections.effect = e.id; updateInvPreview(); updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+      grid.appendChild(item);
+    });
+  }
+
+  function renderInvFonts(grid, owned, profile) {
+    SHOP_FONTS.forEach(f => {
+      const isOwned = f.price === 0 || owned.includes(f.id) || profile.is_admin;
+      const isEquipped = invSelections.font === f.id;
+      const rarity = f.price === 0 ? 'free' : f.price >= 500 ? 'epic' : f.price >= 300 ? 'rare' : 'common';
+      const previewHtml = `<span style="font-family:${f.css}; font-size:clamp(.5rem, 1.5vw, .8rem);">AaBb 12</span>`;
+      const item = createInvItem(f.name, previewHtml, f.id, isEquipped, isOwned, rarity);
+      if (isOwned) {
+        item.addEventListener('click', () => { invSelections.font = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function renderInvTitles(grid, owned, profile) {
+    SHOP_TITLES.forEach(t => {
+      const isOwned = t.price === 0 || owned.includes(t.id) || profile.is_admin;
+      const isEquipped = invSelections.title === t.id;
+      const rarity = t.price === 0 ? 'free' : t.price >= 1000 ? 'legendary' : t.price >= 500 ? 'epic' : t.price >= 200 ? 'rare' : 'common';
+      const previewHtml = `<span style="color:${t.color};">${escapeHtml(t.name)}</span>`;
+      const item = createInvItem(t.name, previewHtml, t.id, isEquipped, isOwned, rarity);
+      if (isOwned) {
+        item.addEventListener('click', () => { invSelections.title = t.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function renderInvFlair(grid, owned, profile) {
+    // "None" option
+    const noneItem = createInvItem('NONE', '-', 'none', invSelections.flair === 'none', true, 'free');
+    noneItem.addEventListener('click', () => { invSelections.flair = 'none'; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+    grid.appendChild(noneItem);
+
+    SHOP_FLAIR.forEach(f => {
+      const isOwned = owned.includes(f.id) || profile.is_admin;
+      const isEquipped = invSelections.flair === f.id;
+      const rarity = f.price >= 400 ? 'epic' : f.price >= 250 ? 'rare' : 'common';
+      const previewHtml = `<span style="font-size:clamp(.6rem, 2vw, 1.2rem);">${f.prefix.trim()}</span>`;
+      const item = createInvItem(f.name, previewHtml, f.id, isEquipped, isOwned, rarity);
+      if (isOwned) {
+        item.addEventListener('click', () => { invSelections.flair = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+      }
+      grid.appendChild(item);
+    });
+  }
+
+  function createInvItem(name, previewHtml, id, isEquipped, isOwned, rarity) {
+    const item = document.createElement('div');
+    item.className = 'inv-item' + (isEquipped ? ' equipped' : '') + (!isOwned ? ' locked' : '');
+    item.innerHTML = `
+      <div class="inv-item-rarity ${rarity}">${rarity.toUpperCase()}</div>
+      <div class="inv-item-preview">${previewHtml}</div>
+      <div class="inv-item-name">${escapeHtml(name)}</div>
+    `;
+    return item;
+  }
+
+  // Inventory tab switching
+  document.querySelectorAll('[data-inv-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioSystem.sfxNavigate();
+      invCurrentTab = btn.dataset.invTab;
+      document.querySelectorAll('[data-inv-tab]').forEach(b => b.classList.toggle('active', b === btn));
+      renderInvGrid();
+    });
+    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
+
+  // Color picker live preview
+  document.getElementById('edit-color').addEventListener('input', () => updateInvPreview());
+
+  // Avatar upload
   document.getElementById('edit-avatar-input').addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) { showToast('MAX 2MB'); return; }
 
-    // Only admins can upload video/gif avatars
     const isAnimated = file.type === 'image/gif' || file.type.startsWith('video/');
     if (isAnimated && !SupabaseClient.isAdmin()) {
       showToast('ONLY ADMINS CAN USE GIF/VIDEO AVATARS');
@@ -709,29 +794,29 @@
       console.error('Avatar upload error:', err);
     }
   });
+
+  // Save loadout
   document.getElementById('edit-save').addEventListener('click', async () => {
     try {
-      const titleId = document.getElementById('edit-title').value;
-      const titleObj = SHOP_TITLES.find(t => t.id === titleId);
+      const titleObj = SHOP_TITLES.find(t => t.id === invSelections.title);
       const rankName = titleObj ? titleObj.name : 'NEWCOMER';
 
       await SupabaseClient.updateProfile({
         name_color: document.getElementById('edit-color').value,
-        name_effect: document.getElementById('edit-effect').value,
+        name_effect: invSelections.effect,
         rank: rankName,
       });
 
-      // Store font and flair in localStorage (no DB column needed)
       const user = SupabaseClient.getUser();
       if (user) {
         const prefs = getUserPrefs(user.id);
-        prefs.font = document.getElementById('edit-font').value;
-        prefs.flair = document.getElementById('edit-flair').value;
-        prefs.titleId = titleId;
+        prefs.font = invSelections.font;
+        prefs.flair = invSelections.flair;
+        prefs.titleId = invSelections.title;
         saveUserPrefs(user.id, prefs);
       }
 
-      AudioSystem.sfxSelect(); showToast('PROFILE SAVED');
+      AudioSystem.sfxSelect(); showToast('LOADOUT SAVED');
       switchScreen('screen-editor', 'screen-nav');
     } catch (err) { AudioSystem.sfxError(); showToast('SAVE FAILED'); }
   });
@@ -2400,8 +2485,8 @@
       item.innerHTML = `
         <div class="shop-item-rarity ${rarity}">${font.price === 0 ? 'FREE' : rarity.toUpperCase()}</div>
         <div class="shop-item-name">${escapeHtml(font.name)}</div>
-        <div class="shop-item-preview" style="font-family:${font.css};">
-          ${escapeHtml(font.preview)}
+        <div class="shop-item-preview" style="font-family:${font.css}; font-size:clamp(.6rem, 2vw, 1rem);">
+          AaBbCc 123
         </div>
         <div class="shop-item-price ${font.price === 0 ? 'free' : ''}">${font.price === 0 ? 'FREE' : '$' + font.price}</div>
         <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
