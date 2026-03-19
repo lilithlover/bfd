@@ -69,6 +69,11 @@ const SupabaseClient = (() => {
   }
 
   async function login(email, password) {
+    // Clear any stale/expired session to prevent conflicts on re-login after refresh
+    try { await sb.auth.signOut(); } catch (_) {}
+    currentUser = null;
+    currentProfile = null;
+
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) {
       if (error.message.includes('Email not confirmed')) {

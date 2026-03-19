@@ -530,6 +530,14 @@
   /* ===== AUTH STATE ===== */
   let hasAutoResumed = false;
   SupabaseClient.setOnAuthChange((user, profile) => {
+    // Reset guest chat state when user logs in so chat input is restored
+    if (user && guestChatLoaded) {
+      guestChatLoaded = false;
+      const inputArea = document.querySelector('.chat-input-area');
+      if (inputArea) inputArea.style.display = '';
+      const guestBanner = document.querySelector('.chat-guest-banner');
+      if (guestBanner) guestBanner.remove();
+    }
     updateHUD(user, profile);
     updateNavMenu(user, profile);
     updateShopMenu(user);
