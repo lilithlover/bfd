@@ -83,35 +83,37 @@
     .screen.visible { opacity: 1; }
 
     /* ===== TITLE SCREEN ===== */
-    .title-wrap { text-align: center; margin-bottom: 0.5rem; }
+    #screen-title { justify-content: flex-end; padding-bottom: 3vh; gap: 0; }
+    .title-wrap { text-align: center; margin-bottom: 0; position: relative; z-index: 2; }
     .title {
       font-family: 'Blood Crow', Impact, sans-serif !important;
-      font-size: clamp(3rem, 10vw, 6.5rem); color: #e02020;
+      font-size: clamp(2.2rem, 8vw, 5rem); color: #e02020;
       text-shadow: 0 0 0 2px #000, 2px 2px 0 #8b0000, 4px 4px 0 #4a0000, 0 2px 0 rgba(255,180,180,.5);
-      letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; white-space: nowrap;
+      letter-spacing: .08em; line-height: 1; text-transform: uppercase; white-space: nowrap;
+      margin-bottom: -0.3rem;
     }
     .subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.5vw, .7rem); color: #660000; letter-spacing: .3em; margin-top: .3rem; }
-    .ascii-container { width: 100%; display: flex; justify-content: center; align-items: center; min-height: 220px; margin: .5rem 0; }
-    #ascii-canvas { display: block; width: 100%; max-height: 42vh; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+    .ascii-container { width: 80%; max-width: 700px; display: flex; justify-content: center; align-items: center; min-height: 180px; margin: 0 auto; position: relative; z-index: 1; }
+    #ascii-canvas { display: block; width: 100%; max-height: 50vh; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
     .press-start {
-      font-size: clamp(.6rem, 2vw, .9rem); color: #ccc; letter-spacing: .2em; margin: 1rem 0;
+      font-size: clamp(.5rem, 1.6vw, .75rem); color: #ccc; letter-spacing: .25em; margin: 1.2rem 0 0.4rem;
       animation: blink 1s step-end infinite; cursor: pointer; user-select: none;
       text-shadow: 0 0 4px rgba(204,204,204,.3);
     }
     .press-start:hover { color: #e02020; animation: none; text-shadow: 0 0 12px rgba(224,32,32,.6); }
     @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-    .copyright { font-size: clamp(.35rem, 1.2vw, .55rem); color: #444; letter-spacing: .1em; text-align: center; line-height: 2; }
+    .copyright { font-size: clamp(.28rem, .9vw, .42rem); color: #555; letter-spacing: .15em; text-align: center; line-height: 1.8; margin-top: 0.2rem; }
     .insert-coin { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.3rem, 1vw, .45rem); color: #333; letter-spacing: .2em; margin-top: .5rem; animation: blink 2s step-end infinite; }
     .no-video { color: #333; font-size: .5rem; text-align: center; padding: 2rem; }
 
     /* ===== PAGE CONTAINER (shared modern layout) ===== */
-    .page-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: .6rem; }
+    .page-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: .6rem; max-height: 90vh; overflow-y: auto; }
     .page-header { display: flex; align-items: center; gap: .7rem; padding: .3rem 0; border-bottom: 1px solid #151515; margin-bottom: .2rem; }
     .page-header-icon { font-size: clamp(.8rem, 2.5vw, 1.2rem); color: #e02020; min-width: 1.5rem; text-align: center; }
     .page-header-text { display: flex; flex-direction: column; gap: .1rem; }
     .page-title { font-size: clamp(.5rem, 1.6vw, .75rem); color: #ddd; letter-spacing: .12em; text-transform: uppercase; }
     .page-desc { font-size: clamp(.26rem, .8vw, .34rem); color: #555; letter-spacing: .04em; }
-    .page-footer { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; margin-top: .4rem; border-top: 1px solid #0a0a0a; }
+    .page-footer { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; margin-top: auto; border-top: 1px solid #0a0a0a; flex-shrink: 0; }
     .page-back { font-size: clamp(.3rem, .95vw, .42rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
     .page-back:hover { color: #e02020; }
     .page-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
@@ -667,7 +669,7 @@
     .shop-item-rarity.omega { background: linear-gradient(90deg, #ffd700, #ff4400, #ff00ff, #ffd700); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: omega-rarity-shimmer 2s linear infinite; }
 
     /* ===== MEMBERS ===== */
-    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .5rem; width: 100%; max-height: 55vh; overflow-y: auto; padding: .2rem; }
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .5rem; width: 100%; max-height: 35vh; overflow-y: auto; padding: .2rem; }
     .members-list { list-style: none; width: 100%; padding: 0; }
     .members-list li { margin: 0; }
     .member-card { display: flex; align-items: center; gap: .7rem; padding: .6rem .8rem; border: 1px solid #151515; background: #080808; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; }
@@ -1134,10 +1136,10 @@
       .screen { max-width: 1200px; padding: 2rem; }
       .menu-item { font-size: 1rem; padding: .5rem 0; }
       .menu-list li { margin: .9rem 0; }
-      .press-start { font-size: 1rem; }
+      .press-start { font-size: .8rem; }
       .subtitle { font-size: .7rem; }
       .menu-subtitle { font-size: .55rem; }
-      .copyright { font-size: .55rem; }
+      .copyright { font-size: .45rem; }
       .insert-coin { font-size: .5rem; }
       .member-name { font-size: .75rem; }
       .member-card { padding: .6rem .9rem; }
@@ -1236,11 +1238,9 @@
     <div id="screen-title" class="screen active visible">
       <div class="title-wrap">
         <h1 class="title rgb-split">RUNE TRIBE</h1>
-        <div class="subtitle"> </div>
       </div>
       <div class="ascii-container"><canvas id="ascii-canvas" style="display:none"></canvas></div>
       <p class="press-start" id="press-start">PRESS START BUTTON</p>
-      <p class="insert-coin"> </p>
       <p class="copyright">TM&amp;&#169; 2025 RUNE TRIBE<br>ALL RIGHTS RESERVED</p>
     </div>
 
