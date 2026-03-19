@@ -110,6 +110,7 @@
     { id: 'ancient',    name: 'ANCIENT RUNE',              rarity: 'admin' },
     { id: 'overlord',   name: 'OVERLORD\'S WRATH',         rarity: 'admin' },
     { id: 'omega',      name: 'OMEGA PROTOCOL',            rarity: 'admin' },
+    { id: 'toxicooze',  name: '\u2623 TOXIC OOZE \u2623',  rarity: 'admin' },
     // OMEGA TIER — admin-gifted only, extreme visual effects
     { id: 'omg-godhand',    name: '\u2726 GOD HAND \u2726',              rarity: 'omega' },
     { id: 'omg-voidborn',   name: '\u2620 VOID BORN \u2620',             rarity: 'omega' },

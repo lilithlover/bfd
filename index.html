@@ -308,6 +308,115 @@
     }
     @keyframes fx-omega { 0%,100%{background-position:0% 50%}50%{background-position:300% 50%} }
 
+    /* ===== TOXIC OOZE — admin-only: green cracked text, ooze drip, stick figure + dancing pill ===== */
+    .fx-toxicooze {
+      color: #22ff44 !important;
+      -webkit-text-fill-color: #22ff44 !important;
+      position: relative;
+      text-shadow:
+        /* Base glow */
+        0 0 6px #00ff33, 0 0 14px #00cc22, 0 0 28px #009918, 0 0 42px #006610,
+        /* Crack fracture lines — multi-directional offsets simulating splits */
+        1px 1px 1px #001a00, -1px -1px 1px #001a00, 2px -1px 2px #003300, -2px 1px 2px #003300,
+        1px 2px 1px #002200, -1px -2px 1px #002200, 3px 0 2px #004400, -3px 0 2px #004400,
+        /* Ooze dripping down */
+        0 3px 4px #00ee22, 0 6px 8px rgba(0,221,34,.7), 0 10px 14px rgba(0,187,24,.55),
+        0 16px 20px rgba(0,153,16,.4), 0 24px 28px rgba(0,119,0,.25), 0 34px 36px rgba(0,85,0,.12) !important;
+      animation: fx-toxicooze-ooze 3s ease-in-out infinite, fx-toxicooze-crack .25s steps(2) infinite !important;
+    }
+    /* Stick figure — appears before the username text */
+    .fx-toxicooze::before {
+      content: '\1F9CD';
+      display: inline-block;
+      font-size: .75em;
+      margin-right: .2em;
+      vertical-align: middle;
+      filter: brightness(0) saturate(100%) invert(69%) sepia(74%) saturate(5000%) hue-rotate(90deg) brightness(1.1);
+      animation: fx-toxicooze-figure 4s ease-in-out infinite !important;
+    }
+    /* Pill — appears after the username text, dances toward figure and back */
+    .fx-toxicooze::after {
+      content: '\1F48A';
+      display: inline-block;
+      font-size: .7em;
+      margin-left: .3em;
+      vertical-align: middle;
+      animation: fx-toxicooze-pill 4s ease-in-out infinite !important;
+    }
+    /* Ooze pulse — drip shadows grow longer then retract */
+    @keyframes fx-toxicooze-ooze {
+      0%,100%{text-shadow:
+        0 0 6px #00ff33,0 0 14px #00cc22,0 0 28px #009918,0 0 42px #006610,
+        1px 1px 1px #001a00,-1px -1px 1px #001a00,2px -1px 2px #003300,-2px 1px 2px #003300,
+        1px 2px 1px #002200,-1px -2px 1px #002200,3px 0 2px #004400,-3px 0 2px #004400,
+        0 3px 4px #00ee22,0 6px 8px rgba(0,221,34,.7),0 10px 14px rgba(0,187,24,.55),
+        0 16px 20px rgba(0,153,16,.4),0 24px 28px rgba(0,119,0,.25),0 34px 36px rgba(0,85,0,.12);
+        filter:brightness(.85) saturate(1.5)}
+      35%{text-shadow:
+        0 0 10px #33ff55,0 0 20px #00ee33,0 0 36px #00bb22,0 0 50px #008818,
+        1px 1px 1px #001a00,-1px -1px 1px #001a00,2px -1px 2px #003300,-2px 1px 2px #003300,
+        1px 2px 1px #002200,-1px -2px 1px #002200,4px 1px 3px #005500,-4px -1px 3px #005500,
+        0 5px 6px #00ff44,0 10px 12px rgba(0,238,44,.75),0 18px 20px rgba(0,204,34,.6),
+        0 28px 28px rgba(0,170,24,.45),0 40px 36px rgba(0,136,16,.3),0 54px 44px rgba(0,102,0,.15),0 68px 52px rgba(0,68,0,.06);
+        filter:brightness(1.1) saturate(2)}
+      70%{text-shadow:
+        0 0 8px #44ff66,0 0 18px #22dd44,0 0 32px #00aa22,0 0 48px #007718,
+        2px 2px 2px #002200,-2px -2px 2px #002200,3px -2px 3px #004400,-3px 2px 3px #004400,
+        2px 3px 2px #003300,-2px -3px 2px #003300,5px 0 3px #005500,-5px 0 3px #005500,
+        0 4px 5px #00ee33,0 8px 10px rgba(0,221,34,.7),0 14px 16px rgba(0,187,24,.55),
+        0 22px 24px rgba(0,153,16,.4),0 32px 32px rgba(0,119,0,.25),0 44px 40px rgba(0,85,0,.12);
+        filter:brightness(1) saturate(1.8)}
+    }
+    /* Crack jitter — rapid micro-shifts simulating fractures spreading */
+    @keyframes fx-toxicooze-crack {
+      0%{transform:translate(0,0) skew(0)}
+      50%{transform:translate(.5px,-.5px) skew(-.3deg,.2deg)}
+      100%{transform:translate(0,0) skew(0)}
+    }
+    /* Stick figure dance — bounces, waves, reacts when pill arrives */
+    @keyframes fx-toxicooze-figure {
+      0%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+      10%{transform:translateX(0) translateY(-2px) rotate(-5deg) scale(1.05)}
+      20%{transform:translateX(0) translateY(0) rotate(3deg) scale(1)}
+      30%{transform:translateX(0) translateY(-1px) rotate(-3deg) scale(1.02)}
+      40%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+      /* Pill arrives — figure reaches out */
+      48%{transform:translateX(2px) translateY(-1px) rotate(8deg) scale(1.1)}
+      52%{transform:translateX(4px) translateY(-3px) rotate(12deg) scale(1.2)}
+      /* Contact — excited bounce */
+      56%{transform:translateX(2px) translateY(-5px) rotate(-8deg) scale(1.15)}
+      60%{transform:translateX(0) translateY(0) rotate(5deg) scale(1.05)}
+      /* Back to idle dance */
+      70%{transform:translateX(0) translateY(-2px) rotate(-4deg) scale(1)}
+      80%{transform:translateX(0) translateY(0) rotate(2deg) scale(1.02)}
+      90%{transform:translateX(0) translateY(-1px) rotate(-2deg) scale(1)}
+      100%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+    }
+    /* Pill dances to stick figure then bounces back — full round trip */
+    @keyframes fx-toxicooze-pill {
+      0%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+      /* Idle bounce */
+      8%{transform:translateX(0) translateY(-3px) rotate(10deg) scale(1.05)}
+      15%{transform:translateX(0) translateY(0) rotate(-8deg) scale(1)}
+      22%{transform:translateX(0) translateY(-2px) rotate(5deg) scale(1.02)}
+      /* Start moving toward stick figure (left) */
+      30%{transform:translateX(-8px) translateY(-2px) rotate(-15deg) scale(1.08)}
+      36%{transform:translateX(-18px) translateY(-5px) rotate(20deg) scale(1.12)}
+      42%{transform:translateX(-28px) translateY(-3px) rotate(-25deg) scale(1.15)}
+      /* Arrive at stick figure */
+      48%{transform:translateX(-36px) translateY(-6px) rotate(30deg) scale(1.2)}
+      52%{transform:translateX(-34px) translateY(-8px) rotate(-20deg) scale(1.18)}
+      /* Bounce off figure — heading back */
+      58%{transform:translateX(-24px) translateY(-4px) rotate(25deg) scale(1.12)}
+      64%{transform:translateX(-14px) translateY(-6px) rotate(-18deg) scale(1.08)}
+      72%{transform:translateX(-6px) translateY(-3px) rotate(12deg) scale(1.05)}
+      /* Return home — celebratory bounce */
+      80%{transform:translateX(0) translateY(-5px) rotate(-10deg) scale(1.1)}
+      88%{transform:translateX(0) translateY(0) rotate(6deg) scale(1.02)}
+      94%{transform:translateX(0) translateY(-2px) rotate(-4deg) scale(1)}
+      100%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+    }
+
     /* ========== OMEGA TIER — ADMIN-GIFTED LEGENDARIES ========== */
 
     /* GOD HAND — radiant gold aura that pulses outward with layered halos */
