@@ -50,6 +50,26 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN name_font text DEFAULT 'default';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN chat_font text DEFAULT 'default';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN text_color text DEFAULT '#ffffff';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  ALTER TABLE public.profiles ADD COLUMN flair text DEFAULT '';
+EXCEPTION WHEN duplicate_column THEN NULL;
+END $$;
+
 -- RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
@@ -106,9 +126,9 @@ DROP POLICY IF EXISTS "Anyone can view messages" ON public.messages;
 DROP POLICY IF EXISTS "Authenticated users can send messages" ON public.messages;
 DROP POLICY IF EXISTS "Admins can delete messages" ON public.messages;
 
--- All authenticated users can read all messages
+-- Anyone (including guests via anon key) can read messages
 CREATE POLICY "Anyone can view messages"
-  ON public.messages FOR SELECT TO authenticated USING (true);
+  ON public.messages FOR SELECT USING (true);
 
 -- Authenticated users can insert their own messages
 CREATE POLICY "Authenticated users can send messages"

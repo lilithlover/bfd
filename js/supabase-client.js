@@ -520,7 +520,7 @@ const SupabaseClient = (() => {
   return {
     init, register, login, logout,
     fetchProfile, updateProfile, uploadAvatar,
-    fetchMessages, sendMessage, subscribeChat, unsubscribeChat,
+    fetchMessages, sendMessage, subscribeChat, unsubscribeChat, unsubscribeAll,
     fetchUnreadMentions, markMentionsRead,
     fetchDMConversations, fetchDMsWith, sendDM, markDMsRead, subscribeDMs,
     searchUsers, fetchAllProfiles,

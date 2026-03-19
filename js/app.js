@@ -1070,9 +1070,12 @@
     });
   }
 
-  // Wire up hub clicks
+  // Wire up hub clicks (only for authenticated users — guests use their own handlers)
   document.querySelectorAll('.chat-hub-item').forEach(item => {
-    item.addEventListener('click', () => switchHub(item.dataset.channel));
+    item.addEventListener('click', () => {
+      if (!SupabaseClient.getUser()) return; // guests handled in enterGuestChat
+      switchHub(item.dataset.channel);
+    });
   });
 
   async function loadChat() {
@@ -2698,6 +2701,8 @@
   /* ===== GUEST CHAT (READ-ONLY) ===== */
   let guestChatLoaded = false;
 
+  let guestSubscribed = false;
+
   async function enterGuestChat() {
     if (guestChatLoaded) return;
     guestChatLoaded = true;
@@ -2728,13 +2733,14 @@
     if (purgeBtn2) purgeBtn2.style.display = 'none';
 
     // Load messages for current channel (read-only)
-    try {
-      const messages = await SupabaseClient.fetchMessages(50, currentChannel);
-      chatMessages.innerHTML = '';
-      if (messages.length === 0) {
-        addSystemMessage('NO MESSAGES YET.');
-      } else {
-        messages.forEach(msg => {
+    await guestLoadChannel(currentChannel);
+
+    // Subscribe to real-time updates (read-only) — only once
+    if (!guestSubscribed) {
+      guestSubscribed = true;
+      SupabaseClient.subscribeChat((msg) => {
+        const msgChannel = msg.channel || 'general';
+        if (msgChannel === currentChannel) {
           const content = msg.content || '';
           let el;
           if (isDropMessage(content)) {
@@ -2744,70 +2750,58 @@
           } else {
             el = renderMessage(msg);
           }
-          if (el) chatMessages.appendChild(el);
-        });
-      }
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    } catch (err) {
-      chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD MESSAGES</div>';
+          if (el) {
+            chatMessages.appendChild(el);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+        }
+      });
     }
-
-    // Subscribe to real-time updates (read-only)
-    SupabaseClient.subscribeChat((msg) => {
-      const msgChannel = msg.channel || 'general';
-      if (msgChannel === currentChannel) {
-        const content = msg.content || '';
-        let el;
-        if (isDropMessage(content)) {
-          el = renderDropMessage(msg);
-        } else if (isClaimMessage(content)) {
-          el = renderClaimMessage(msg);
-        } else {
-          el = renderMessage(msg);
-        }
-        if (el) {
-          chatMessages.appendChild(el);
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-      }
-    });
 
     // Guest hub switching
     document.querySelectorAll('.chat-hub-item').forEach(item => {
       item.addEventListener('click', async () => {
+        if (SupabaseClient.getUser()) return; // auth users handled by switchHub
         const channel = item.dataset.channel;
         if (channel === currentChannel) return;
         currentChannel = channel;
+        chatLoadId++;
         const hub = HUBS[channel];
         document.querySelectorAll('.chat-hub-item').forEach(i => {
           i.classList.toggle('active', i.dataset.channel === channel);
         });
         document.getElementById('chat-header-name').textContent = hub.name;
         document.getElementById('chat-header-desc').textContent = hub.desc;
-
-        // Reload messages for this channel
-        try {
-          const messages = await SupabaseClient.fetchMessages(50, channel);
-          chatMessages.innerHTML = '';
-          if (messages.length === 0) {
-            addSystemMessage('NO MESSAGES YET.');
-          } else {
-            messages.forEach(msg => {
-              const content = msg.content || '';
-              let el;
-              if (isDropMessage(content)) el = renderDropMessage(msg);
-              else if (isClaimMessage(content)) el = renderClaimMessage(msg);
-              else el = renderMessage(msg);
-              if (el) chatMessages.appendChild(el);
-            });
-          }
-          chatMessages.scrollTop = chatMessages.scrollHeight;
-        } catch (_) {
-          chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD</div>';
-        }
+        await guestLoadChannel(channel);
         AudioSystem.sfxNavigate();
       });
     });
+  }
+
+  async function guestLoadChannel(channel) {
+    const thisLoadId = chatLoadId;
+    chatMessages.innerHTML = '<div class="chat-system">LOADING...</div>';
+    try {
+      const messages = await SupabaseClient.fetchMessages(50, channel);
+      if (thisLoadId !== chatLoadId) return;
+      chatMessages.innerHTML = '';
+      if (messages.length === 0) {
+        addSystemMessage('NO MESSAGES YET.');
+      } else {
+        messages.forEach(msg => {
+          const content = msg.content || '';
+          let el;
+          if (isDropMessage(content)) el = renderDropMessage(msg);
+          else if (isClaimMessage(content)) el = renderClaimMessage(msg);
+          else el = renderMessage(msg);
+          if (el) chatMessages.appendChild(el);
+        });
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (_) {
+      if (thisLoadId !== chatLoadId) return;
+      chatMessages.innerHTML = '<div class="chat-system">FAILED TO LOAD</div>';
+    }
   }
 
   /* ===== BROWSER TAB NOTIFICATIONS ===== */
@@ -2866,9 +2860,11 @@
 
   async function reconnectChat() {
     try {
-      // Re-subscribe to realtime channels
+      // Unsubscribe old channels before re-subscribing
+      SupabaseClient.unsubscribeAll();
       chatSubscribed = false;
       chatLoaded = false;
+      chatLoadId++;
       loadChat();
       showToast('RECONNECTED');
     } catch (err) {
