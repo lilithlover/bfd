@@ -331,17 +331,17 @@
       font-size: .75em;
       margin-right: .2em;
       vertical-align: middle;
-      filter: brightness(0) saturate(100%) invert(69%) sepia(74%) saturate(5000%) hue-rotate(90deg) brightness(1.1);
+      filter: none;
       animation: fx-toxicooze-figure 4s ease-in-out infinite !important;
     }
-    /* Pill — appears after the username text, dances toward figure and back */
+    /* Pill — appears after the username text, travels to figure and dissolves */
     .fx-toxicooze::after {
       content: '\1F48A';
       display: inline-block;
       font-size: .7em;
       margin-left: .3em;
       vertical-align: middle;
-      animation: fx-toxicooze-pill 4s ease-in-out infinite !important;
+      animation: fx-toxicooze-pill 5s ease-in-out infinite !important;
     }
     /* Ooze pulse — drip shadows grow longer then retract */
     @keyframes fx-toxicooze-ooze {
@@ -373,48 +373,54 @@
       50%{transform:translate(.5px,-.5px) skew(-.3deg,.2deg)}
       100%{transform:translate(0,0) skew(0)}
     }
-    /* Stick figure dance — bounces, waves, reacts when pill arrives */
+    /* Stick figure — idle sway, reacts when pill arrives */
     @keyframes fx-toxicooze-figure {
-      0%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
-      10%{transform:translateX(0) translateY(-2px) rotate(-5deg) scale(1.05)}
-      20%{transform:translateX(0) translateY(0) rotate(3deg) scale(1)}
-      30%{transform:translateX(0) translateY(-1px) rotate(-3deg) scale(1.02)}
-      40%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
-      /* Pill arrives — figure reaches out */
-      48%{transform:translateX(2px) translateY(-1px) rotate(8deg) scale(1.1)}
-      52%{transform:translateX(4px) translateY(-3px) rotate(12deg) scale(1.2)}
-      /* Contact — excited bounce */
-      56%{transform:translateX(2px) translateY(-5px) rotate(-8deg) scale(1.15)}
-      60%{transform:translateX(0) translateY(0) rotate(5deg) scale(1.05)}
-      /* Back to idle dance */
-      70%{transform:translateX(0) translateY(-2px) rotate(-4deg) scale(1)}
-      80%{transform:translateX(0) translateY(0) rotate(2deg) scale(1.02)}
-      90%{transform:translateX(0) translateY(-1px) rotate(-2deg) scale(1)}
-      100%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+      0%{transform:translateY(0) rotate(0) scale(1)}
+      8%{transform:translateY(-2px) rotate(-4deg) scale(1.03)}
+      16%{transform:translateY(0) rotate(3deg) scale(1)}
+      24%{transform:translateY(-1px) rotate(-2deg) scale(1.02)}
+      32%{transform:translateY(0) rotate(0) scale(1)}
+      /* Pill arrives — figure notices */
+      40%{transform:translateY(0) rotate(5deg) scale(1.05)}
+      /* Contact — grabs pill, happy bounce */
+      46%{transform:translateY(-4px) rotate(-6deg) scale(1.15)}
+      50%{transform:translateY(-6px) rotate(8deg) scale(1.2)}
+      54%{transform:translateY(-2px) rotate(-4deg) scale(1.1)}
+      /* Settles back */
+      62%{transform:translateY(0) rotate(3deg) scale(1.04)}
+      70%{transform:translateY(-1px) rotate(-2deg) scale(1)}
+      80%{transform:translateY(0) rotate(2deg) scale(1.02)}
+      90%{transform:translateY(-1px) rotate(-1deg) scale(1)}
+      100%{transform:translateY(0) rotate(0) scale(1)}
     }
-    /* Pill dances to stick figure then bounces back — full round trip */
+    /* Pill — travels to figure, fades/shrinks on contact, then pops back at home */
     @keyframes fx-toxicooze-pill {
-      0%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
-      /* Idle bounce */
-      8%{transform:translateX(0) translateY(-3px) rotate(10deg) scale(1.05)}
-      15%{transform:translateX(0) translateY(0) rotate(-8deg) scale(1)}
-      22%{transform:translateX(0) translateY(-2px) rotate(5deg) scale(1.02)}
-      /* Start moving toward stick figure (left) */
-      30%{transform:translateX(-8px) translateY(-2px) rotate(-15deg) scale(1.08)}
-      36%{transform:translateX(-18px) translateY(-5px) rotate(20deg) scale(1.12)}
-      42%{transform:translateX(-28px) translateY(-3px) rotate(-25deg) scale(1.15)}
-      /* Arrive at stick figure */
-      48%{transform:translateX(-36px) translateY(-6px) rotate(30deg) scale(1.2)}
-      52%{transform:translateX(-34px) translateY(-8px) rotate(-20deg) scale(1.18)}
-      /* Bounce off figure — heading back */
-      58%{transform:translateX(-24px) translateY(-4px) rotate(25deg) scale(1.12)}
-      64%{transform:translateX(-14px) translateY(-6px) rotate(-18deg) scale(1.08)}
-      72%{transform:translateX(-6px) translateY(-3px) rotate(12deg) scale(1.05)}
-      /* Return home — celebratory bounce */
-      80%{transform:translateX(0) translateY(-5px) rotate(-10deg) scale(1.1)}
-      88%{transform:translateX(0) translateY(0) rotate(6deg) scale(1.02)}
-      94%{transform:translateX(0) translateY(-2px) rotate(-4deg) scale(1)}
-      100%{transform:translateX(0) translateY(0) rotate(0) scale(1)}
+      /* Idle bounce at home */
+      0%{transform:translateX(0) translateY(0) rotate(0) scale(1);opacity:1}
+      6%{transform:translateX(0) translateY(-3px) rotate(8deg) scale(1.06);opacity:1}
+      12%{transform:translateX(0) translateY(0) rotate(-6deg) scale(1);opacity:1}
+      18%{transform:translateX(0) translateY(-2px) rotate(4deg) scale(1.03);opacity:1}
+      /* Start traveling toward stick figure */
+      24%{transform:translateX(-6px) translateY(-1px) rotate(-10deg) scale(1.05);opacity:1}
+      30%{transform:translateX(-14px) translateY(-4px) rotate(15deg) scale(1.1);opacity:1}
+      36%{transform:translateX(-24px) translateY(-2px) rotate(-20deg) scale(1.12);opacity:.95}
+      /* Arrive at stick figure — start dissolving */
+      42%{transform:translateX(-34px) translateY(-5px) rotate(25deg) scale(1.15);opacity:.8}
+      46%{transform:translateX(-38px) translateY(-3px) rotate(-15deg) scale(.8);opacity:.45}
+      /* Absorbed — vanish */
+      50%{transform:translateX(-40px) translateY(0) rotate(0) scale(.2);opacity:0}
+      /* Stay invisible while traveling back */
+      52%{transform:translateX(-30px) translateY(0) rotate(0) scale(0);opacity:0}
+      58%{transform:translateX(-15px) translateY(0) rotate(0) scale(0);opacity:0}
+      64%{transform:translateX(0) translateY(0) rotate(0) scale(0);opacity:0}
+      /* Pop back into existence at home with a burst */
+      68%{transform:translateX(0) translateY(0) rotate(0) scale(0);opacity:0}
+      72%{transform:translateX(0) translateY(-6px) rotate(15deg) scale(1.4);opacity:1}
+      76%{transform:translateX(0) translateY(-2px) rotate(-10deg) scale(1.25);opacity:1}
+      80%{transform:translateX(0) translateY(-4px) rotate(8deg) scale(1.15);opacity:1}
+      86%{transform:translateX(0) translateY(0) rotate(-5deg) scale(1.05);opacity:1}
+      92%{transform:translateX(0) translateY(-1px) rotate(3deg) scale(1.02);opacity:1}
+      100%{transform:translateX(0) translateY(0) rotate(0) scale(1);opacity:1}
     }
 
     /* ========== OMEGA TIER — ADMIN-GIFTED LEGENDARIES ========== */
