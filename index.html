@@ -840,6 +840,78 @@
     .inv-item.omega-item:hover { border-color: #ff8800; box-shadow: 0 0 12px rgba(255,136,0,.15); }
     .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,.15); }
 
+    /* ===== ANIMATED FLAIR CLASSES ===== */
+    .fl-pulse-red { display: inline-block; animation: fl-pulse-red 1.5s ease-in-out infinite; }
+    @keyframes fl-pulse-red { 0%,100%{color:#cc0000;text-shadow:0 0 4px rgba(204,0,0,.4)} 50%{color:#ff3333;text-shadow:0 0 10px rgba(255,51,51,.7)} }
+    .fl-pulse-white { display: inline-block; animation: fl-pulse-white 1.5s ease-in-out infinite; }
+    @keyframes fl-pulse-white { 0%,100%{opacity:.6;text-shadow:none} 50%{opacity:1;text-shadow:0 0 8px rgba(255,255,255,.5)} }
+    .fl-glow-gold { display: inline-block; animation: fl-glow-gold 2s ease-in-out infinite; }
+    @keyframes fl-glow-gold { 0%,100%{color:#cc9900;text-shadow:0 0 4px rgba(204,153,0,.3)} 50%{color:#ffd700;text-shadow:0 0 12px rgba(255,215,0,.6)} }
+    .fl-glow-cyan { display: inline-block; animation: fl-glow-cyan 2s ease-in-out infinite; }
+    @keyframes fl-glow-cyan { 0%,100%{color:#00aacc;text-shadow:0 0 4px rgba(0,170,204,.3)} 50%{color:#00ffff;text-shadow:0 0 12px rgba(0,255,255,.5)} }
+    .fl-glow-green { display: inline-block; animation: fl-glow-green 2s ease-in-out infinite; }
+    @keyframes fl-glow-green { 0%,100%{color:#00aa44;text-shadow:0 0 4px rgba(0,170,68,.3)} 50%{color:#00ff66;text-shadow:0 0 12px rgba(0,255,102,.5)} }
+    .fl-spin { display: inline-block; animation: fl-spin 3s linear infinite; }
+    @keyframes fl-spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .fl-flash { display: inline-block; animation: fl-flash .8s steps(2, start) infinite; }
+    @keyframes fl-flash { 0%{opacity:1;text-shadow:0 0 8px rgba(255,221,0,.6)} 50%{opacity:.3;text-shadow:none} 100%{opacity:1} }
+    .fl-shake { display: inline-block; animation: fl-shake .4s ease-in-out infinite; }
+    @keyframes fl-shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 75%{transform:translateX(2px)} }
+    .fl-sparkle { display: inline-block; animation: fl-sparkle 1.5s ease-in-out infinite; }
+    @keyframes fl-sparkle { 0%,100%{text-shadow:0 0 2px #fff,0 0 4px #aaf} 25%{text-shadow:2px -1px 4px #faf,0 0 8px #aaf} 50%{text-shadow:-1px 2px 4px #aff,0 0 12px #ffa} 75%{text-shadow:1px -2px 4px #ffa,0 0 8px #faf} }
+    .fl-float { display: inline-block; animation: fl-float 2s ease-in-out infinite; }
+    @keyframes fl-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    .fl-phase { display: inline-block; animation: fl-phase 3s ease-in-out infinite; }
+    @keyframes fl-phase { 0%,100%{opacity:1;transform:scale(1)} 25%{opacity:.4;transform:scale(.9)} 50%{opacity:.8;transform:scale(1.05)} 75%{opacity:.5;transform:scale(.95)} }
+    .fl-burn { display: inline-block; animation: fl-burn 1s ease-in-out infinite; }
+    @keyframes fl-burn { 0%,100%{color:#ff4400;text-shadow:0 0 4px rgba(255,68,0,.4),0 -2px 6px rgba(255,153,0,.2)} 50%{color:#ff8800;text-shadow:0 0 10px rgba(255,136,0,.6),0 -4px 10px rgba(255,200,0,.3)} }
+    .fl-toxic { display: inline-block; animation: fl-toxic 1.5s ease-in-out infinite; }
+    @keyframes fl-toxic { 0%,100%{color:#44cc00;text-shadow:0 0 6px rgba(68,204,0,.4)} 50%{color:#88ff00;text-shadow:0 0 14px rgba(136,255,0,.6)} }
+    .fl-orbit { display: inline-block; animation: fl-orbit 2s linear infinite; transform-origin: center; }
+    @keyframes fl-orbit { 0%{transform:rotate(0deg) scale(1)} 25%{transform:rotate(90deg) scale(1.1)} 50%{transform:rotate(180deg) scale(1)} 75%{transform:rotate(270deg) scale(1.1)} 100%{transform:rotate(360deg) scale(1)} }
+    .fl-glitch { display: inline-block; animation: fl-glitch .5s steps(3) infinite; }
+    @keyframes fl-glitch { 0%{transform:translate(0)} 33%{transform:translate(-2px,1px);opacity:.8} 66%{transform:translate(2px,-1px);text-shadow:2px 0 #f00,-2px 0 #0ff} 100%{transform:translate(0);opacity:1} }
+    .fl-wave { display: inline-block; animation: fl-wave 2s ease-in-out infinite; }
+    @keyframes fl-wave { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(-2px) rotate(5deg)} 75%{transform:translateY(2px) rotate(-5deg)} }
+    .fl-heartbeat { display: inline-block; animation: fl-heartbeat 1s ease-in-out infinite; color: #cc0033; }
+    @keyframes fl-heartbeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.2)} 28%{transform:scale(1)} 42%{transform:scale(1.15)} 56%{transform:scale(1)} }
+    .fl-frost { display: inline-block; animation: fl-frost 2s ease-in-out infinite; }
+    @keyframes fl-frost { 0%,100%{color:#88ddff;text-shadow:0 0 4px rgba(136,221,255,.3)} 50%{color:#ccffff;text-shadow:0 0 10px rgba(200,255,255,.6),0 0 20px rgba(136,221,255,.2)} }
+    .fl-rattle { display: inline-block; animation: fl-rattle .3s ease-in-out infinite; }
+    @keyframes fl-rattle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(3deg)} 75%{transform:rotate(-3deg)} }
+    .fl-bounce { display: inline-block; animation: fl-bounce .6s ease-in-out infinite; }
+    @keyframes fl-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+    .fl-streak { display: inline-block; animation: fl-streak 1.5s ease-in-out infinite; }
+    @keyframes fl-streak { 0%{text-shadow:0 0 2px #ff8800;transform:translateX(0)} 50%{text-shadow:4px 0 8px #ff4400,-4px 0 8px #ffaa00;transform:translateX(2px)} 100%{text-shadow:0 0 2px #ff8800;transform:translateX(0)} }
+    .fl-flare { display: inline-block; animation: fl-flare 2s ease-in-out infinite; }
+    @keyframes fl-flare { 0%,100%{color:#ffaa00;text-shadow:0 0 6px rgba(255,170,0,.4)} 50%{color:#ffdd44;text-shadow:0 0 16px rgba(255,221,68,.7),0 0 30px rgba(255,170,0,.3)} }
+    .fl-color-shift { display: inline-block; animation: fl-color-shift 4s linear infinite; }
+    @keyframes fl-color-shift { 0%{color:#ff0000} 16%{color:#ff8800} 33%{color:#ffff00} 50%{color:#00ff00} 66%{color:#0088ff} 83%{color:#8800ff} 100%{color:#ff0000} }
+    .fl-omega { display: inline-block; animation: fl-omega 2s linear infinite; background: linear-gradient(90deg, #ffd700, #ff4400, #ff00ff, #ffd700); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    @keyframes fl-omega { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
+
+    /* ===== ANIMATED TITLE CLASSES ===== */
+    .tl-glitch { animation: tl-glitch 3s steps(5) infinite; }
+    @keyframes tl-glitch { 0%,90%,100%{text-shadow:none} 92%{text-shadow:-3px 0 #f0f,3px 0 #0ff} 94%{text-shadow:3px 0 #f0f,-3px 0 #0ff} 96%{text-shadow:-2px -1px #f0f,2px 1px #0ff} 98%{text-shadow:2px 0 #f0f,-2px 0 #0ff} }
+    .tl-drip { animation: tl-drip 2s ease-in-out infinite; }
+    @keyframes tl-drip { 0%,100%{text-shadow:0 0 4px currentColor} 50%{text-shadow:0 2px 8px currentColor,0 4px 16px rgba(204,0,0,.3)} }
+    .tl-shimmer { background: linear-gradient(90deg, currentColor 40%, #fff 50%, currentColor 60%); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: tl-shimmer 3s linear infinite; }
+    @keyframes tl-shimmer { 0%{background-position:100% 0} 100%{background-position:-100% 0} }
+    .tl-burn { animation: tl-burn 1.5s ease-in-out infinite; }
+    @keyframes tl-burn { 0%,100%{text-shadow:0 0 4px currentColor,0 -2px 8px rgba(255,68,0,.3)} 50%{text-shadow:0 0 12px currentColor,0 -4px 16px rgba(255,136,0,.5),0 -8px 24px rgba(255,200,0,.2)} }
+    .tl-frost { animation: tl-frost 2s ease-in-out infinite; }
+    @keyframes tl-frost { 0%,100%{text-shadow:0 0 4px rgba(102,221,255,.4)} 50%{text-shadow:0 0 12px rgba(102,221,255,.6),0 0 24px rgba(200,255,255,.3),2px 2px 4px rgba(255,255,255,.1)} }
+    .tl-void { animation: tl-void 3s ease-in-out infinite; }
+    @keyframes tl-void { 0%,100%{text-shadow:0 0 6px currentColor;opacity:1} 30%{opacity:.6;text-shadow:0 0 20px currentColor} 50%{opacity:.4;text-shadow:0 0 30px currentColor,0 0 60px rgba(102,51,204,.3)} 70%{opacity:.7;text-shadow:0 0 15px currentColor} }
+    .tl-flash { animation: tl-flash 2s ease-in-out infinite; }
+    @keyframes tl-flash { 0%,100%{text-shadow:0 0 4px currentColor} 10%{text-shadow:0 0 20px #fff,0 0 40px currentColor} 12%{text-shadow:0 0 4px currentColor} 50%{text-shadow:0 0 4px currentColor} 52%{text-shadow:0 0 20px #fff,0 0 40px currentColor} 54%{text-shadow:0 0 4px currentColor} }
+    .tl-neon { animation: tl-neon 1.5s ease-in-out infinite; }
+    @keyframes tl-neon { 0%,100%{text-shadow:0 0 4px currentColor,0 0 12px currentColor} 50%{text-shadow:0 0 8px currentColor,0 0 20px currentColor,0 0 40px currentColor} }
+    .tl-chaos { animation: tl-chaos 2s steps(8) infinite; }
+    @keyframes tl-chaos { 0%{color:#ff0066} 12%{color:#ff4400} 25%{color:#ffaa00} 37%{color:#00ff66} 50%{color:#0066ff} 62%{color:#aa00ff} 75%{color:#ff00aa} 87%{color:#ff3300} 100%{color:#ff0066} }
+    .tl-rainbow { background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088, #ff0000); background-size: 400% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: tl-rainbow 4s linear infinite; }
+    @keyframes tl-rainbow { 0%{background-position:0% 50%} 100%{background-position:400% 50%} }
+
     /* -- Footer: Save + Back -- */
     .inv-save-btn {
       font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem);

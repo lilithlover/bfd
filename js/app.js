@@ -232,9 +232,21 @@
     { id: 'title-mythic',      name: 'MYTHIC ANCESTOR',     price: 7000,  color: '#ddbb44' },
     { id: 'title-infinitum',   name: 'AD INFINITUM',        price: 8000,  color: '#aaccff' },
     { id: 'title-genesis',     name: 'GENESIS ARCHITECT',   price: 10000, color: '#ff8800' },
+    // Animated titles
+    { id: 'title-phantom-king', name: 'PHANTOM KING',        price: 5000,  color: '#9966ff', css: 'tl-glitch' },
+    { id: 'title-bloodborn',    name: 'BLOOD BORN',          price: 6000,  color: '#cc0000', css: 'tl-drip' },
+    { id: 'title-starcaller',   name: 'STAR CALLER',         price: 7000,  color: '#aaccff', css: 'tl-shimmer' },
+    { id: 'title-hellfire',     name: 'HELLFIRE',             price: 8000,  color: '#ff4400', css: 'tl-burn' },
+    { id: 'title-frostborn',    name: 'FROSTBORN',            price: 6500,  color: '#66ddff', css: 'tl-frost' },
+    { id: 'title-voidwalker',   name: 'VOID WALKER',          price: 9000,  color: '#6633cc', css: 'tl-void' },
+    { id: 'title-thundergod',   name: 'THUNDER GOD',          price: 8500,  color: '#ffdd44', css: 'tl-flash' },
+    { id: 'title-neon-wraith',  name: 'NEON WRAITH',          price: 7500,  color: '#00ff88', css: 'tl-neon' },
+    { id: 'title-chaos-lord',   name: 'CHAOS LORD',           price: 10000, color: '#ff0066', css: 'tl-chaos' },
+    { id: 'title-cosmic',       name: 'COSMIC ENTITY',        price: 12000, color: '#ffffff', css: 'tl-rainbow' },
   ];
 
   const SHOP_FLAIR = [
+    // Original flairs (static)
     { id: 'flair-skull',     name: '\u2620 SKULL TAG',          price: 150,  prefix: '\u2620 ' },
     { id: 'flair-crown',     name: '\u265B ROYAL CROWN',       price: 250,  prefix: '\u265B ' },
     { id: 'flair-star',      name: '\u2605 STAR MARK',         price: 200,  prefix: '\u2605 ' },
@@ -245,6 +257,37 @@
     { id: 'flair-biohazard', name: '\u2623 BIOHAZARD',         price: 500,  prefix: '\u2623 ' },
     { id: 'flair-eye',       name: '\u25C9 ALL-SEEING EYE',    price: 600,  prefix: '\u25C9 ' },
     { id: 'flair-moon',      name: '\u263E DARK MOON',         price: 350,  prefix: '\u263E ' },
+    // Animated flairs
+    { id: 'flair-pulse-skull',  name: '\u2620 DEATH PULSE',       price: 400,  prefix: '\u2620 ', css: 'fl-pulse-red' },
+    { id: 'flair-glow-crown',  name: '\u265B GOLDEN REIGN',      price: 500,  prefix: '\u265B ', css: 'fl-glow-gold' },
+    { id: 'flair-spin-star',   name: '\u2605 SPINNING STAR',     price: 350,  prefix: '\u2605 ', css: 'fl-spin' },
+    { id: 'flair-flash-bolt',  name: '\u26A1 STORM SURGE',       price: 450,  prefix: '\u26A1 ', css: 'fl-flash' },
+    { id: 'flair-shake-sword', name: '\u2694 BATTLE FURY',       price: 500,  prefix: '\u2694 ', css: 'fl-shake' },
+    { id: 'flair-sparkle-gem', name: '\u25C8 PRISMATIC GEM',     price: 550,  prefix: '\u25C8 ', css: 'fl-sparkle' },
+    { id: 'flair-float-eye',   name: '\u25C9 WATCHER',           price: 600,  prefix: '\u25C9 ', css: 'fl-float' },
+    { id: 'flair-phase-moon',  name: '\u263E LUNAR PHASE',       price: 500,  prefix: '\u263E ', css: 'fl-phase' },
+    { id: 'flair-burn-fire',   name: '\u2739 INFERNAL MARK',     price: 600,  prefix: '\u2739 ', css: 'fl-burn' },
+    { id: 'flair-toxic-bio',   name: '\u2623 TOXIC AURA',        price: 650,  prefix: '\u2623 ', css: 'fl-toxic' },
+    { id: 'flair-orbit-atom',  name: '\u269B ATOMIC ORBIT',      price: 500,  prefix: '\u269B ', css: 'fl-orbit' },
+    { id: 'flair-glitch-x',    name: '\u2716 GLITCH MARK',       price: 550,  prefix: '\u2716 ', css: 'fl-glitch' },
+    { id: 'flair-wave-trident', name: '\u2624 TIDAL FORCE',      price: 600,  prefix: '\u2624 ', css: 'fl-wave' },
+    { id: 'flair-fleur',       name: '\u269C NOBLE CREST',       price: 450,  prefix: '\u269C ', css: 'fl-glow-gold' },
+    { id: 'flair-heartbeat',   name: '\u2665 HEARTBEAT',         price: 350,  prefix: '\u2665 ', css: 'fl-heartbeat' },
+    { id: 'flair-frost-flake', name: '\u2746 FROST SHARD',       price: 500,  prefix: '\u2746 ', css: 'fl-frost' },
+    { id: 'flair-chain-link',  name: '\u26D3 CHAIN BOUND',       price: 400,  prefix: '\u26D3 ', css: 'fl-rattle' },
+    { id: 'flair-pentacle',    name: '\u26E4 DARK PENTACLE',     price: 700,  prefix: '\u26E4 ', css: 'fl-pulse-red' },
+    { id: 'flair-dharma',      name: '\u2638 DHARMA WHEEL',      price: 550,  prefix: '\u2638 ', css: 'fl-spin' },
+    { id: 'flair-ankh',        name: '\u2625 ANKH OF LIFE',      price: 600,  prefix: '\u2625 ', css: 'fl-glow-cyan' },
+    { id: 'flair-radioactive', name: '\u2622 MELTDOWN',          price: 650,  prefix: '\u2622 ', css: 'fl-burn' },
+    { id: 'flair-caduceus',    name: '\u2695 SERPENT STAFF',     price: 500,  prefix: '\u2695 ', css: 'fl-glow-green' },
+    { id: 'flair-snowflake',   name: '\u2744 BLIZZARD',          price: 450,  prefix: '\u2744 ', css: 'fl-frost' },
+    { id: 'flair-bounce-die',  name: '\u2684 GAMBLER',           price: 400,  prefix: '\u2684 ', css: 'fl-bounce' },
+    { id: 'flair-comet',       name: '\u2604 COMET TRAIL',       price: 700,  prefix: '\u2604 ', css: 'fl-streak' },
+    { id: 'flair-vortex',      name: '\u2740 VORTEX',            price: 600,  prefix: '\u2740 ', css: 'fl-spin' },
+    { id: 'flair-rising-sun',  name: '\u2600 SOLAR FLARE',       price: 550,  prefix: '\u2600 ', css: 'fl-flare' },
+    { id: 'flair-infinity',    name: '\u221E INFINITE',           price: 800,  prefix: '\u221E ', css: 'fl-color-shift' },
+    { id: 'flair-omega',       name: '\u2126 OMEGA SIGIL',       price: 900,  prefix: '\u2126 ', css: 'fl-omega' },
+    { id: 'flair-cross',       name: '\u2720 IRON CROSS',        price: 500,  prefix: '\u2720 ', css: 'fl-pulse-white' },
   ];
 
   // Parse owned items from comma-separated string (stored in owned_effects field)
@@ -680,7 +723,7 @@
   function renderInvEffects(grid, owned, profile) {
     // "None" option
     const noneItem = createInvItem('NONE', '', 'none', invSelections.effect === 'none', true, 'free');
-    noneItem.addEventListener('click', () => { invSelections.effect = 'none'; updateInvPreview(); updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+    noneItem.addEventListener('click', () => { invSelections.effect = 'none'; updateInvPreview(); invSelect('effect', 'none'); });
     grid.appendChild(noneItem);
 
     const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
@@ -689,7 +732,7 @@
       const rarity = e.rarity === 'omega' ? 'omega' : e.rarity === 'admin' ? 'admin' : e.rarity === 'free' ? 'free' : e.rarity === 'drop' ? 'drop' : e.price >= 1000 ? 'legendary' : e.price >= 700 ? 'epic' : e.price >= 400 ? 'rare' : 'common';
       const previewHtml = `<span class="${getEffectClass(e.id)}" style="color:#e02020;">${escapeHtml(e.name.split(' ')[0])}</span>`;
       const item = createInvItem(e.name, previewHtml, e.id, isEquipped, true, rarity);
-      item.addEventListener('click', () => { invSelections.effect = e.id; updateInvPreview(); updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+      item.addEventListener('click', () => { updateInvPreview(); invSelect('effect', e.id); });
       grid.appendChild(item);
     });
   }
@@ -702,10 +745,17 @@
       const previewHtml = `<span style="font-family:${f.css}; font-size:clamp(.5rem, 1.5vw, .8rem);">AaBb 12</span>`;
       const item = createInvItem(f.name, previewHtml, f.id, isEquipped, isOwned, rarity);
       if (isOwned) {
-        item.addEventListener('click', () => { invSelections[selKey] = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+        item.addEventListener('click', () => invSelect(selKey, f.id));
       }
       grid.appendChild(item);
     });
+  }
+
+  function invSelect(key, value) {
+    invSelections[key] = value;
+    updateInvEquipped();
+    requestAnimationFrame(() => renderInvGrid());
+    AudioSystem.sfxSelect();
   }
 
   function renderInvTitles(grid, owned, profile) {
@@ -713,10 +763,11 @@
       const isOwned = t.price === 0 || owned.includes(t.id) || profile.is_admin;
       const isEquipped = invSelections.title === t.id;
       const rarity = t.price === 0 ? 'free' : t.price >= 1000 ? 'legendary' : t.price >= 500 ? 'epic' : t.price >= 200 ? 'rare' : 'common';
-      const previewHtml = `<span style="color:${t.color};">${escapeHtml(t.name)}</span>`;
+      const cssClass = t.css || '';
+      const previewHtml = `<span class="${cssClass}" style="color:${t.color};">${escapeHtml(t.name)}</span>`;
       const item = createInvItem(t.name, previewHtml, t.id, isEquipped, isOwned, rarity);
       if (isOwned) {
-        item.addEventListener('click', () => { invSelections.title = t.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+        item.addEventListener('click', () => invSelect('title', t.id));
       }
       grid.appendChild(item);
     });
@@ -725,17 +776,18 @@
   function renderInvFlair(grid, owned, profile) {
     // "None" option
     const noneItem = createInvItem('NONE', '-', 'none', invSelections.flair === 'none', true, 'free');
-    noneItem.addEventListener('click', () => { invSelections.flair = 'none'; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+    noneItem.addEventListener('click', () => invSelect('flair', 'none'));
     grid.appendChild(noneItem);
 
     SHOP_FLAIR.forEach(f => {
       const isOwned = owned.includes(f.id) || profile.is_admin;
       const isEquipped = invSelections.flair === f.id;
-      const rarity = f.price >= 400 ? 'epic' : f.price >= 250 ? 'rare' : 'common';
-      const previewHtml = `<span style="font-size:clamp(.6rem, 2vw, 1.2rem);">${f.prefix.trim()}</span>`;
+      const rarity = f.price >= 500 ? 'epic' : f.price >= 300 ? 'rare' : f.price >= 150 ? 'common' : 'free';
+      const cssClass = f.css || '';
+      const previewHtml = `<span class="${cssClass}" style="font-size:clamp(.6rem, 2vw, 1.2rem);">${f.prefix.trim()}</span>`;
       const item = createInvItem(f.name, previewHtml, f.id, isEquipped, isOwned, rarity);
       if (isOwned) {
-        item.addEventListener('click', () => { invSelections.flair = f.id; updateInvEquipped(); renderInvGrid(); AudioSystem.sfxSelect(); });
+        item.addEventListener('click', () => invSelect('flair', f.id));
       }
       grid.appendChild(item);
     });
@@ -807,7 +859,7 @@
       const titleObj = SHOP_TITLES.find(t => t.id === invSelections.title);
       const rankName = titleObj ? titleObj.name : 'NEWCOMER';
 
-      await SupabaseClient.updateProfile({
+      const fullUpdate = {
         name_color: document.getElementById('edit-color').value,
         name_effect: invSelections.effect,
         rank: rankName,
@@ -815,7 +867,20 @@
         chat_font: invSelections.chatFont || 'font-default',
         text_color: invSelections.textColor || '#aaaaaa',
         flair: invSelections.flair || 'none',
-      });
+      };
+
+      try {
+        await SupabaseClient.updateProfile(fullUpdate);
+      } catch (dbErr) {
+        // If full update fails (missing columns), try core fields only
+        console.warn('Full save failed, trying core fields:', dbErr);
+        await SupabaseClient.updateProfile({
+          name_color: fullUpdate.name_color,
+          name_effect: fullUpdate.name_effect,
+          rank: fullUpdate.rank,
+        });
+        showToast('PARTIAL SAVE - RUN SQL MIGRATION');
+      }
 
       const user = SupabaseClient.getUser();
       if (user) {
@@ -831,7 +896,11 @@
 
       AudioSystem.sfxSelect(); showToast('LOADOUT SAVED');
       switchScreen('screen-editor', 'screen-nav');
-    } catch (err) { AudioSystem.sfxError(); showToast('SAVE FAILED'); }
+    } catch (err) {
+      console.error('Save failed:', err);
+      AudioSystem.sfxError();
+      showToast('SAVE FAILED: ' + (err.message || 'UNKNOWN ERROR').toUpperCase().slice(0, 50));
+    }
   });
 
   // User preferences (stored in localStorage for font/flair)
@@ -851,6 +920,19 @@
     const prefs = getUserPrefs(user.id);
     const flair = SHOP_FLAIR.find(f => f.id === prefs.flair);
     return flair ? flair.prefix : '';
+  }
+  function getActiveFlairId() {
+    const user = SupabaseClient.getUser();
+    if (!user) return 'none';
+    const prefs = getUserPrefs(user.id);
+    return prefs.flair || 'none';
+  }
+  function getFlairHtml(flairId) {
+    if (!flairId || flairId === 'none') return '';
+    const flair = SHOP_FLAIR.find(f => f.id === flairId);
+    if (!flair) return '';
+    if (flair.css) return `<span class="${flair.css}">${flair.prefix}</span>`;
+    return flair.prefix;
   }
   function fontIdToClass(fontId) {
     return fontId && fontId !== 'font-default' ? 'chat-font-' + fontId.replace('font-', '') : '';
@@ -960,9 +1042,7 @@
     // Fall back to localStorage prefs for own messages if profile fields missing
     const currentUser = SupabaseClient.getUser();
     const isOwnMsg = currentUser && msg.user_id === currentUser.id;
-    const flairPrefix = p && p.flair && p.flair !== 'none'
-      ? (SHOP_FLAIR.find(f => f.id === p.flair)?.prefix || '')
-      : (isOwnMsg ? getActiveFlair() : '');
+    const flairHtml = getFlairHtml(p && p.flair && p.flair !== 'none' ? p.flair : (isOwnMsg ? getActiveFlairId() : 'none'));
     const userFontClass = p && p.name_font ? fontIdToClass(p.name_font) : (isOwnMsg ? getActiveNameFont() : '');
     const msgFontClass = p && p.chat_font ? fontIdToClass(p.chat_font) : (isOwnMsg ? getActiveChatFont() : '');
     const textColor = p && p.text_color && p.text_color !== '#aaaaaa' ? p.text_color : (isOwnMsg ? getActiveTextColor() : '');
@@ -981,7 +1061,7 @@
       </div>
       <div class="chat-msg-body">
         <div class="chat-msg-header">
-          <span class="chat-user ${effect} ${userFontClass}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairPrefix}${escapeHtml(username)}</span>
+          <span class="chat-user ${effect} ${userFontClass}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairHtml}${escapeHtml(username)}</span>
           <span class="chat-id">${idNum}</span>
           ${adminTag}
           <span class="chat-time">${time}</span>
@@ -2627,7 +2707,7 @@
         <div class="shop-item-rarity ${rarity}">${title.price === 0 ? 'FREE' : rarity.toUpperCase()}</div>
         <div class="shop-item-name">${escapeHtml(title.name)}</div>
         <div class="shop-item-preview">
-          <span style="color:${title.color};letter-spacing:.08em;">${escapeHtml(title.name)}</span>
+          <span class="${title.css || ''}" style="color:${title.color};letter-spacing:.08em;">${escapeHtml(title.name)}</span>
         </div>
         <div class="shop-item-price ${title.price === 0 ? 'free' : ''}">${title.price === 0 ? 'FREE' : '$' + title.price}</div>
         <button class="shop-buy-btn ${isOwned ? 'owned' : ''}" ${!canAfford && !isOwned ? 'disabled' : ''}>
@@ -2653,7 +2733,7 @@
         <div class="shop-item-rarity ${rarity}">${rarity.toUpperCase()}</div>
         <div class="shop-item-name">${escapeHtml(flair.name)}</div>
         <div class="shop-item-preview">
-          <span style="color:#ccc;font-size:1.3em;">${flair.prefix}USERNAME</span>
+          <span style="color:#ccc;font-size:1.3em;">${flair.css ? '<span class="' + flair.css + '">' + flair.prefix + '</span>' : flair.prefix}USERNAME</span>
         </div>
         <div class="shop-item-desc">Shows ${flair.prefix}before your name in chat</div>
         <div class="shop-item-price">$${flair.price}</div>
