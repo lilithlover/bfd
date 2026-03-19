@@ -121,6 +121,11 @@
     { id: 'omg-worldeater', name: '\u2621 WORLD EATER \u2621',           rarity: 'omega' },
     { id: 'omg-glitchgod',  name: '\u2592\u2593 GLITCH GOD \u2593\u2592', rarity: 'omega' },
     { id: 'omg-cosmichorror', name: '\u2740\u2734 COSMIC HORROR \u2734\u2740', rarity: 'omega' },
+    // ULTRA OMEGA — ultimate prestige effects
+    { id: 'omg-voidmaw',     name: '\u2588\u25C9 VOID MAWS \u25C9\u2588',       rarity: 'omega' },
+    { id: 'omg-seraphim',    name: '\u2727\u2726 SERAPHIM \u2726\u2727',         rarity: 'omega' },
+    { id: 'omg-abomination', name: '\u2623\u2620 ABOMINATION \u2620\u2623',     rarity: 'omega' },
+    { id: 'omg-infernalthrone', name: '\u2666\u2736 INFERNAL THRONE \u2736\u2666', rarity: 'omega' },
   ];
 
   const DROPPABLE_EFFECTS = EFFECTS.filter(e => e.rarity === 'drop');
