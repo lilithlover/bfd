@@ -775,8 +775,9 @@
     .inv-avatar { width: 64px; height: 64px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(224,32,32,.2), inset 0 0 8px rgba(0,0,0,.5); flex-shrink: 0; }
     .inv-avatar img, .inv-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .inv-player-info { display: flex; flex-direction: column; gap: .25rem; flex: 1; min-width: 0; }
-    .inv-preview-box { padding: .3rem .5rem; border-left: 2px solid #e02020; background: rgba(224,32,32,.03); display: inline-flex; align-items: center; }
-    .edit-preview-name { font-size: clamp(.45rem, 1.4vw, .7rem); letter-spacing: .08em; }
+    .inv-preview-box { padding: .3rem .5rem; border-left: 2px solid #e02020; background: rgba(224,32,32,.03); display: flex; flex-direction: column; gap: .25rem; }
+    .edit-preview-name { font-size: clamp(.45rem, 1.4vw, .7rem); letter-spacing: .08em; display: flex; align-items: center; gap: .15em; }
+    .edit-chat-preview { font-size: clamp(.35rem, 1.1vw, .55rem); opacity: .7; border-top: 1px solid rgba(255,255,255,.05); padding-top: .2rem; margin-top: .1rem; }
     .inv-player-actions { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
     .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); background: transparent; border: 1px solid #222; color: #555; padding: .2rem .4rem; cursor: pointer; transition: all .15s; }
     .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
@@ -1011,6 +1012,8 @@
     .chat-msg-avatar-placeholder { font-size: 10px; color: #333; }
     .chat-msg-body { flex: 1; min-width: 0; }
     .chat-msg-header { display: flex; align-items: baseline; gap: .4rem; flex-wrap: wrap; margin-bottom: .15rem; }
+    .chat-flair { display: inline-flex; align-items: center; margin-right: .15em; font-size: 11px; vertical-align: middle; }
+    .chat-flair > span { display: inline-block; }
     .chat-user { cursor: pointer; letter-spacing: .04em; font-size: 10px; }
     .chat-user:hover { text-decoration: underline; }
     .chat-id { color: #282828; font-size: 8px; }
@@ -1248,6 +1251,7 @@
       .auth-input { font-size: .5rem; max-width: 340px; padding: .7rem .9rem; }
       .auth-btn { font-size: .5rem; padding: .6rem 1.8rem; }
       .edit-preview-name { font-size: .9rem; }
+      .edit-chat-preview { font-size: .5rem; }
       .edit-label { font-size: .42rem; }
       .edit-select { font-size: .42rem; max-width: 340px; }
       .chat-layout { max-width: 1200px; height: 82vh; }

@@ -689,9 +689,25 @@
     const preview = document.getElementById('edit-preview-name');
     const profile = SupabaseClient.getProfile();
     if (!preview || !profile) return;
-    preview.textContent = profile.username;
-    preview.style.color = document.getElementById('edit-color').value;
-    preview.className = 'edit-preview-name ' + getEffectClass(invSelections.effect);
+    const nameColor = document.getElementById('edit-color').value;
+    const effectClass = getEffectClass(invSelections.effect);
+    const nameFontClass = fontIdToClass(invSelections.nameFont);
+    const chatFontClass = fontIdToClass(invSelections.chatFont);
+    const flairHtml = getFlairHtml(invSelections.flair);
+    const textColor = invSelections.textColor || '#aaaaaa';
+
+    preview.innerHTML = `${flairHtml}<span class="${effectClass} ${nameFontClass}" style="color:${escapeHtml(nameColor)}">${escapeHtml(profile.username)}</span>`;
+    preview.className = 'edit-preview-name';
+
+    // Chat message preview
+    let chatPreview = document.getElementById('edit-chat-preview');
+    if (!chatPreview) {
+      chatPreview = document.createElement('div');
+      chatPreview.id = 'edit-chat-preview';
+      chatPreview.className = 'edit-chat-preview';
+      preview.parentElement.appendChild(chatPreview);
+    }
+    chatPreview.innerHTML = `<span class="${chatFontClass}" style="color:${escapeHtml(textColor)}">This is how your chat text will look.</span>`;
   }
 
   function updateInvEquipped() {
@@ -731,7 +747,7 @@
   function renderInvEffects(grid, owned, profile) {
     // "None" option
     const noneItem = createInvItem('NONE', '', 'none', invSelections.effect === 'none', true, 'free');
-    noneItem.addEventListener('click', () => { invSelections.effect = 'none'; updateInvPreview(); invSelect('effect', 'none'); });
+    noneItem.addEventListener('click', () => invSelect('effect', 'none'));
     grid.appendChild(noneItem);
 
     const available = getAvailableEffects(profile.level, profile.is_admin, profile.owned_effects);
@@ -740,7 +756,7 @@
       const rarity = e.rarity === 'omega' ? 'omega' : e.rarity === 'admin' ? 'admin' : e.rarity === 'free' ? 'free' : e.rarity === 'drop' ? 'drop' : e.price >= 1000 ? 'legendary' : e.price >= 700 ? 'epic' : e.price >= 400 ? 'rare' : 'common';
       const previewHtml = `<span class="${getEffectClass(e.id)}" style="color:#e02020;">${escapeHtml(e.name.split(' ')[0])}</span>`;
       const item = createInvItem(e.name, previewHtml, e.id, isEquipped, true, rarity);
-      item.addEventListener('click', () => { updateInvPreview(); invSelect('effect', e.id); });
+      item.addEventListener('click', () => invSelect('effect', e.id));
       grid.appendChild(item);
     });
   }
@@ -762,6 +778,7 @@
   function invSelect(key, value) {
     invSelections[key] = value;
     updateInvEquipped();
+    updateInvPreview();
     requestAnimationFrame(() => renderInvGrid());
     AudioSystem.sfxSelect();
   }
@@ -1069,7 +1086,7 @@
       </div>
       <div class="chat-msg-body">
         <div class="chat-msg-header">
-          <span class="chat-user ${effect} ${userFontClass}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${flairHtml}${escapeHtml(username)}</span>
+          ${flairHtml ? `<span class="chat-flair">${flairHtml}</span>` : ''}<span class="chat-user ${effect} ${userFontClass}" style="color:${escapeHtml(color)}" data-username="${escapeHtml(username)}">${escapeHtml(username)}</span>
           <span class="chat-id">${idNum}</span>
           ${adminTag}
           <span class="chat-time">${time}</span>
