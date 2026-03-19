@@ -767,83 +767,103 @@
     .auth-btn:hover { background: #e02020; color: #000; }
 
     /* ===== INVENTORY / PROFILE EDITOR ===== */
-    .inv-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: .6rem; }
-    .inv-top { display: flex; gap: .8rem; align-items: stretch; }
-    .inv-player-card { background: #080808; border: 1px solid #151515; padding: .8rem; display: flex; align-items: center; gap: .8rem; flex: 1; }
-    .inv-avatar { width: 72px; height: 72px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(224,32,32,.15); flex-shrink: 0; }
+    .inv-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: .5rem; max-height: 92vh; }
+
+    /* -- Top: Player identity -- */
+    .inv-top { display: flex; gap: 0; align-items: stretch; background: #0a0a0a; border: 1px solid #1a0a0a; overflow: hidden; }
+    .inv-player-card { padding: .7rem; display: flex; align-items: center; gap: .7rem; flex: 1; border-right: 1px solid #1a0a0a; }
+    .inv-avatar { width: 64px; height: 64px; border: 2px solid #e02020; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(224,32,32,.2), inset 0 0 8px rgba(0,0,0,.5); flex-shrink: 0; }
     .inv-avatar img, .inv-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-    .inv-player-info { display: flex; flex-direction: column; gap: .3rem; flex: 1; min-width: 0; }
-    .inv-preview-box { padding: .4rem .6rem; border: 1px solid #181818; background: #0a0a0a; display: inline-flex; align-items: center; }
-    .edit-preview-name { font-size: clamp(.5rem, 1.5vw, .75rem); letter-spacing: .08em; }
-    .inv-player-actions { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-    .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .8vw, .32rem); background: transparent; border: 1px solid #252525; color: #777; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
+    .inv-player-info { display: flex; flex-direction: column; gap: .25rem; flex: 1; min-width: 0; }
+    .inv-preview-box { padding: .3rem .5rem; border-left: 2px solid #e02020; background: rgba(224,32,32,.03); display: inline-flex; align-items: center; }
+    .edit-preview-name { font-size: clamp(.45rem, 1.4vw, .7rem); letter-spacing: .08em; }
+    .inv-player-actions { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+    .inv-avatar-upload-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); background: transparent; border: 1px solid #222; color: #555; padding: .2rem .4rem; cursor: pointer; transition: all .15s; }
     .inv-avatar-upload-btn:hover { color: #e02020; border-color: #e02020; }
-    .inv-label { font-size: clamp(.24rem, .8vw, .32rem); color: #888; letter-spacing: .08em; }
-    .edit-color-input { width: 34px; height: 22px; border: 1px solid #333; background: #000; cursor: pointer; padding: 0; }
+    .inv-label { font-size: clamp(.22rem, .7vw, .28rem); color: #666; letter-spacing: .08em; }
+    .edit-color-input { width: 28px; height: 18px; border: 1px solid #333; background: #000; cursor: pointer; padding: 0; }
     .edit-color-input:hover { border-color: #e02020; }
-    .inv-toggle-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem); background: transparent; border: 1px solid #222; color: #555; padding: .25rem .5rem; cursor: pointer; transition: all .15s; }
+    .inv-toggle-btn { font-family: 'Press Start 2P', monospace; font-size: clamp(.2rem, .65vw, .26rem); background: transparent; border: 1px solid #1a1a1a; color: #444; padding: .2rem .4rem; cursor: pointer; transition: all .15s; }
     .inv-toggle-btn:hover { color: #ccc; border-color: #444; }
     .inv-toggle-btn.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.06); }
-    .inv-stats-bar { background: #080808; border: 1px solid #151515; padding: .5rem .8rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; min-width: 220px; }
-    .inv-stat { display: flex; flex-direction: column; align-items: center; gap: .1rem; }
-    .inv-stat-val { font-size: clamp(.38rem, 1.2vw, .55rem); color: #e02020; letter-spacing: .06em; }
-    .inv-stat-label { font-size: clamp(.2rem, .65vw, .26rem); color: #555; letter-spacing: .06em; }
-    .inv-equipped-bar { display: flex; gap: .4rem; flex-wrap: wrap; }
-    .inv-equipped-slot { display: flex; align-items: center; gap: .4rem; padding: .35rem .6rem; border: 1px solid #151515; background: #080808; font-size: clamp(.26rem, .85vw, .35rem); flex: 1; min-width: 120px; }
-    .inv-equipped-slot .slot-label { color: #555; letter-spacing: .06em; white-space: nowrap; }
-    .inv-equipped-slot .slot-value { color: #ccc; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .inv-equipped-slot .slot-value.empty { color: #333; }
-    .inv-bottom { display: flex; gap: .6rem; flex: 1; min-height: 0; }
-    .inv-tabs-col { display: flex; flex-direction: column; gap: .3rem; min-width: 130px; }
-    .inv-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem); background: transparent; border: 1px solid #151515; color: #555; padding: .5rem .7rem; cursor: pointer; transition: all .15s; text-align: left; display: flex; align-items: center; gap: .4rem; }
-    .inv-tab:hover { color: #ccc; border-color: #2a0a0a; background: #0c0606; }
-    .inv-tab.active { color: #e02020; border-color: #e02020; background: rgba(224,32,32,.04); border-left: 3px solid #e02020; }
-    .inv-tab-icon { font-size: 1.1em; min-width: 1rem; text-align: center; }
+
+    /* -- Stats bar (right side of top) -- */
+    .inv-stats-bar { background: transparent; padding: .5rem .6rem; display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; min-width: 200px; justify-content: center; }
+    .inv-stat { display: flex; flex-direction: column; align-items: center; gap: .05rem; }
+    .inv-stat-val { font-size: clamp(.35rem, 1.1vw, .5rem); color: #e02020; letter-spacing: .06em; }
+    .inv-stat-label { font-size: clamp(.18rem, .6vw, .22rem); color: #444; letter-spacing: .06em; text-transform: uppercase; }
+
+    /* -- Equipped bar -- */
+    .inv-equipped-bar { display: flex; gap: 0; overflow-x: auto; background: #060606; border: 1px solid #1a0a0a; }
+    .inv-equipped-slot { display: flex; align-items: center; gap: .3rem; padding: .3rem .5rem; font-size: clamp(.22rem, .75vw, .3rem); flex: 1; min-width: 100px; border-right: 1px solid #1a0a0a; }
+    .inv-equipped-slot:last-child { border-right: none; }
+    .inv-equipped-slot .slot-label { color: #e02020; letter-spacing: .06em; white-space: nowrap; font-size: clamp(.18rem, .6vw, .22rem); opacity: .7; }
+    .inv-equipped-slot .slot-value { color: #999; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-equipped-slot .slot-value.empty { color: #222; }
+
+    /* -- Bottom: Tabs + Grid -- */
+    .inv-bottom { display: flex; gap: 0; flex: 1; min-height: 0; border: 1px solid #1a0a0a; background: #060606; overflow: hidden; }
+    .inv-tabs-col { display: flex; flex-direction: column; min-width: 120px; border-right: 1px solid #1a0a0a; background: #080808; }
+    .inv-tab { font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .8vw, .32rem); background: transparent; border: none; border-bottom: 1px solid #111; color: #444; padding: .55rem .6rem; cursor: pointer; transition: all .15s; text-align: left; display: flex; align-items: center; gap: .35rem; position: relative; }
+    .inv-tab:hover { color: #aaa; background: rgba(224,32,32,.02); }
+    .inv-tab.active { color: #e02020; background: rgba(224,32,32,.04); }
+    .inv-tab.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #e02020; }
+    .inv-tab-icon { font-size: 1em; min-width: .8rem; text-align: center; opacity: .6; }
+    .inv-tab.active .inv-tab-icon { opacity: 1; }
+
+    /* -- Grid area -- */
     .inv-grid-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .inv-grid-header { display: flex; justify-content: space-between; align-items: center; padding: .3rem .1rem; }
-    .inv-grid-title { font-size: clamp(.28rem, .9vw, .38rem); color: #666; letter-spacing: .1em; }
-    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: .4rem; overflow-y: auto; flex: 1; padding: .2rem; max-height: 50vh; }
-    .inv-item { background: #080808; border: 1px solid #151515; padding: .5rem; display: flex; flex-direction: column; gap: .2rem; cursor: pointer; transition: all .2s; position: relative; }
-    .inv-item:hover { border-color: #2a0a0a; background: #0c0606; }
-    .inv-item.equipped { border-color: #e02020; background: rgba(224,32,32,.04); box-shadow: inset 0 0 8px rgba(224,32,32,.08); }
-    .inv-item.equipped::after { content: 'EQUIPPED'; position: absolute; top: .2rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.18rem, .6vw, .24rem); color: #e02020; letter-spacing: .04em; }
-    .inv-item.locked { opacity: .25; cursor: default; }
-    .inv-item.locked::after { content: 'LOCKED'; position: absolute; top: .2rem; right: .25rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.18rem, .6vw, .24rem); color: #444; letter-spacing: .04em; }
-    .inv-item-name { font-size: clamp(.24rem, .8vw, .34rem); color: #bbb; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .inv-item-preview { font-size: clamp(.4rem, 1.2vw, .55rem); padding: .35rem; border: 1px solid #111; background: #0a0a0a; text-align: center; min-height: 1.8rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .inv-item-rarity { font-size: clamp(.2rem, .65vw, .26rem); letter-spacing: .06em; }
-    .inv-item-rarity.common { color: #777; }
+    .inv-grid-header { display: flex; justify-content: space-between; align-items: center; padding: .25rem .4rem; border-bottom: 1px solid #111; }
+    .inv-grid-title { font-size: clamp(.24rem, .8vw, .32rem); color: #555; letter-spacing: .1em; }
+    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .3rem; overflow-y: auto; flex: 1; padding: .3rem; max-height: 46vh; }
+
+    /* -- Inventory items -- */
+    .inv-item { background: #0a0a0a; border: 1px solid #151515; padding: .4rem; display: flex; flex-direction: column; gap: .15rem; cursor: pointer; transition: all .15s; position: relative; }
+    .inv-item:hover { border-color: #2a1010; background: #0e0808; transform: translateY(-1px); }
+    .inv-item.equipped { border-color: #e02020; background: rgba(224,32,32,.05); box-shadow: 0 0 8px rgba(224,32,32,.1); }
+    .inv-item.equipped::after { content: '\2713'; position: absolute; top: .15rem; right: .2rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.2rem, .7vw, .28rem); color: #e02020; }
+    .inv-item.locked { opacity: .2; cursor: default; pointer-events: none; }
+    .inv-item.locked::after { content: '\2717'; position: absolute; top: .15rem; right: .2rem; font-family: 'Press Start 2P', monospace; font-size: clamp(.2rem, .65vw, .26rem); color: #333; }
+    .inv-item-name { font-size: clamp(.22rem, .75vw, .3rem); color: #888; letter-spacing: .04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .inv-item-preview { font-size: clamp(.38rem, 1.1vw, .5rem); padding: .3rem; border: 1px solid #0e0e0e; background: #070707; text-align: center; min-height: 1.6rem; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .inv-item-rarity { font-size: clamp(.18rem, .6vw, .22rem); letter-spacing: .06em; text-transform: uppercase; }
+    .inv-item-rarity.common { color: #555; }
     .inv-item-rarity.rare { color: #5599ff; }
     .inv-item-rarity.epic { color: #bb66ff; }
     .inv-item-rarity.legendary { color: #ffaa22; }
     .inv-item-rarity.admin { color: #e02020; }
     .inv-item-rarity.omega { background: linear-gradient(90deg, #ffd700, #ff4400, #ff00ff, #ffd700); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: omega-rarity-shimmer 2s linear infinite; font-weight: bold; }
-    .inv-item-rarity.free { color: #0c0; }
-    .inv-item-rarity.drop { color: #ffcc00; }
+    .inv-item-rarity.free { color: #0a0; }
+    .inv-item-rarity.drop { color: #cc0; }
     @keyframes omega-rarity-shimmer { 0%{background-position:0% 50%}100%{background-position:300% 50%} }
     .inv-item.omega-item { border-color: #332200; }
     .inv-item.omega-item:hover { border-color: #ff8800; box-shadow: 0 0 12px rgba(255,136,0,.15); }
-    .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: inset 0 0 8px rgba(255,215,0,.1), 0 0 12px rgba(255,215,0,.2); }
+    .inv-item.omega-item.equipped { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,.15); }
+
+    /* -- Footer: Save + Back -- */
     .inv-save-btn {
-      font-family: 'Press Start 2P', monospace; font-size: clamp(.32rem, 1vw, .45rem);
-      background: transparent; border: 1px solid #e02020; color: #e02020;
-      padding: .5rem 1.2rem; cursor: pointer; transition: all .2s; letter-spacing: .1em;
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.28rem, .9vw, .38rem);
+      background: rgba(224,32,32,.08); border: 1px solid #e02020; color: #e02020;
+      padding: .45rem 1rem; cursor: pointer; transition: all .2s; letter-spacing: .1em;
     }
-    .inv-save-btn:hover { background: #e02020; color: #000; box-shadow: 0 0 16px rgba(224,32,32,.3); }
-    .inv-footer { display: flex; justify-content: space-between; align-items: center; padding: .3rem 0; }
-    .inv-footer-back { font-size: clamp(.3rem, .95vw, .42rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
+    .inv-save-btn:hover { background: #e02020; color: #000; box-shadow: 0 0 20px rgba(224,32,32,.35); }
+    .inv-footer { display: flex; justify-content: space-between; align-items: center; padding: .25rem 0; }
+    .inv-footer-back { font-size: clamp(.28rem, .9vw, .38rem); color: #444; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
     .inv-footer-back:hover { color: #e02020; }
-    .inv-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
+    .inv-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .5; }
+
+    /* -- Mobile -- */
     @media (max-width: 700px) {
       .inv-top { flex-direction: column; }
-      .inv-player-card { flex-direction: column; text-align: center; }
+      .inv-player-card { flex-direction: column; text-align: center; border-right: none; border-bottom: 1px solid #1a0a0a; }
       .inv-player-info { align-items: center; }
-      .inv-stats-bar { justify-content: center; }
+      .inv-stats-bar { justify-content: center; border-top: 1px solid #1a0a0a; }
+      .inv-equipped-bar { overflow-x: auto; }
       .inv-bottom { flex-direction: column; }
-      .inv-tabs-col { flex-direction: row; overflow-x: auto; min-width: unset; }
-      .inv-tab { white-space: nowrap; border-left: none !important; border-bottom: 2px solid transparent; }
-      .inv-tab.active { border-left: 1px solid #e02020 !important; border-bottom-color: #e02020; }
-      .inv-grid { max-height: 40vh; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+      .inv-tabs-col { flex-direction: row; overflow-x: auto; min-width: unset; border-right: none; border-bottom: 1px solid #1a0a0a; }
+      .inv-tab { white-space: nowrap; border-bottom: none; padding: .4rem .5rem; }
+      .inv-tab.active::before { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 2px; }
+      .inv-grid { max-height: 38vh; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
     }
 
     /* ===== CHAT - FULL LAYOUT ===== */
