@@ -135,115 +135,165 @@
     .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.2vw, .55rem); color: #661111; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
 
     /* ===== NAV DASHBOARD ===== */
-    .nav-dashboard { width: 100%; max-width: 960px; display: flex; gap: 0; height: auto; border: 1px solid #151515; overflow: hidden; }
+    .nav-dashboard { width: 100%; max-width: 980px; display: flex; height: auto; border: 1px solid #1a1a1a; overflow: hidden; background: #060606; }
 
-    /* Left: Main nav area */
-    .nav-main { flex: 1; display: flex; flex-direction: column; background: #060606; }
+    /* Left column */
+    .nav-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-    /* Profile Hero Card */
+    /* Profile Hero */
     .nav-profile-hero {
-      display: flex; align-items: center; gap: .8rem; padding: 1rem 1.2rem;
-      background: linear-gradient(135deg, #0a0808 0%, #0d0606 50%, #0a0505 100%);
-      border-bottom: 1px solid #151515; position: relative; overflow: hidden;
+      display: flex; align-items: center; gap: .9rem; padding: 1rem 1.2rem;
+      background: linear-gradient(180deg, #0c0808 0%, #080606 100%);
+      border-bottom: 1px solid #1a1a1a; position: relative; overflow: hidden;
     }
-    .nav-profile-hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(224,32,32,.25), transparent); }
-    .nav-profile-avatar { width: 48px; height: 48px; border: 2px solid #330000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808; transition: border-color .3s; }
+    .nav-profile-hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #e02020, transparent); opacity: .35; }
+    .nav-profile-hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(224,32,32,.15), transparent); }
+    .nav-profile-avatar {
+      width: 52px; height: 52px; border: 2px solid #2a0a0a; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      background: #080808; transition: border-color .3s; position: relative;
+    }
+    .nav-profile-avatar::after { content: ''; position: absolute; inset: 0; border: 1px solid rgba(224,32,32,.08); pointer-events: none; }
     .nav-profile-hero:hover .nav-profile-avatar { border-color: #e02020; }
     .nav-profile-avatar img, .nav-profile-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .nav-profile-avatar-placeholder { font-size: .8rem; color: #333; }
-    .nav-profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .2rem; }
+    .nav-profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
     .nav-profile-name { font-size: clamp(.4rem, 1.4vw, .6rem); color: #ccc; letter-spacing: .08em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nav-profile-meta { font-size: clamp(.24rem, .8vw, .32rem); color: #553333; letter-spacing: .06em; }
-    .nav-profile-stats { font-size: clamp(.22rem, .7vw, .28rem); color: #333; letter-spacing: .04em; display: flex; gap: .6rem; }
+    .nav-profile-stats { font-size: clamp(.22rem, .7vw, .28rem); color: #444; letter-spacing: .04em; display: flex; gap: .6rem; margin-top: .1rem; }
     .nav-profile-stats span { display: flex; align-items: center; gap: .2rem; }
     .nav-profile-actions { display: flex; gap: .4rem; flex-shrink: 0; }
     .nav-action-btn {
-      font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .7vw, .32rem); background: transparent;
-      border: 1px solid #222; color: #555; padding: .4rem .6rem; cursor: pointer;
-      transition: all .2s; letter-spacing: .08em; display: flex; align-items: center; gap: .3rem;
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .65vw, .28rem);
+      background: rgba(224,32,32,.03); border: 1px solid #1c1212; color: #666;
+      padding: .4rem .7rem; cursor: pointer; transition: all .25s; letter-spacing: .08em;
+      display: flex; align-items: center; gap: .3rem; position: relative; overflow: hidden;
     }
-    .nav-action-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.05); }
-    .nav-action-logout { color: #444; }
-    .nav-action-logout:hover { border-color: #882222; color: #aa3333; }
+    .nav-action-btn::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: #e02020; opacity: 0; transition: opacity .25s; }
+    .nav-action-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.06); }
+    .nav-action-btn:hover::before { opacity: .6; }
+    .nav-action-logout { color: #555; }
+    .nav-action-logout:hover { border-color: #661111; color: #aa3333; }
+    .nav-action-logout:hover::before { background: #aa3333; }
 
-    /* Quick Actions Bar */
-    .nav-quick-bar { display: flex; border-bottom: 1px solid #151515; }
-    .nav-quick-btn {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: .25rem; padding: .7rem .4rem; background: #080808; cursor: pointer;
-      transition: all .25s; position: relative; user-select: none; border-right: 1px solid #111;
+    /* Section Label */
+    .nav-section-label {
+      font-size: clamp(.22rem, .7vw, .28rem); color: #333; letter-spacing: .18em;
+      padding: .45rem 1rem; background: #080808; border-bottom: 1px solid #111;
+      text-transform: uppercase; user-select: none;
     }
-    .nav-quick-btn:last-child { border-right: none; }
-    .nav-quick-btn::before { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 2px; background: transparent; transition: all .25s; }
-    .nav-quick-btn:hover { background: #0c0606; }
-    .nav-quick-btn:hover::before { background: #e02020; left: 0; right: 0; }
-    .nav-quick-btn:hover .nav-quick-icon { color: #e02020; transform: translateY(-2px); }
-    .nav-quick-btn:hover .nav-quick-label { color: #aaa; }
-    .nav-quick-icon { font-size: clamp(.8rem, 2.5vw, 1.2rem); color: #444; transition: all .25s; }
-    .nav-quick-label { font-size: clamp(.24rem, .7vw, .3rem); color: #555; letter-spacing: .12em; transition: color .25s; }
-    .nav-quick-admin .nav-quick-icon { color: #993300; }
-    .nav-quick-admin:hover .nav-quick-icon { color: #ff6622; }
-    .nav-quick-admin:hover::before { background: #ff6622; }
-    .chat-badge { display: none; font-size: .28rem; color: #000; background: #e02020; padding: .1rem .25rem; position: absolute; top: .3rem; right: .6rem; animation: blink 1.5s step-end infinite; border-radius: 1px; min-width: .6rem; text-align: center; }
+
+    /* Unified Nav Tiles */
+    .nav-tiles { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
+    .nav-tile {
+      display: flex; align-items: center; gap: .7rem; padding: .6rem 1rem;
+      background: #070707; cursor: pointer; user-select: none;
+      transition: all .2s ease; position: relative; overflow: hidden;
+      border-bottom: 1px solid #0f0f0f;
+    }
+    .nav-tile::before {
+      content: ''; position: absolute; left: 0; top: 0; width: 0; height: 100%;
+      background: linear-gradient(90deg, rgba(224,32,32,.12), transparent);
+      transition: width .3s ease;
+    }
+    .nav-tile::after {
+      content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 100%;
+      background: transparent; transition: background .2s;
+    }
+    .nav-tile:hover { background: #0a0707; }
+    .nav-tile:hover::before { width: 100%; }
+    .nav-tile:hover::after { background: #e02020; }
+    .nav-tile:hover .nav-tile-icon { color: #e02020; transform: scale(1.1); }
+    .nav-tile:hover .nav-tile-label { color: #ddd; }
+    .nav-tile:hover .nav-tile-desc { color: #555; }
+    .nav-tile:hover .nav-tile-arrow { color: #e02020; opacity: 1; transform: translateX(2px); }
+
+    .nav-tile-icon-wrap {
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      background: rgba(224,32,32,.03); border: 1px solid #181010; flex-shrink: 0;
+      position: relative; transition: border-color .2s;
+    }
+    .nav-tile:hover .nav-tile-icon-wrap { border-color: #2a0a0a; }
+    .nav-tile-icon { font-size: clamp(.65rem, 2vw, .9rem); color: #555; transition: all .25s; position: relative; z-index: 1; }
+
+    .nav-tile-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .08rem; position: relative; z-index: 1; }
+    .nav-tile-label { font-size: clamp(.28rem, .9vw, .38rem); color: #888; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; }
+    .nav-tile-desc { font-size: clamp(.2rem, .65vw, .26rem); color: #333; letter-spacing: .04em; line-height: 1.3; transition: color .2s; }
+
+    .nav-tile-arrow { font-size: clamp(.4rem, 1.2vw, .55rem); color: #222; opacity: .5; transition: all .25s; flex-shrink: 0; position: relative; z-index: 1; }
+
+    /* Admin tile accent */
+    .nav-tile-admin .nav-tile-icon { color: #884400; }
+    .nav-tile-admin .nav-tile-icon-wrap { border-color: #1a1108; background: rgba(255,102,34,.03); }
+    .nav-tile-admin:hover .nav-tile-icon { color: #ff6622; }
+    .nav-tile-admin:hover::after { background: #ff6622; }
+    .nav-tile-admin:hover .nav-tile-arrow { color: #ff6622; }
+    .nav-tile-admin:hover .nav-tile-icon-wrap { border-color: #2a1808; }
+    .nav-tile-admin:hover::before { background: linear-gradient(90deg, rgba(255,102,34,.1), transparent); }
+
+    /* Auth tile accent */
+    .nav-tile-auth .nav-tile-icon-wrap { background: rgba(224,32,32,.05); border-color: #201010; }
+
+    /* Chat badge */
+    .chat-badge {
+      display: none; font-size: .24rem; color: #000; background: #e02020;
+      padding: .06rem .2rem; position: absolute; top: -2px; right: -2px;
+      animation: blink 1.5s step-end infinite; min-width: .5rem; text-align: center; z-index: 2;
+    }
     .chat-badge.show { display: inline; }
 
-    /* Nav Cards Grid */
-    .nav-grid { display: flex; border-bottom: 1px solid #151515; }
-    .nav-card {
-      flex: 1; display: flex; align-items: center; gap: .6rem; padding: .65rem .8rem;
-      background: #070707; cursor: pointer; user-select: none;
-      transition: all .25s; position: relative; overflow: hidden; border-right: 1px solid #111;
-    }
-    .nav-card:last-child { border-right: none; }
-    .nav-card::before { content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: transparent; transition: background .25s; }
-    .nav-card:hover { background: #0c0606; }
-    .nav-card:hover::before { background: #e02020; }
-    .nav-card:hover .nav-card-icon { color: #e02020; }
-    .nav-card:hover .nav-card-label { color: #ddd; }
-    .nav-card-icon { font-size: clamp(.6rem, 1.8vw, .9rem); color: #444; transition: color .25s; min-width: 1.2rem; text-align: center; }
-    .nav-card-text { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
-    .nav-card-label { font-size: clamp(.28rem, .9vw, .4rem); color: #888; letter-spacing: .1em; text-transform: uppercase; transition: color .25s; }
-    .nav-card-desc { font-size: clamp(.2rem, .65vw, .26rem); color: #383838; letter-spacing: .04em; line-height: 1.4; }
-
     /* Nav Footer */
-    .nav-footer { display: flex; justify-content: space-between; align-items: center; padding: .45rem .9rem; background: #050505; border-top: 1px solid #0e0e0e; }
-    .nav-footer-left { font-size: clamp(.22rem, .7vw, .3rem); color: #222; letter-spacing: .08em; }
-    .nav-footer-back { font-size: clamp(.28rem, .9vw, .38rem); color: #444; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
-    .nav-footer-back:hover { color: #e02020; }
+    .nav-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .5rem 1rem; background: #050505; border-top: 1px solid #111;
+    }
+    .nav-footer-left { font-size: clamp(.2rem, .65vw, .26rem); color: #1a1a1a; letter-spacing: .08em; }
+    .nav-footer-back {
+      font-size: clamp(.26rem, .85vw, .35rem); color: #555; cursor: pointer;
+      letter-spacing: .12em; text-transform: uppercase; transition: all .2s;
+      user-select: none; padding: .3rem .6rem; border: 1px solid #151515;
+      background: rgba(224,32,32,.02);
+    }
+    .nav-footer-back:hover { color: #e02020; border-color: #2a0a0a; background: rgba(224,32,32,.05); }
     .nav-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .5; }
 
-    /* ===== DM SIDEBAR on Nav ===== */
+    /* ===== DM SIDEBAR ===== */
     .nav-dm-sidebar {
-      width: 260px; display: flex; flex-direction: column; background: #070707; flex-shrink: 0;
-      border-left: 1px solid #151515;
+      width: 270px; display: flex; flex-direction: column; background: #070707; flex-shrink: 0;
+      border-left: 1px solid #1a1a1a;
     }
     .nav-dm-header {
       display: flex; align-items: center; gap: .4rem; padding: .65rem .8rem;
-      background: #0a0808; border-bottom: 1px solid #151515; flex-shrink: 0;
+      background: linear-gradient(180deg, #0c0808 0%, #0a0707 100%);
+      border-bottom: 1px solid #1a1a1a; flex-shrink: 0; position: relative;
     }
-    .nav-dm-header-title { font-size: clamp(.3rem, .9vw, .4rem); color: #666; letter-spacing: .12em; flex: 1; }
+    .nav-dm-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(224,32,32,.1), transparent); }
+    .nav-dm-header-title { font-size: clamp(.28rem, .85vw, .36rem); color: #666; letter-spacing: .12em; flex: 1; }
     .nav-dm-unread-count {
-      font-size: .28rem; color: #000; background: #e02020; padding: .08rem .22rem;
+      font-size: .26rem; color: #000; background: #e02020; padding: .08rem .22rem;
       display: none; animation: blink 1.5s step-end infinite; min-width: .5rem; text-align: center;
     }
     .nav-dm-unread-count.show { display: inline; }
     .nav-dm-new-btn {
-      font-family: 'Press Start 2P', monospace; font-size: .4rem; background: transparent;
-      border: 1px solid #222; color: #444; width: 22px; height: 22px; cursor: pointer;
+      font-family: 'Press Start 2P', monospace; font-size: .36rem; background: rgba(224,32,32,.03);
+      border: 1px solid #1c1212; color: #555; width: 24px; height: 24px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; transition: all .2s;
     }
-    .nav-dm-new-btn:hover { border-color: #e02020; color: #e02020; }
-    .nav-dm-list { flex: 1; overflow-y: auto; padding: .2rem 0; }
-    .nav-dm-empty { font-size: .26rem; color: #282828; text-align: center; padding: 2rem .5rem; letter-spacing: .06em; }
+    .nav-dm-new-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.06); }
+    .nav-dm-list { flex: 1; overflow-y: auto; padding: .15rem 0; }
+    .nav-dm-empty { font-size: .24rem; color: #222; text-align: center; padding: 2rem .5rem; letter-spacing: .06em; }
 
-    /* DM conversation items in nav sidebar */
+    /* DM items */
     .nav-dm-item {
       display: flex; align-items: center; gap: .5rem; padding: .55rem .8rem;
       cursor: pointer; transition: all .2s; border-left: 2px solid transparent; position: relative;
     }
     .nav-dm-item:hover { background: rgba(224,32,32,.03); }
     .nav-dm-item.has-unread { border-left-color: #e02020; background: rgba(224,32,32,.02); }
-    .nav-dm-item-avatar { width: 28px; height: 28px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808; }
+    .nav-dm-item-avatar {
+      width: 30px; height: 30px; border: 1px solid #1a1a1a; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808;
+    }
     .nav-dm-item-avatar img, .nav-dm-item-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .nav-dm-item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
     .nav-dm-item-name { font-size: clamp(.26rem, .8vw, .34rem); color: #777; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .2s; }
@@ -255,18 +305,18 @@
     .nav-dm-item-unread { width: 8px; height: 8px; background: #e02020; border-radius: 50%; flex-shrink: 0; display: none; box-shadow: 0 0 6px rgba(224,32,32,.4); }
     .nav-dm-item.has-unread .nav-dm-item-unread { display: block; }
 
-    /* Mobile: stack layout vertically */
+    /* Mobile responsive */
     @media (max-width: 600px) {
       .nav-dashboard { flex-direction: column; }
-      .nav-dm-sidebar { width: 100%; max-height: 200px; border-left: none; border-top: 1px solid #151515; }
-      .nav-quick-btn { padding: .5rem .3rem; }
-      .nav-profile-hero { padding: .7rem .8rem; }
-      .nav-profile-avatar { width: 36px; height: 36px; }
-      .nav-grid { flex-direction: column; }
-      .nav-card { border-right: none; border-bottom: 1px solid #111; }
+      .nav-dm-sidebar { width: 100%; max-height: 200px; border-left: none; border-top: 1px solid #1a1a1a; }
+      .nav-profile-hero { padding: .8rem; gap: .6rem; }
+      .nav-profile-avatar { width: 40px; height: 40px; }
+      .nav-tile { padding: .55rem .8rem; }
+      .nav-tile-icon-wrap { width: 30px; height: 30px; }
+      .nav-profile-actions { flex-direction: column; gap: .25rem; }
     }
     @media (min-width: 900px) {
-      .nav-dm-sidebar { width: 280px; }
+      .nav-dm-sidebar { width: 290px; }
     }
 
     /* ===== HUD ===== */
@@ -1872,9 +1922,11 @@
     <!-- NAV -->
     <div id="screen-nav" class="screen">
       <div class="nav-dashboard">
-        <!-- Left: Profile + Navigation -->
+
+        <!-- LEFT COLUMN: Profile + All Navigation -->
         <div class="nav-main">
-          <!-- Profile Hero Card -->
+
+          <!-- Profile Hero -->
           <div class="nav-profile-hero" id="nav-profile-hero">
             <div class="nav-profile-avatar" id="nav-profile-avatar"><span class="nav-profile-avatar-placeholder">?</span></div>
             <div class="nav-profile-info">
@@ -1888,50 +1940,78 @@
             </div>
           </div>
 
-          <!-- Quick Actions Bar -->
-          <div class="nav-quick-bar" id="nav-quick-bar">
-            <div class="nav-quick-btn" data-target="screen-chat" id="chat-menu-card">
-              <span class="nav-quick-icon">&#9993;</span>
-              <span class="nav-quick-label">CHAT</span>
-              <span class="chat-badge" id="chat-badge"></span>
+          <!-- Section Label -->
+          <div class="nav-section-label">&#9670; NAVIGATION</div>
+
+          <!-- Unified Nav Grid - ALL items in one grid -->
+          <div class="nav-tiles" id="nav-tiles">
+            <div class="nav-tile" data-target="screen-chat" id="chat-menu-card">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9993;</span><span class="chat-badge" id="chat-badge"></span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">CHAT</span>
+                <span class="nav-tile-desc">Global chat room</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
             </div>
-            <div class="nav-quick-btn" data-target="screen-members">
-              <span class="nav-quick-icon">&#9733;</span>
-              <span class="nav-quick-label">MEMBERS</span>
+            <div class="nav-tile" data-target="screen-members">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9733;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">MEMBERS</span>
+                <span class="nav-tile-desc">The tribe roster</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
             </div>
-            <div class="nav-quick-btn" data-target="screen-shop" id="shop-menu-card" style="display:none;">
-              <span class="nav-quick-icon">&#9830;</span>
-              <span class="nav-quick-label">SHOP</span>
+            <div class="nav-tile" data-target="screen-releases">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9835;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">RELEASES</span>
+                <span class="nav-tile-desc">Music &amp; projects</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
             </div>
-            <div class="nav-quick-btn nav-quick-admin" data-target="screen-admin" id="admin-menu-card" style="display:none;">
-              <span class="nav-quick-icon">&#9888;</span>
-              <span class="nav-quick-label">ADMIN</span>
+            <div class="nav-tile" data-target="screen-about">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9881;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">ABOUT US</span>
+                <span class="nav-tile-desc">Our story &amp; mission</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
+            </div>
+            <div class="nav-tile" data-target="screen-shop" id="shop-menu-card" style="display:none;">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9830;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">SHOP</span>
+                <span class="nav-tile-desc">Avatars, effects &amp; upgrades</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
+            </div>
+            <div class="nav-tile nav-tile-admin" data-target="screen-admin" id="admin-menu-card" style="display:none;">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9888;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">ADMIN</span>
+                <span class="nav-tile-desc">Manage users &amp; site</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
+            </div>
+            <div class="nav-tile nav-tile-auth" data-target="screen-auth" id="nav-auth-card">
+              <div class="nav-tile-icon-wrap"><span class="nav-tile-icon">&#9670;</span></div>
+              <div class="nav-tile-content">
+                <span class="nav-tile-label">LOGIN / REGISTER</span>
+                <span class="nav-tile-desc">Access your account</span>
+              </div>
+              <span class="nav-tile-arrow">&#9656;</span>
             </div>
           </div>
 
-          <!-- Navigation Cards Grid -->
-          <div class="nav-grid">
-            <div class="nav-card" data-target="screen-auth" id="nav-auth-card">
-              <span class="nav-card-icon">&#9670;</span>
-              <div class="nav-card-text"><span class="nav-card-label">LOGIN / REGISTER</span><span class="nav-card-desc">Access your account</span></div>
-            </div>
-            <div class="nav-card" data-target="screen-releases">
-              <span class="nav-card-icon">&#9835;</span>
-              <div class="nav-card-text"><span class="nav-card-label">RELEASES</span><span class="nav-card-desc">Music &amp; projects</span></div>
-            </div>
-            <div class="nav-card" data-target="screen-about">
-              <span class="nav-card-icon">&#9881;</span>
-              <div class="nav-card-text"><span class="nav-card-label">ABOUT US</span><span class="nav-card-desc">Our story</span></div>
-            </div>
-          </div>
-
+          <!-- Footer -->
           <div class="nav-footer">
             <span class="nav-footer-left">TM&amp;&#169; 2025 RUNE TRIBE</span>
             <span class="nav-footer-back" data-target="screen-title" data-is-back="true">BACK</span>
           </div>
+
         </div>
 
-        <!-- Right: DM Inbox Sidebar -->
+        <!-- RIGHT COLUMN: DM Inbox Sidebar -->
         <div class="nav-dm-sidebar" id="nav-dm-sidebar">
           <div class="nav-dm-header">
             <span class="nav-dm-header-title">&#9993; MESSAGES</span>
@@ -1942,6 +2022,7 @@
             <div class="nav-dm-empty">NO CONVERSATIONS YET</div>
           </div>
         </div>
+
       </div>
     </div>
 

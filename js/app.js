@@ -446,13 +446,9 @@
     }
     switchScreen(currentScreen, target);
   }
-  document.querySelectorAll('.nav-card').forEach(card => {
-    card.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(card.dataset.target); });
-    card.addEventListener('mouseenter', () => AudioSystem.sfxHover());
-  });
-  document.querySelectorAll('.nav-quick-btn').forEach(btn => {
-    btn.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(btn.dataset.target); });
-    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+  document.querySelectorAll('.nav-tile').forEach(tile => {
+    tile.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(tile.dataset.target); });
+    tile.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
   document.querySelectorAll('.nav-footer-back').forEach(btn => {
     btn.addEventListener('click', () => { AudioSystem.sfxBack(); handleNavClick(btn.dataset.target); });
@@ -585,9 +581,9 @@
     const adminCard = document.getElementById('admin-menu-card');
 
     if (authCard) {
-      const label = authCard.querySelector('.nav-card-label');
-      const desc = authCard.querySelector('.nav-card-desc');
-      const icon = authCard.querySelector('.nav-card-icon');
+      const label = authCard.querySelector('.nav-tile-label');
+      const desc = authCard.querySelector('.nav-tile-desc');
+      const icon = authCard.querySelector('.nav-tile-icon');
       if (user) {
         label.textContent = 'LOGOUT';
         desc.textContent = 'Sign out of your account';
