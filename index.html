@@ -259,9 +259,56 @@
 
     /* ===== DM SIDEBAR ===== */
     .nav-dm-sidebar {
-      width: 270px; display: flex; flex-direction: column; background: #070707; flex-shrink: 0;
+      width: 280px; display: flex; flex-direction: column; background: #070707; flex-shrink: 0;
       border-left: 1px solid #1a1a1a;
     }
+
+    /* --- Sidebar Auth (Guest) --- */
+    .nav-sidebar-auth { display: flex; flex-direction: column; flex: 1; animation: navFadeSlideIn .4s ease both; }
+    .nav-sidebar-auth-header {
+      display: flex; align-items: center; gap: .5rem; padding: .65rem .8rem;
+      background: linear-gradient(180deg, #0c0808 0%, #0a0707 100%);
+      border-bottom: 1px solid #1a1a1a; position: relative;
+    }
+    .nav-sidebar-auth-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(224,32,32,.15), transparent); }
+    .nav-sidebar-auth-icon { font-size: clamp(.5rem, 1.5vw, .7rem); color: #e02020; }
+    .nav-sidebar-auth-title { font-size: clamp(.28rem, .85vw, .36rem); color: #666; letter-spacing: .12em; }
+    .nav-sidebar-auth-tabs { display: flex; border-bottom: 1px solid #111; }
+    .nav-sidebar-auth-tab {
+      flex: 1; text-align: center; font-size: clamp(.24rem, .75vw, .3rem); color: #444;
+      cursor: pointer; letter-spacing: .1em; padding: .45rem .5rem; transition: all .25s;
+      border-bottom: 2px solid transparent; background: #080808; user-select: none;
+    }
+    .nav-sidebar-auth-tab:hover { color: #888; background: #0a0606; }
+    .nav-sidebar-auth-tab.active { color: #e02020; border-bottom-color: #e02020; background: #0a0505; }
+    .nav-sidebar-auth-form {
+      display: none; flex-direction: column; gap: .5rem; padding: .8rem;
+      animation: navFadeIn .3s ease both;
+    }
+    .nav-sidebar-auth-form.active { display: flex; }
+    .nav-sidebar-auth-input {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem);
+      background: #0a0a0a; border: 1px solid #181818; color: #888; padding: .45rem .6rem;
+      outline: none; transition: all .25s; letter-spacing: .05em; width: 100%; box-sizing: border-box;
+    }
+    .nav-sidebar-auth-input:focus { border-color: #e02020; color: #ccc; box-shadow: 0 0 10px rgba(224,32,32,.08); transform: translateX(2px); }
+    .nav-sidebar-auth-input::placeholder { color: #252525; }
+    .nav-sidebar-auth-btn {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.24rem, .75vw, .3rem);
+      background: rgba(224,32,32,.06); border: 1px solid #e02020; color: #e02020;
+      padding: .5rem 1rem; cursor: pointer; letter-spacing: .1em; transition: all .25s;
+      margin-top: .15rem; position: relative; overflow: hidden;
+    }
+    .nav-sidebar-auth-btn::before {
+      content: ''; position: absolute; inset: 0; background: #e02020;
+      transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+    }
+    .nav-sidebar-auth-btn:hover { color: #000; }
+    .nav-sidebar-auth-btn:hover::before { transform: scaleX(1); }
+    .nav-sidebar-auth-btn span, .nav-sidebar-auth-btn { position: relative; z-index: 1; }
+
+    /* --- DM Panel (Logged in) --- */
+    .nav-dm-panel { display: flex; flex-direction: column; flex: 1; animation: navFadeSlideIn .4s ease both; }
     .nav-dm-header {
       display: flex; align-items: center; gap: .4rem; padding: .65rem .8rem;
       background: linear-gradient(180deg, #0c0808 0%, #0a0707 100%);
@@ -277,23 +324,53 @@
     .nav-dm-new-btn {
       font-family: 'Press Start 2P', monospace; font-size: .36rem; background: rgba(224,32,32,.03);
       border: 1px solid #1c1212; color: #555; width: 24px; height: 24px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: all .2s;
+      display: flex; align-items: center; justify-content: center; transition: all .3s;
     }
-    .nav-dm-new-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.06); }
+    .nav-dm-new-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.06); transform: rotate(90deg); }
+
+    /* Inline DM Search */
+    .nav-dm-search {
+      display: flex; flex-direction: column; border-bottom: 1px solid #1a1a1a;
+      background: #0a0808; animation: navSlideDown .25s ease both; overflow: hidden;
+    }
+    .nav-dm-search-input {
+      font-family: 'Press Start 2P', monospace; font-size: clamp(.22rem, .7vw, .28rem);
+      background: #0a0a0a; border: none; border-bottom: 1px solid #151515;
+      color: #888; padding: .5rem .8rem; outline: none; transition: all .25s; letter-spacing: .05em;
+    }
+    .nav-dm-search-input:focus { color: #ccc; background: #0c0808; box-shadow: inset 0 -1px 0 #e02020; }
+    .nav-dm-search-input::placeholder { color: #282828; }
+    .nav-dm-search-results { max-height: 180px; overflow-y: auto; }
+    .nav-dm-search-result {
+      font-size: clamp(.22rem, .7vw, .28rem); color: #666; padding: .45rem .8rem;
+      cursor: pointer; display: flex; align-items: center; gap: .4rem; transition: all .2s;
+      border-left: 2px solid transparent;
+    }
+    .nav-dm-search-result:hover { color: #e02020; background: rgba(224,32,32,.04); border-left-color: #e02020; }
+    .nav-dm-search-cancel {
+      font-size: clamp(.2rem, .6vw, .24rem); color: #444; text-align: center;
+      padding: .35rem; cursor: pointer; transition: all .2s; letter-spacing: .08em;
+      border-top: 1px solid #111;
+    }
+    .nav-dm-search-cancel:hover { color: #e02020; background: rgba(224,32,32,.03); }
+
     .nav-dm-list { flex: 1; overflow-y: auto; padding: .15rem 0; }
     .nav-dm-empty { font-size: .24rem; color: #222; text-align: center; padding: 2rem .5rem; letter-spacing: .06em; }
 
     /* DM items */
     .nav-dm-item {
       display: flex; align-items: center; gap: .5rem; padding: .55rem .8rem;
-      cursor: pointer; transition: all .2s; border-left: 2px solid transparent; position: relative;
+      cursor: pointer; transition: all .25s; border-left: 2px solid transparent; position: relative;
+      animation: navFadeIn .3s ease both;
     }
-    .nav-dm-item:hover { background: rgba(224,32,32,.03); }
+    .nav-dm-item:hover { background: rgba(224,32,32,.04); transform: translateX(3px); }
     .nav-dm-item.has-unread { border-left-color: #e02020; background: rgba(224,32,32,.02); }
     .nav-dm-item-avatar {
       width: 30px; height: 30px; border: 1px solid #1a1a1a; overflow: hidden;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808;
+      transition: border-color .2s;
     }
+    .nav-dm-item:hover .nav-dm-item-avatar { border-color: #2a0a0a; }
     .nav-dm-item-avatar img, .nav-dm-item-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
     .nav-dm-item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
     .nav-dm-item-name { font-size: clamp(.26rem, .8vw, .34rem); color: #777; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .2s; }
@@ -302,13 +379,33 @@
     .nav-dm-item-preview { font-size: clamp(.2rem, .65vw, .25rem); color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .nav-dm-item.has-unread .nav-dm-item-preview { color: #555; }
     .nav-dm-item-time { font-size: .22rem; color: #282828; flex-shrink: 0; }
-    .nav-dm-item-unread { width: 8px; height: 8px; background: #e02020; border-radius: 50%; flex-shrink: 0; display: none; box-shadow: 0 0 6px rgba(224,32,32,.4); }
+    .nav-dm-item-unread { width: 8px; height: 8px; background: #e02020; border-radius: 50%; flex-shrink: 0; display: none; box-shadow: 0 0 6px rgba(224,32,32,.4); animation: navPulse 2s ease infinite; }
     .nav-dm-item.has-unread .nav-dm-item-unread { display: block; }
+
+    /* ===== NAV ANIMATIONS ===== */
+    @keyframes navFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes navFadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes navSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 300px; opacity: 1; } }
+    @keyframes navPulse { 0%, 100% { box-shadow: 0 0 4px rgba(224,32,32,.3); } 50% { box-shadow: 0 0 10px rgba(224,32,32,.6); } }
+    @keyframes navTileEnter { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Staggered tile entrance */
+    .nav-tile { animation: navTileEnter .3s ease both; }
+    .nav-tile:nth-child(1) { animation-delay: .05s; }
+    .nav-tile:nth-child(2) { animation-delay: .1s; }
+    .nav-tile:nth-child(3) { animation-delay: .15s; }
+    .nav-tile:nth-child(4) { animation-delay: .2s; }
+    .nav-tile:nth-child(5) { animation-delay: .25s; }
+    .nav-tile:nth-child(6) { animation-delay: .3s; }
+    .nav-tile:nth-child(7) { animation-delay: .35s; }
+
+    /* Profile hero entrance */
+    .nav-profile-hero { animation: navFadeSlideIn .35s ease both; }
 
     /* Mobile responsive */
     @media (max-width: 600px) {
       .nav-dashboard { flex-direction: column; }
-      .nav-dm-sidebar { width: 100%; max-height: 200px; border-left: none; border-top: 1px solid #1a1a1a; }
+      .nav-dm-sidebar { width: 100%; max-height: 280px; border-left: none; border-top: 1px solid #1a1a1a; }
       .nav-profile-hero { padding: .8rem; gap: .6rem; }
       .nav-profile-avatar { width: 40px; height: 40px; }
       .nav-tile { padding: .55rem .8rem; }
@@ -316,7 +413,7 @@
       .nav-profile-actions { flex-direction: column; gap: .25rem; }
     }
     @media (min-width: 900px) {
-      .nav-dm-sidebar { width: 290px; }
+      .nav-dm-sidebar { width: 300px; }
     }
 
     /* ===== HUD ===== */
@@ -1931,7 +2028,7 @@
             <div class="nav-profile-avatar" id="nav-profile-avatar"><span class="nav-profile-avatar-placeholder">?</span></div>
             <div class="nav-profile-info">
               <div class="nav-profile-name" id="nav-profile-name">GUEST</div>
-              <div class="nav-profile-meta" id="nav-profile-meta">LOGIN TO ACCESS ALL FEATURES</div>
+              <div class="nav-profile-meta" id="nav-profile-meta">SIGN IN TO ACCESS ALL FEATURES</div>
               <div class="nav-profile-stats" id="nav-profile-stats"></div>
             </div>
             <div class="nav-profile-actions" id="nav-profile-actions">
@@ -2011,16 +2108,51 @@
 
         </div>
 
-        <!-- RIGHT COLUMN: DM Inbox Sidebar -->
+        <!-- RIGHT COLUMN: DM Inbox / Guest Auth -->
         <div class="nav-dm-sidebar" id="nav-dm-sidebar">
-          <div class="nav-dm-header">
-            <span class="nav-dm-header-title">&#9993; MESSAGES</span>
-            <span class="nav-dm-unread-count" id="nav-dm-unread-count"></span>
-            <button class="nav-dm-new-btn" id="nav-dm-new-btn" title="New DM">+</button>
+
+          <!-- GUEST AUTH (shown when not logged in) -->
+          <div class="nav-sidebar-auth" id="nav-sidebar-auth">
+            <div class="nav-sidebar-auth-header">
+              <span class="nav-sidebar-auth-icon">&#9670;</span>
+              <span class="nav-sidebar-auth-title">ACCESS TERMINAL</span>
+            </div>
+            <div class="nav-sidebar-auth-tabs">
+              <span class="nav-sidebar-auth-tab active" data-sidebar-form="sidebar-login-form">LOGIN</span>
+              <span class="nav-sidebar-auth-tab" data-sidebar-form="sidebar-register-form">REGISTER</span>
+            </div>
+            <form id="sidebar-login-form" class="nav-sidebar-auth-form active" onsubmit="return false;">
+              <input type="email" class="nav-sidebar-auth-input" placeholder="EMAIL" autocomplete="email">
+              <input type="password" class="nav-sidebar-auth-input" placeholder="PASSWORD" autocomplete="current-password">
+              <button type="submit" class="nav-sidebar-auth-btn">ENTER</button>
+            </form>
+            <form id="sidebar-register-form" class="nav-sidebar-auth-form" onsubmit="return false;">
+              <input type="text" class="nav-sidebar-auth-input" placeholder="USERNAME" autocomplete="username">
+              <input type="email" class="nav-sidebar-auth-input" placeholder="EMAIL" autocomplete="email">
+              <input type="password" class="nav-sidebar-auth-input" placeholder="PASSWORD" autocomplete="new-password">
+              <input type="password" class="nav-sidebar-auth-input" placeholder="CONFIRM" autocomplete="new-password">
+              <button type="submit" class="nav-sidebar-auth-btn">REGISTER</button>
+            </form>
           </div>
-          <div class="nav-dm-list" id="nav-dm-list">
-            <div class="nav-dm-empty">NO CONVERSATIONS YET</div>
+
+          <!-- DM PANEL (shown when logged in) -->
+          <div class="nav-dm-panel" id="nav-dm-panel" style="display:none;">
+            <div class="nav-dm-header">
+              <span class="nav-dm-header-title">&#9993; MESSAGES</span>
+              <span class="nav-dm-unread-count" id="nav-dm-unread-count"></span>
+              <button class="nav-dm-new-btn" id="nav-dm-new-btn" title="New DM">+</button>
+            </div>
+            <!-- Inline new DM search (hidden by default) -->
+            <div class="nav-dm-search" id="nav-dm-search" style="display:none;">
+              <input type="text" class="nav-dm-search-input" id="nav-dm-search-input" placeholder="ENTER USERNAME..." autocomplete="off">
+              <div class="nav-dm-search-results" id="nav-dm-search-results"></div>
+              <div class="nav-dm-search-cancel" id="nav-dm-search-cancel">&#10005; CANCEL</div>
+            </div>
+            <div class="nav-dm-list" id="nav-dm-list">
+              <div class="nav-dm-empty">NO CONVERSATIONS YET</div>
+            </div>
           </div>
+
         </div>
 
       </div>

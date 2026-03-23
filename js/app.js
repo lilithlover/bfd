@@ -534,6 +534,56 @@
     }
   });
 
+  /* ===== SIDEBAR AUTH (Nav) ===== */
+  document.querySelectorAll('.nav-sidebar-auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      AudioSystem.sfxNavigate();
+      document.querySelectorAll('.nav-sidebar-auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-sidebar-auth-form').forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.sidebarForm).classList.add('active');
+    });
+  });
+
+  document.getElementById('sidebar-login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const inputs = e.target.querySelectorAll('.nav-sidebar-auth-input');
+    const email = inputs[0].value.trim();
+    const password = inputs[1].value;
+    if (!email || !password) { showToast('FILL ALL FIELDS'); AudioSystem.sfxError(); return; }
+    try {
+      await SupabaseClient.login(email, password);
+      AudioSystem.sfxSelect();
+      showToast('ACCESS GRANTED');
+      inputs.forEach(i => i.value = '');
+    } catch (err) {
+      AudioSystem.sfxError();
+      showToast(err.message ? err.message.toUpperCase().slice(0, 60) : 'ACCESS DENIED');
+    }
+  });
+
+  document.getElementById('sidebar-register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const inputs = e.target.querySelectorAll('.nav-sidebar-auth-input');
+    const username = inputs[0].value.trim();
+    const email = inputs[1].value.trim();
+    const password = inputs[2].value;
+    const confirm = inputs[3].value;
+    if (!username || !email || !password) { showToast('FILL ALL FIELDS'); AudioSystem.sfxError(); return; }
+    if (password !== confirm) { showToast('PASSWORDS DO NOT MATCH'); AudioSystem.sfxError(); return; }
+    if (password.length < 6) { showToast('PASSWORD MIN 6 CHARACTERS'); AudioSystem.sfxError(); return; }
+    if (username.length < 2 || username.length > 20) { showToast('USERNAME 2-20 CHARACTERS'); AudioSystem.sfxError(); return; }
+    try {
+      await SupabaseClient.register(email, password, username.toUpperCase());
+      AudioSystem.sfxSelect();
+      showToast('REGISTERED SUCCESSFULLY');
+      inputs.forEach(i => i.value = '');
+    } catch (err) {
+      AudioSystem.sfxError();
+      showToast(err.message ? err.message.toUpperCase().slice(0, 60) : 'REGISTRATION FAILED');
+    }
+  });
+
   /* ===== AUTH STATE ===== */
   let hasAutoResumed = false;
   SupabaseClient.setOnAuthChange((user, profile) => {
@@ -579,6 +629,8 @@
     const authCard = document.getElementById('nav-auth-card');
     const shopCard = document.getElementById('shop-menu-card');
     const adminCard = document.getElementById('admin-menu-card');
+    const sidebarAuth = document.getElementById('nav-sidebar-auth');
+    const dmPanel = document.getElementById('nav-dm-panel');
 
     if (authCard) {
       const label = authCard.querySelector('.nav-tile-label');
@@ -610,6 +662,10 @@
     if (shopCard) shopCard.style.display = user ? '' : 'none';
     if (adminCard) adminCard.style.display = (profile && profile.is_admin) ? '' : 'none';
 
+    // Toggle sidebar: auth form for guests, DM panel for logged-in
+    if (sidebarAuth) sidebarAuth.style.display = user ? 'none' : '';
+    if (dmPanel) dmPanel.style.display = user ? '' : 'none';
+
     // Update nav profile hero
     updateNavProfileHero(user, profile);
 
@@ -633,11 +689,11 @@
       nameEl.textContent = 'GUEST';
       nameEl.className = 'nav-profile-name';
       nameEl.style.color = '';
-      if (metaEl) metaEl.textContent = 'LOGIN TO ACCESS ALL FEATURES';
+      if (metaEl) metaEl.textContent = 'SIGN IN TO ACCESS ALL FEATURES';
       if (statsEl) statsEl.innerHTML = '';
       if (editBtn) editBtn.style.display = 'none';
       if (logoutBtn) logoutBtn.style.display = 'none';
-      if (hero) hero.onclick = () => handleNavClick('screen-auth');
+      if (hero) hero.onclick = null;
       return;
     }
 
@@ -2113,7 +2169,61 @@
     AudioSystem.sfxNavigate();
   }
   document.getElementById('chat-dm-new')?.addEventListener('click', openDMSearch);
-  document.getElementById('nav-dm-new-btn')?.addEventListener('click', openDMSearch);
+  // Nav sidebar inline DM search
+  const navDmSearch = document.getElementById('nav-dm-search');
+  const navDmSearchInput = document.getElementById('nav-dm-search-input');
+  const navDmSearchResults = document.getElementById('nav-dm-search-results');
+  const navDmSearchCancel = document.getElementById('nav-dm-search-cancel');
+
+  document.getElementById('nav-dm-new-btn')?.addEventListener('click', () => {
+    if (navDmSearch) {
+      navDmSearch.style.display = navDmSearch.style.display === 'none' ? '' : 'none';
+      if (navDmSearch.style.display !== 'none') {
+        navDmSearchInput.value = '';
+        navDmSearchResults.innerHTML = '';
+        navDmSearchInput.focus();
+      }
+      AudioSystem.sfxNavigate();
+    }
+  });
+
+  navDmSearchCancel?.addEventListener('click', () => {
+    if (navDmSearch) navDmSearch.style.display = 'none';
+    AudioSystem.sfxBack();
+  });
+
+  let navDmSearchTimeout;
+  navDmSearchInput?.addEventListener('input', () => {
+    clearTimeout(navDmSearchTimeout);
+    navDmSearchTimeout = setTimeout(async () => {
+      const q = navDmSearchInput.value.trim();
+      if (!q) { navDmSearchResults.innerHTML = ''; return; }
+      const users = await SupabaseClient.searchUsers(q, 8);
+      const currentUserId = SupabaseClient.getUser()?.id;
+      navDmSearchResults.innerHTML = '';
+      const filtered = users.filter(u => u.id !== currentUserId);
+      filtered.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'nav-dm-search-result';
+        div.innerHTML = `
+          <span style="width:18px;height:18px;border:1px solid #1a1a1a;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#080808;">
+            ${u.avatar_url ? renderAvatar(u.avatar_url) : '<span style="color:#333;font-size:.2rem;">\u25C9</span>'}
+          </span>
+          <span style="color:${escapeHtml(u.name_color || '#888')}">${escapeHtml(u.username)}</span>
+          ${u.is_admin ? '<span style="color:#e02020;font-size:.7em;">[A]</span>' : ''}
+        `;
+        div.addEventListener('click', () => {
+          navDmSearch.style.display = 'none';
+          openDMPanel(u.id, u.username);
+          AudioSystem.sfxSelect();
+        });
+        navDmSearchResults.appendChild(div);
+      });
+      if (filtered.length === 0) {
+        navDmSearchResults.innerHTML = '<div style="font-size:.24rem;color:#333;text-align:center;padding:.5rem;">NO USERS FOUND</div>';
+      }
+    }, 300);
+  });
 
   let dmSearchTimeout;
   dmSearchInput.addEventListener('input', () => {
