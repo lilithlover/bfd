@@ -415,7 +415,7 @@
       to.classList.add('active');
       to.offsetHeight;
       to.classList.add('visible');
-      hud.classList.toggle('show', toId !== 'screen-title');
+      hud.classList.toggle('show', toId !== 'screen-title' && toId !== 'screen-nav');
       currentScreen = toId;
     }, 600);
   }
@@ -570,7 +570,6 @@
             navEl.classList.add('active');
             navEl.offsetHeight;
             navEl.classList.add('visible');
-            hud.classList.add('show');
             currentScreen = 'screen-nav';
           }, 300);
         }
