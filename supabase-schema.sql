@@ -51,22 +51,22 @@ EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  ALTER TABLE public.profiles ADD COLUMN name_font text DEFAULT 'default';
+  ALTER TABLE public.profiles ADD COLUMN name_font text DEFAULT 'font-default';
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  ALTER TABLE public.profiles ADD COLUMN chat_font text DEFAULT 'default';
+  ALTER TABLE public.profiles ADD COLUMN chat_font text DEFAULT 'font-default';
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  ALTER TABLE public.profiles ADD COLUMN text_color text DEFAULT '#ffffff';
+  ALTER TABLE public.profiles ADD COLUMN text_color text DEFAULT '#aaaaaa';
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
 DO $$ BEGIN
-  ALTER TABLE public.profiles ADD COLUMN flair text DEFAULT '';
+  ALTER TABLE public.profiles ADD COLUMN flair text DEFAULT 'none';
 EXCEPTION WHEN duplicate_column THEN NULL;
 END $$;
 
@@ -290,6 +290,18 @@ CREATE POLICY "Users can delete their own avatars"
     AND (storage.foldername(name))[1] = auth.uid()::text
   );
 
--- 9. SET allcontempt AS ADMIN
+-- 9. FIX COLUMN DEFAULTS (safe to re-run — corrects old defaults)
+ALTER TABLE public.profiles ALTER COLUMN name_font SET DEFAULT 'font-default';
+ALTER TABLE public.profiles ALTER COLUMN chat_font SET DEFAULT 'font-default';
+ALTER TABLE public.profiles ALTER COLUMN text_color SET DEFAULT '#aaaaaa';
+ALTER TABLE public.profiles ALTER COLUMN flair SET DEFAULT 'none';
+
+-- Backfill any rows with old/empty defaults
+UPDATE public.profiles SET name_font = 'font-default' WHERE name_font IS NULL OR name_font = 'default';
+UPDATE public.profiles SET chat_font = 'font-default' WHERE chat_font IS NULL OR chat_font = 'default';
+UPDATE public.profiles SET text_color = '#aaaaaa' WHERE text_color IS NULL OR text_color = '#ffffff';
+UPDATE public.profiles SET flair = 'none' WHERE flair IS NULL OR flair = '';
+
+-- 10. SET allcontempt AS ADMIN
 -- (Will update once this username registers. Re-run after registration.)
 UPDATE public.profiles SET is_admin = true WHERE LOWER(username) = 'allcontempt';
