@@ -450,6 +450,10 @@
     card.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(card.dataset.target); });
     card.addEventListener('mouseenter', () => AudioSystem.sfxHover());
   });
+  document.querySelectorAll('.nav-quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => { AudioSystem.sfxSelect(); handleNavClick(btn.dataset.target); });
+    btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+  });
   document.querySelectorAll('.nav-footer-back').forEach(btn => {
     btn.addEventListener('click', () => { AudioSystem.sfxBack(); handleNavClick(btn.dataset.target); });
     btn.addEventListener('mouseenter', () => AudioSystem.sfxHover());
@@ -610,6 +614,118 @@
     // Show/hide shop + admin cards
     if (shopCard) shopCard.style.display = user ? '' : 'none';
     if (adminCard) adminCard.style.display = (profile && profile.is_admin) ? '' : 'none';
+
+    // Update nav profile hero
+    updateNavProfileHero(user, profile);
+
+    // Load DM sidebar on nav if logged in
+    if (user) loadNavDMs();
+  }
+
+  function updateNavProfileHero(user, profile) {
+    const avatarEl = document.getElementById('nav-profile-avatar');
+    const nameEl = document.getElementById('nav-profile-name');
+    const metaEl = document.getElementById('nav-profile-meta');
+    const statsEl = document.getElementById('nav-profile-stats');
+    const editBtn = document.getElementById('nav-edit-profile-btn');
+    const logoutBtn = document.getElementById('nav-logout-btn');
+    const hero = document.getElementById('nav-profile-hero');
+
+    if (!nameEl) return;
+
+    if (!user || !profile) {
+      if (avatarEl) avatarEl.innerHTML = '<span class="nav-profile-avatar-placeholder">?</span>';
+      nameEl.textContent = 'GUEST';
+      nameEl.className = 'nav-profile-name';
+      nameEl.style.color = '';
+      if (metaEl) metaEl.textContent = 'LOGIN TO ACCESS ALL FEATURES';
+      if (statsEl) statsEl.innerHTML = '';
+      if (editBtn) editBtn.style.display = 'none';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (hero) hero.onclick = () => handleNavClick('screen-auth');
+      return;
+    }
+
+    const effect = getEffectClass(profile.name_effect);
+    if (avatarEl) {
+      avatarEl.innerHTML = profile.avatar_url
+        ? renderAvatar(profile.avatar_url)
+        : '<span class="nav-profile-avatar-placeholder">?</span>';
+    }
+    nameEl.textContent = profile.username;
+    nameEl.className = 'nav-profile-name ' + effect;
+    nameEl.style.color = profile.name_color || '#ccc';
+
+    const rank = profile.rank || 'MEMBER';
+    const idNum = profile.user_id_num ? '#' + String(profile.user_id_num).padStart(4, '0') : '';
+    if (metaEl) metaEl.textContent = rank + (profile.is_admin ? ' [ADMIN]' : '') + (idNum ? ' ' + idNum : '');
+    if (statsEl) statsEl.innerHTML = `<span>LV.${profile.level || 1}</span><span>$${profile.balance || 0}</span>`;
+
+    if (editBtn) { editBtn.style.display = ''; editBtn.onclick = (e) => { e.stopPropagation(); openProfileEditor(); }; }
+    if (logoutBtn) {
+      logoutBtn.style.display = '';
+      logoutBtn.onclick = async (e) => {
+        e.stopPropagation();
+        await SupabaseClient.logout();
+        AudioSystem.sfxBack();
+        showToast('LOGGED OUT');
+        updateHUD(null, null);
+        updateNavMenu(null, null);
+      };
+    }
+    if (hero) hero.onclick = () => openProfileEditor();
+  }
+
+  async function loadNavDMs() {
+    const list = document.getElementById('nav-dm-list');
+    const countEl = document.getElementById('nav-dm-unread-count');
+    if (!list) return;
+    try {
+      const convos = await SupabaseClient.fetchDMConversations();
+      if (!convos || convos.length === 0) {
+        list.innerHTML = '<div class="nav-dm-empty">NO CONVERSATIONS YET</div>';
+        if (countEl) countEl.classList.remove('show');
+        return;
+      }
+      list.innerHTML = '';
+      let totalUnread = 0;
+      convos.forEach(c => {
+        const partner = c.partner;
+        const unread = c.unread > 0;
+        if (unread) totalUnread += c.unread;
+        const item = document.createElement('div');
+        item.className = 'nav-dm-item' + (unread ? ' has-unread' : '');
+        const time = c.lastMessage ? new Date(c.lastMessage.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
+        const preview = c.lastMessage ? c.lastMessage.content.slice(0, 40) : '';
+        item.innerHTML = `
+          <div class="nav-dm-item-avatar">${partner && partner.avatar_url
+            ? renderAvatar(partner.avatar_url)
+            : '<span style="color:#333;font-size:.25rem;">\u25C9</span>'}</div>
+          <div class="nav-dm-item-info">
+            <div class="nav-dm-item-name">${escapeHtml(partner ? partner.username : 'USER')}</div>
+            <div class="nav-dm-item-preview">${escapeHtml(preview)}</div>
+          </div>
+          ${time ? `<span class="nav-dm-item-time">${time}</span>` : ''}
+          <span class="nav-dm-item-unread"></span>
+        `;
+        item.addEventListener('click', () => {
+          openDMPanel(c.partnerId, partner ? partner.username : 'USER');
+          AudioSystem.sfxNavigate();
+        });
+        item.addEventListener('mouseenter', () => AudioSystem.sfxHover());
+        list.appendChild(item);
+      });
+      if (countEl) {
+        if (totalUnread > 0) {
+          countEl.textContent = totalUnread;
+          countEl.classList.add('show');
+        } else {
+          countEl.classList.remove('show');
+        }
+      }
+    } catch (e) {
+      list.innerHTML = '<div class="nav-dm-empty">COULD NOT LOAD DMs</div>';
+    }
   }
 
   /* ===== PLAYER HUD ===== */
@@ -1907,6 +2023,8 @@
         list.appendChild(li);
       });
     } catch (e) { /* silently fail */ }
+    // Also refresh the nav DM sidebar
+    loadNavDMs();
   }
 
   async function openDMPanel(partnerId, partnerName) {
@@ -1991,14 +2109,16 @@
   });
 
   // --- New DM search ---
-  document.getElementById('chat-dm-new').addEventListener('click', () => {
+  function openDMSearch() {
     dmSearchModal.classList.add('show');
     dmOverlay.classList.add('show');
     dmSearchInput.value = '';
     dmSearchResults.innerHTML = '';
     dmSearchInput.focus();
     AudioSystem.sfxNavigate();
-  });
+  }
+  document.getElementById('chat-dm-new')?.addEventListener('click', openDMSearch);
+  document.getElementById('nav-dm-new-btn')?.addEventListener('click', openDMSearch);
 
   let dmSearchTimeout;
   dmSearchInput.addEventListener('input', () => {

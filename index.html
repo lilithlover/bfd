@@ -127,44 +127,135 @@
     }
     .menu-subtitle { font-family: 'Retro Arcade', 'Press Start 2P', monospace; font-size: clamp(.4rem, 1.2vw, .55rem); color: #661111; letter-spacing: .25em; margin-bottom: 1.2rem; text-align: center; }
 
-    /* Nav card grid */
-    .nav-container { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: .8rem; }
-    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    /* ===== NAV DASHBOARD ===== */
+    .nav-dashboard { width: 100%; max-width: 960px; display: flex; gap: 1px; height: 80vh; max-height: 600px; background: #1a0000; border: 1px solid #1a0000; overflow: hidden; }
+
+    /* Left: Main nav area */
+    .nav-main { flex: 1; display: flex; flex-direction: column; gap: 1px; background: #1a0000; overflow-y: auto; }
+
+    /* Profile Hero Card */
+    .nav-profile-hero {
+      display: flex; align-items: center; gap: .8rem; padding: 1rem 1.2rem;
+      background: linear-gradient(135deg, #0a0808 0%, #0d0606 50%, #0a0505 100%);
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+    .nav-profile-hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, #e02020, transparent); opacity: .3; }
+    .nav-profile-avatar { width: 48px; height: 48px; border: 2px solid #330000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808; transition: border-color .3s; }
+    .nav-profile-hero:hover .nav-profile-avatar { border-color: #e02020; }
+    .nav-profile-avatar img, .nav-profile-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .nav-profile-avatar-placeholder { font-size: .8rem; color: #333; }
+    .nav-profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .2rem; }
+    .nav-profile-name { font-size: clamp(.4rem, 1.4vw, .6rem); color: #ccc; letter-spacing: .08em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-profile-meta { font-size: clamp(.24rem, .8vw, .32rem); color: #553333; letter-spacing: .06em; }
+    .nav-profile-stats { font-size: clamp(.22rem, .7vw, .28rem); color: #333; letter-spacing: .04em; display: flex; gap: .6rem; }
+    .nav-profile-stats span { display: flex; align-items: center; gap: .2rem; }
+    .nav-profile-actions { display: flex; gap: .4rem; flex-shrink: 0; }
+    .nav-action-btn {
+      font-family: 'Press Start 2P', monospace; font-size: .45rem; background: transparent;
+      border: 1px solid #222; color: #555; padding: .35rem .5rem; cursor: pointer;
+      transition: all .2s; letter-spacing: .05em;
+    }
+    .nav-action-btn:hover { border-color: #e02020; color: #e02020; background: rgba(224,32,32,.05); }
+    .nav-action-logout:hover { border-color: #882222; color: #aa3333; }
+
+    /* Quick Actions Bar */
+    .nav-quick-bar {
+      display: flex; gap: 1px; background: #1a0000;
+    }
+    .nav-quick-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: .25rem; padding: .7rem .4rem; background: #080808; cursor: pointer;
+      transition: all .25s; position: relative; user-select: none;
+    }
+    .nav-quick-btn::before { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 2px; background: transparent; transition: all .25s; }
+    .nav-quick-btn:hover { background: #0c0606; }
+    .nav-quick-btn:hover::before { background: #e02020; left: 0; right: 0; }
+    .nav-quick-btn:hover .nav-quick-icon { color: #e02020; transform: translateY(-2px); }
+    .nav-quick-btn:hover .nav-quick-label { color: #aaa; }
+    .nav-quick-icon { font-size: clamp(.8rem, 2.5vw, 1.2rem); color: #444; transition: all .25s; }
+    .nav-quick-label { font-size: clamp(.24rem, .7vw, .3rem); color: #555; letter-spacing: .12em; transition: color .25s; }
+    .nav-quick-admin .nav-quick-icon { color: #993300; }
+    .nav-quick-admin:hover .nav-quick-icon { color: #ff6622; }
+    .nav-quick-admin:hover::before { background: #ff6622; }
+    .chat-badge { display: none; font-size: .28rem; color: #000; background: #e02020; padding: .1rem .25rem; position: absolute; top: .3rem; right: .6rem; animation: blink 1.5s step-end infinite; border-radius: 1px; min-width: .6rem; text-align: center; }
+    .chat-badge.show { display: inline; }
+
+    /* Nav Cards Grid */
+    .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: #1a0000; }
     .nav-card {
       display: flex; align-items: center; gap: .7rem; padding: .7rem .9rem;
-      background: #080808; border: 1px solid #151515; cursor: pointer; user-select: none;
-      transition: border-color .2s, background .2s, box-shadow .2s; position: relative; overflow: hidden;
+      background: #080808; cursor: pointer; user-select: none;
+      transition: all .25s; position: relative; overflow: hidden;
     }
-    .nav-card::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%; background: transparent; transition: background .2s; }
-    .nav-card:hover { border-color: #2a0a0a; background: #0c0606; box-shadow: 0 0 12px rgba(224,32,32,.06); }
+    .nav-card::before { content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: transparent; transition: background .25s; }
+    .nav-card:hover { background: #0c0606; }
     .nav-card:hover::before { background: #e02020; }
     .nav-card:hover .nav-card-icon { color: #e02020; }
     .nav-card:hover .nav-card-label { color: #ddd; }
-    .nav-card-icon { font-size: clamp(.7rem, 2.2vw, 1.1rem); color: #444; transition: color .2s; min-width: 1.5rem; text-align: center; }
-    .nav-card-text { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
-    .nav-card-label { font-size: clamp(.38rem, 1.2vw, .55rem); color: #999; letter-spacing: .1em; text-transform: uppercase; transition: color .2s; }
-    .nav-card-desc { font-size: clamp(.24rem, .75vw, .32rem); color: #444; letter-spacing: .04em; line-height: 1.4; }
-    .nav-card.full-width { grid-column: 1 / -1; }
-    .nav-card.accent { border-color: #1a0a00; }
-    .nav-card.accent:hover { border-color: #e02020; }
-    .nav-card.accent .nav-card-icon { color: #993300; }
-    .nav-card.accent:hover .nav-card-icon { color: #ff6622; }
-    .nav-card.muted { border-color: #111; }
-    .nav-card.muted .nav-card-icon { color: #333; }
-    .nav-card.muted .nav-card-label { color: #555; }
-    .nav-card.muted:hover .nav-card-icon { color: #888; }
-    .nav-card.muted:hover .nav-card-label { color: #aaa; }
-    .nav-card.muted:hover::before { background: #555; }
-    .nav-footer { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; }
-    .nav-footer-left { font-size: clamp(.25rem, .8vw, .34rem); color: #333; letter-spacing: .08em; }
-    .nav-footer-back { font-size: clamp(.32rem, 1vw, .45rem); color: #555; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
+    .nav-card-icon { font-size: clamp(.7rem, 2vw, 1rem); color: #444; transition: color .25s; min-width: 1.5rem; text-align: center; }
+    .nav-card-text { display: flex; flex-direction: column; gap: .12rem; min-width: 0; }
+    .nav-card-label { font-size: clamp(.32rem, 1vw, .45rem); color: #888; letter-spacing: .1em; text-transform: uppercase; transition: color .25s; }
+    .nav-card-desc { font-size: clamp(.22rem, .7vw, .28rem); color: #383838; letter-spacing: .04em; line-height: 1.4; }
+
+    /* Nav Footer */
+    .nav-footer { display: flex; justify-content: space-between; align-items: center; padding: .5rem .9rem; background: #060606; }
+    .nav-footer-left { font-size: clamp(.22rem, .7vw, .3rem); color: #282828; letter-spacing: .08em; }
+    .nav-footer-back { font-size: clamp(.28rem, .9vw, .38rem); color: #444; cursor: pointer; letter-spacing: .12em; text-transform: uppercase; transition: color .2s; user-select: none; }
     .nav-footer-back:hover { color: #e02020; }
-    .nav-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .6; }
-    .chat-badge { display: none; font-size: .35rem; color: #000; background: #e02020; padding: .08rem .2rem; margin-left: .4rem; vertical-align: middle; animation: blink 1.5s step-end infinite; border-radius: 1px; }
-    .chat-badge.show { display: inline; }
-    @media (max-width: 500px) {
-      .nav-grid { grid-template-columns: 1fr; }
-      .nav-card { padding: .6rem .7rem; }
+    .nav-footer-back::before { content: '\25C4 '; color: #e02020; opacity: .5; }
+
+    /* ===== DM SIDEBAR on Nav ===== */
+    .nav-dm-sidebar {
+      width: 260px; display: flex; flex-direction: column; background: #070707; flex-shrink: 0;
+    }
+    .nav-dm-header {
+      display: flex; align-items: center; gap: .4rem; padding: .65rem .8rem;
+      background: #0a0808; border-bottom: 1px solid #1a0000; flex-shrink: 0;
+    }
+    .nav-dm-header-title { font-size: clamp(.3rem, .9vw, .4rem); color: #666; letter-spacing: .12em; flex: 1; }
+    .nav-dm-unread-count {
+      font-size: .28rem; color: #000; background: #e02020; padding: .08rem .22rem;
+      display: none; animation: blink 1.5s step-end infinite; min-width: .5rem; text-align: center;
+    }
+    .nav-dm-unread-count.show { display: inline; }
+    .nav-dm-new-btn {
+      font-family: 'Press Start 2P', monospace; font-size: .4rem; background: transparent;
+      border: 1px solid #222; color: #444; width: 22px; height: 22px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all .2s;
+    }
+    .nav-dm-new-btn:hover { border-color: #e02020; color: #e02020; }
+    .nav-dm-list { flex: 1; overflow-y: auto; padding: .2rem 0; }
+    .nav-dm-empty { font-size: .26rem; color: #282828; text-align: center; padding: 2rem .5rem; letter-spacing: .06em; }
+
+    /* DM conversation items in nav sidebar */
+    .nav-dm-item {
+      display: flex; align-items: center; gap: .5rem; padding: .5rem .8rem;
+      cursor: pointer; transition: all .2s; border-left: 2px solid transparent; position: relative;
+    }
+    .nav-dm-item:hover { background: rgba(224,32,32,.03); }
+    .nav-dm-item.has-unread { border-left-color: #e02020; background: rgba(224,32,32,.02); }
+    .nav-dm-item-avatar { width: 28px; height: 28px; border: 1px solid #222; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #080808; }
+    .nav-dm-item-avatar img, .nav-dm-item-avatar video { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+    .nav-dm-item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+    .nav-dm-item-name { font-size: clamp(.26rem, .8vw, .34rem); color: #777; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .2s; }
+    .nav-dm-item:hover .nav-dm-item-name { color: #bbb; }
+    .nav-dm-item.has-unread .nav-dm-item-name { color: #ccc; }
+    .nav-dm-item-preview { font-size: clamp(.2rem, .65vw, .25rem); color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-dm-item.has-unread .nav-dm-item-preview { color: #555; }
+    .nav-dm-item-time { font-size: .22rem; color: #282828; flex-shrink: 0; }
+    .nav-dm-item-unread { width: 8px; height: 8px; background: #e02020; border-radius: 50%; flex-shrink: 0; display: none; box-shadow: 0 0 6px rgba(224,32,32,.4); }
+    .nav-dm-item.has-unread .nav-dm-item-unread { display: block; }
+
+    /* Mobile: stack layout vertically, hide DM sidebar */
+    @media (max-width: 600px) {
+      .nav-dashboard { flex-direction: column; height: auto; max-height: none; }
+      .nav-dm-sidebar { width: 100%; max-height: 200px; border-top: 1px solid #1a0000; }
+      .nav-quick-btn { padding: .5rem .3rem; }
+      .nav-profile-hero { padding: .7rem .8rem; }
+      .nav-profile-avatar { width: 36px; height: 36px; }
+    }
+    @media (min-width: 900px) {
+      .nav-dm-sidebar { width: 280px; }
     }
 
     /* ===== HUD ===== */
@@ -1768,40 +1859,76 @@
 
     <!-- NAV -->
     <div id="screen-nav" class="screen">
-      <div class="nav-container">
-        <div class="nav-grid">
-          <div class="nav-card" data-target="screen-auth" id="nav-auth-card">
-            <span class="nav-card-icon">&#9670;</span>
-            <div class="nav-card-text"><span class="nav-card-label">LOGIN / REGISTER</span><span class="nav-card-desc">Access your account</span></div>
+      <div class="nav-dashboard">
+        <!-- Left: Profile + Navigation -->
+        <div class="nav-main">
+          <!-- Profile Hero Card -->
+          <div class="nav-profile-hero" id="nav-profile-hero">
+            <div class="nav-profile-avatar" id="nav-profile-avatar"><span class="nav-profile-avatar-placeholder">?</span></div>
+            <div class="nav-profile-info">
+              <div class="nav-profile-name" id="nav-profile-name">GUEST</div>
+              <div class="nav-profile-meta" id="nav-profile-meta">LOGIN TO ACCESS ALL FEATURES</div>
+              <div class="nav-profile-stats" id="nav-profile-stats"></div>
+            </div>
+            <div class="nav-profile-actions" id="nav-profile-actions">
+              <button class="nav-action-btn" id="nav-edit-profile-btn" title="Edit Profile" style="display:none;">&#9998;</button>
+              <button class="nav-action-btn nav-action-logout" id="nav-logout-btn" title="Logout" style="display:none;">&#9654;</button>
+            </div>
           </div>
-          <div class="nav-card" data-target="screen-members">
-            <span class="nav-card-icon">&#9733;</span>
-            <div class="nav-card-text"><span class="nav-card-label">MEMBERS</span><span class="nav-card-desc">View the roster</span></div>
+
+          <!-- Quick Actions Bar -->
+          <div class="nav-quick-bar" id="nav-quick-bar">
+            <div class="nav-quick-btn" data-target="screen-chat" id="chat-menu-card">
+              <span class="nav-quick-icon">&#9993;</span>
+              <span class="nav-quick-label">CHAT</span>
+              <span class="chat-badge" id="chat-badge"></span>
+            </div>
+            <div class="nav-quick-btn" data-target="screen-members">
+              <span class="nav-quick-icon">&#9733;</span>
+              <span class="nav-quick-label">MEMBERS</span>
+            </div>
+            <div class="nav-quick-btn" data-target="screen-shop" id="shop-menu-card" style="display:none;">
+              <span class="nav-quick-icon">&#9830;</span>
+              <span class="nav-quick-label">SHOP</span>
+            </div>
+            <div class="nav-quick-btn nav-quick-admin" data-target="screen-admin" id="admin-menu-card" style="display:none;">
+              <span class="nav-quick-icon">&#9888;</span>
+              <span class="nav-quick-label">ADMIN</span>
+            </div>
           </div>
-          <div class="nav-card" data-target="screen-releases">
-            <span class="nav-card-icon">&#9835;</span>
-            <div class="nav-card-text"><span class="nav-card-label">RELEASES</span><span class="nav-card-desc">Music &amp; projects</span></div>
+
+          <!-- Navigation Cards Grid -->
+          <div class="nav-grid">
+            <div class="nav-card" data-target="screen-auth" id="nav-auth-card">
+              <span class="nav-card-icon">&#9670;</span>
+              <div class="nav-card-text"><span class="nav-card-label">LOGIN / REGISTER</span><span class="nav-card-desc">Access your account</span></div>
+            </div>
+            <div class="nav-card" data-target="screen-releases">
+              <span class="nav-card-icon">&#9835;</span>
+              <div class="nav-card-text"><span class="nav-card-label">RELEASES</span><span class="nav-card-desc">Music &amp; projects</span></div>
+            </div>
+            <div class="nav-card" data-target="screen-about">
+              <span class="nav-card-icon">&#9881;</span>
+              <div class="nav-card-text"><span class="nav-card-label">ABOUT US</span><span class="nav-card-desc">Our story</span></div>
+            </div>
           </div>
-          <div class="nav-card" data-target="screen-about">
-            <span class="nav-card-icon">&#9881;</span>
-            <div class="nav-card-text"><span class="nav-card-label">ABOUT US</span><span class="nav-card-desc">Our story</span></div>
-          </div>
-          <div class="nav-card full-width" data-target="screen-chat" id="chat-menu-card">
-            <span class="nav-card-icon">&#9993;</span>
-            <div class="nav-card-text"><span class="nav-card-label">CHAT<span class="chat-badge" id="chat-badge"></span></span><span class="nav-card-desc">Join the conversation</span></div>
-          </div>
-          <div class="nav-card accent" data-target="screen-shop" id="shop-menu-card" style="display:none;">
-            <span class="nav-card-icon">&#9733;</span>
-            <div class="nav-card-text"><span class="nav-card-label">SHOP</span><span class="nav-card-desc">Effects, fonts &amp; more</span></div>
-          </div>
-          <div class="nav-card accent" data-target="screen-admin" id="admin-menu-card" style="display:none;">
-            <span class="nav-card-icon">&#9888;</span>
-            <div class="nav-card-text"><span class="nav-card-label">ADMIN PANEL</span><span class="nav-card-desc">Manage users</span></div>
+
+          <div class="nav-footer">
+            <span class="nav-footer-left">TM&amp;&#169; 2025 RUNE TRIBE</span>
+            <span class="nav-footer-back" data-target="screen-title" data-is-back="true">BACK</span>
           </div>
         </div>
-        <div class="nav-footer">
-          <span class="nav-footer-left">TM&amp;&#169; 2025 RUNE TRIBE</span>
-          <span class="nav-footer-back" data-target="screen-title" data-is-back="true">BACK</span>
+
+        <!-- Right: DM Inbox Sidebar -->
+        <div class="nav-dm-sidebar" id="nav-dm-sidebar">
+          <div class="nav-dm-header">
+            <span class="nav-dm-header-title">&#9993; MESSAGES</span>
+            <span class="nav-dm-unread-count" id="nav-dm-unread-count"></span>
+            <button class="nav-dm-new-btn" id="nav-dm-new-btn" title="New DM">+</button>
+          </div>
+          <div class="nav-dm-list" id="nav-dm-list">
+            <div class="nav-dm-empty">NO CONVERSATIONS YET</div>
+          </div>
         </div>
       </div>
     </div>
