@@ -1200,30 +1200,34 @@
 
       // Subscribe to ALL messages (filter by channel client-side)
       SupabaseClient.subscribeChat((msg) => {
-        const msgChannel = msg.channel || 'general';
-        if (msgChannel === currentChannel) {
-          const content = msg.content || '';
-          let el;
-          if (isDropMessage(content)) {
-            el = renderDropMessage(msg);
-            if (el) AudioSystem.sfxMention();
-          } else if (isClaimMessage(content)) {
-            el = renderClaimMessage(msg);
+        try {
+          const msgChannel = msg.channel || 'general';
+          if (msgChannel === currentChannel) {
+            const content = msg.content || '';
+            let el;
+            if (isDropMessage(content)) {
+              el = renderDropMessage(msg);
+              if (el) AudioSystem.sfxMention();
+            } else if (isClaimMessage(content)) {
+              el = renderClaimMessage(msg);
+            } else {
+              el = renderMessage(msg);
+              AudioSystem.sfxChat();
+              incrementTabUnread();
+            }
+            if (el) {
+              chatMessages.appendChild(el);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
           } else {
-            el = renderMessage(msg);
-            AudioSystem.sfxChat();
-            incrementTabUnread();
+            // Unread badge for other hub
+            if (hubUnread[msgChannel] !== undefined) {
+              hubUnread[msgChannel]++;
+              updateHubUnreadBadges();
+            }
           }
-          if (el) {
-            chatMessages.appendChild(el);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
-        } else {
-          // Unread badge for other hub
-          if (hubUnread[msgChannel] !== undefined) {
-            hubUnread[msgChannel]++;
-            updateHubUnreadBadges();
-          }
+        } catch (err) {
+          console.error('Chat message handler error:', err);
         }
       });
 
@@ -1563,7 +1567,7 @@
     claimedDropIds.add(info.dropMsgId);
 
     // Update the original drop element if it exists in DOM
-    const dropEl = chatMessages.querySelector(`.chat-drop[data-msg-id="${info.dropMsgId}"]`);
+    const dropEl = Array.from(chatMessages.querySelectorAll('.chat-drop')).find(el => el.dataset.msgId === info.dropMsgId);
     if (dropEl) {
       const inner = dropEl.querySelector('.chat-drop-inner');
       if (inner) inner.classList.add('claimed');
@@ -1708,6 +1712,14 @@
         lastMsgTime = Date.now();
         try { await SupabaseClient.sendMessage(content, currentChannel); }
         catch (err) { showToast('SEND FAILED'); AudioSystem.sfxError(); }
+        return;
+      }
+
+      // Unknown command - show error instead of sending as message
+      if (cmd !== '/me') {
+        addSystemMessage(`UNKNOWN COMMAND: ${cmd} — TYPE /help FOR COMMANDS`);
+        AudioSystem.sfxError();
+        chatInput.value = '';
         return;
       }
     }
@@ -2851,21 +2863,25 @@
     if (!guestSubscribed) {
       guestSubscribed = true;
       SupabaseClient.subscribeChat((msg) => {
-        const msgChannel = msg.channel || 'general';
-        if (msgChannel === currentChannel) {
-          const content = msg.content || '';
-          let el;
-          if (isDropMessage(content)) {
-            el = renderDropMessage(msg);
-          } else if (isClaimMessage(content)) {
-            el = renderClaimMessage(msg);
-          } else {
-            el = renderMessage(msg);
+        try {
+          const msgChannel = msg.channel || 'general';
+          if (msgChannel === currentChannel) {
+            const content = msg.content || '';
+            let el;
+            if (isDropMessage(content)) {
+              el = renderDropMessage(msg);
+            } else if (isClaimMessage(content)) {
+              el = renderClaimMessage(msg);
+            } else {
+              el = renderMessage(msg);
+            }
+            if (el) {
+              chatMessages.appendChild(el);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
           }
-          if (el) {
-            chatMessages.appendChild(el);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          }
+        } catch (err) {
+          console.error('Guest chat handler error:', err);
         }
       });
     }

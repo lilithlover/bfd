@@ -215,17 +215,27 @@ const SupabaseClient = (() => {
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         async (payload) => {
-          const { data } = await sb.from('messages')
-            .select(`
-              id, content, created_at, user_id, channel,
-              profiles:user_id ( username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, rank, user_id_num, is_admin )
-            `)
-            .eq('id', payload.new.id)
-            .single();
-          if (data && onNewMessage) onNewMessage(data);
+          try {
+            const { data } = await sb.from('messages')
+              .select(`
+                id, content, created_at, user_id, channel,
+                profiles:user_id ( username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, rank, user_id_num, is_admin )
+              `)
+              .eq('id', payload.new.id)
+              .single();
+            if (data && onNewMessage) onNewMessage(data);
+          } catch (err) {
+            console.error('Realtime message fetch error:', err);
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Chat subscription status:', status);
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.warn('Chat subscription lost, will retry...');
+          setTimeout(() => subscribeChat(callback), 3000);
+        }
+      });
   }
 
   function unsubscribeChat() {
@@ -315,29 +325,38 @@ const SupabaseClient = (() => {
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'direct_messages' },
         async (payload) => {
-          const dm = payload.new;
-          if (dm.from_user_id === currentUser.id || dm.to_user_id === currentUser.id) {
-            // Fetch with profile info
-            const { data } = await sb.from('direct_messages')
-              .select(`
-                id, content, created_at, from_user_id, to_user_id, is_read,
-                from_profile:from_user_id ( username, avatar_url, name_color, name_effect, user_id_num )
-              `)
-              .eq('id', dm.id)
-              .single();
-            if (data && onNewDM) onNewDM(data);
+          try {
+            const dm = payload.new;
+            if (dm.from_user_id === currentUser.id || dm.to_user_id === currentUser.id) {
+              const { data } = await sb.from('direct_messages')
+                .select(`
+                  id, content, created_at, from_user_id, to_user_id, is_read,
+                  from_profile:from_user_id ( username, avatar_url, name_color, name_effect, user_id_num )
+                `)
+                .eq('id', dm.id)
+                .single();
+              if (data && onNewDM) onNewDM(data);
+            }
+          } catch (err) {
+            console.error('DM subscription error:', err);
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.warn('DM subscription lost, will retry...');
+          setTimeout(() => subscribeDMs(callback), 3000);
+        }
+      });
   }
 
   // --- USER SEARCH (for @mentions and DMs) ---
   async function searchUsers(query, limit = 10) {
     if (!query) return [];
+    const safeQuery = query.replace(/[%_\\]/g, '\\$&');
     const { data, error } = await sb.from('profiles')
       .select('id, username, avatar_url, name_color, name_effect, user_id_num, is_admin')
-      .ilike('username', `%${query}%`)
+      .ilike('username', `%${safeQuery}%`)
       .limit(limit);
     if (error) return [];
     return data || [];
