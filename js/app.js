@@ -537,38 +537,42 @@
   /* ===== AUTH STATE ===== */
   let hasAutoResumed = false;
   SupabaseClient.setOnAuthChange((user, profile) => {
-    // Reset guest chat state when user logs in so chat input is restored
-    if (user && guestChatLoaded) {
-      guestChatLoaded = false;
-      const inputArea = document.querySelector('.chat-input-area');
-      if (inputArea) inputArea.style.display = '';
-      const guestBanner = document.querySelector('.chat-guest-banner');
-      if (guestBanner) guestBanner.remove();
-    }
-    updateHUD(user, profile);
-    updateNavMenu(user, profile);
-    updateShopMenu(user);
-    updatePurgeBtn();
-    updateSpawnDropBtn();
-
-    // Auto-resume session: skip title screen if user is already logged in on page load
-    if (user && profile && !hasAutoResumed && currentScreen === 'screen-title') {
-      hasAutoResumed = true;
-      AudioSystem.init();
-      setTimeout(() => AudioSystem.startMusic(), 400);
-      const titleEl = document.getElementById('screen-title');
-      const navEl = document.getElementById('screen-nav');
-      if (titleEl && navEl) {
-        titleEl.classList.remove('visible');
-        setTimeout(() => {
-          titleEl.classList.remove('active');
-          navEl.classList.add('active');
-          navEl.offsetHeight;
-          navEl.classList.add('visible');
-          hud.classList.add('show');
-          currentScreen = 'screen-nav';
-        }, 300);
+    try {
+      // Reset guest chat state when user logs in so chat input is restored
+      if (user && guestChatLoaded) {
+        guestChatLoaded = false;
+        const inputArea = document.querySelector('.chat-input-area');
+        if (inputArea) inputArea.style.display = '';
+        const guestBanner = document.querySelector('.chat-guest-banner');
+        if (guestBanner) guestBanner.remove();
       }
+      updateHUD(user, profile);
+      updateNavMenu(user, profile);
+      updateShopMenu(user);
+      updatePurgeBtn();
+      updateSpawnDropBtn();
+
+      // Auto-resume session: skip title screen if user is already logged in on page load
+      if (user && profile && !hasAutoResumed && currentScreen === 'screen-title') {
+        hasAutoResumed = true;
+        AudioSystem.init();
+        setTimeout(() => AudioSystem.startMusic(), 400);
+        const titleEl = document.getElementById('screen-title');
+        const navEl = document.getElementById('screen-nav');
+        if (titleEl && navEl) {
+          titleEl.classList.remove('visible');
+          setTimeout(() => {
+            titleEl.classList.remove('active');
+            navEl.classList.add('active');
+            navEl.offsetHeight;
+            navEl.classList.add('visible');
+            hud.classList.add('show');
+            currentScreen = 'screen-nav';
+          }, 300);
+        }
+      }
+    } catch (err) {
+      console.error('Auth change UI update error:', err);
     }
   });
 
@@ -1081,8 +1085,9 @@
     const textColorStyle = textColor ? `color:${escapeHtml(textColor)}` : '';
 
     // Check if it's an action message (/me)
-    const isAction = msg.content.startsWith('/me ');
-    const content = isAction ? msg.content.slice(4) : msg.content;
+    const msgContent = msg.content || '';
+    const isAction = msgContent.startsWith('/me ');
+    const content = isAction ? msgContent.slice(4) : msgContent;
     const textClass = isAction ? 'chat-text chat-cmd-msg' : 'chat-text';
 
     div.innerHTML = `

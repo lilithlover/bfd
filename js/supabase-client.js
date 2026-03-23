@@ -35,18 +35,24 @@ const SupabaseClient = (() => {
 
     // Listen for auth changes
     sb.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-        if (session?.user) {
-          currentUser = session.user;
-          await fetchProfile();
-          subscribeMentions();
+      try {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+          if (session?.user) {
+            currentUser = session.user;
+            await fetchProfile();
+            try { subscribeMentions(); } catch (_) {}
+          }
+        } else if (event === 'SIGNED_OUT') {
+          currentUser = null;
+          currentProfile = null;
+          try { unsubscribeAll(); } catch (_) {}
         }
-      } else if (event === 'SIGNED_OUT') {
-        currentUser = null;
-        currentProfile = null;
-        unsubscribeAll();
+        if (onAuthChange) onAuthChange(currentUser, currentProfile);
+      } catch (err) {
+        console.error('Auth state change error:', err);
+        // Still try to fire the callback so UI updates
+        if (onAuthChange) onAuthChange(currentUser, currentProfile);
       }
-      if (onAuthChange) onAuthChange(currentUser, currentProfile);
     });
   }
 
@@ -147,6 +153,7 @@ const SupabaseClient = (() => {
 
   // --- CHAT ---
   async function fetchMessages(limit = 50, channel = 'general') {
+    // Try full query with all profile columns first
     const { data, error } = await sb.from('messages')
       .select(`
         id, content, created_at, user_id, channel,
@@ -157,8 +164,21 @@ const SupabaseClient = (() => {
       .eq('channel', channel)
       .order('created_at', { ascending: false })
       .limit(limit);
-    if (error) throw error;
-    return (data || []).reverse();
+    if (!error) return (data || []).reverse();
+    // Fallback: core profile columns only (in case extended columns don't exist yet)
+    console.warn('Full message fetch failed, trying core columns:', error.message);
+    const { data: fallback, error: err2 } = await sb.from('messages')
+      .select(`
+        id, content, created_at, user_id, channel,
+        profiles:user_id (
+          username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin
+        )
+      `)
+      .eq('channel', channel)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (err2) throw err2;
+    return (fallback || []).reverse();
   }
 
   async function sendMessage(content, channel = 'general') {
@@ -216,13 +236,24 @@ const SupabaseClient = (() => {
         { event: 'INSERT', schema: 'public', table: 'messages' },
         async (payload) => {
           try {
-            const { data } = await sb.from('messages')
+            let { data } = await sb.from('messages')
               .select(`
                 id, content, created_at, user_id, channel,
                 profiles:user_id ( username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, rank, user_id_num, is_admin )
               `)
               .eq('id', payload.new.id)
               .single();
+            // Fallback if extended columns missing
+            if (!data) {
+              const res = await sb.from('messages')
+                .select(`
+                  id, content, created_at, user_id, channel,
+                  profiles:user_id ( username, avatar_url, name_color, name_effect, rank, user_id_num, is_admin )
+                `)
+                .eq('id', payload.new.id)
+                .single();
+              data = res.data;
+            }
             if (data && onNewMessage) onNewMessage(data);
           } catch (err) {
             console.error('Realtime message fetch error:', err);
@@ -367,8 +398,15 @@ const SupabaseClient = (() => {
       .select('id, username, avatar_url, name_color, name_effect, name_font, chat_font, text_color, flair, user_id_num, is_admin, rank, level, owned_effects, created_at')
       .order('username')
       .limit(limit);
-    if (error) return [];
-    return data || [];
+    if (!error) return data || [];
+    // Fallback: core columns only
+    console.warn('Full profiles fetch failed, trying core columns:', error.message);
+    const { data: fallback, error: err2 } = await sb.from('profiles')
+      .select('id, username, avatar_url, name_color, name_effect, user_id_num, is_admin, rank, level, created_at')
+      .order('username')
+      .limit(limit);
+    if (err2) return [];
+    return fallback || [];
   }
 
   // --- MENTIONS ---
